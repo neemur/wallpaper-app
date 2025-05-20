@@ -490,6 +490,8 @@ const AppStyles = () => (
     @media (prefers-color-scheme: dark) { .card-title-blue { color: #60a5fa; } } /* dark:text-blue-400 */
     .card-title-green { color: #15803d; } /* text-green-700 */
     @media (prefers-color-scheme: dark) { .card-title-green { color: #4ade80; } } /* dark:text-green-400 */
+    .card-title-purple { color: #6d28d9; } /* Example for room details */
+    @media (prefers-color-scheme: dark) { .card-title-purple { color: #a78bfa; } }
 
 
     .card-description-base {
@@ -831,25 +833,23 @@ const AppStyles = () => (
       z-index: 50;
       margin-top: 0.25rem;
       max-height: 15rem; /* max-h-60 */
-      /* width: 100%; Simplified, original used var(--radix-select-trigger-width) */
-      min-width: 100%; /* Ensure it's at least as wide as trigger */
+      min-width: 100%; 
       overflow-y: auto;
       border-radius: 0.375rem;
-      border: 1px solid #e2e8f0; /* border-slate-200 */
+      border: 1px solid #e2e8f0; 
       background-color: white;
-      color: #0f172a; /* text-slate-900 */
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); /* shadow-xl */
-      /* Basic animation - original had data-state animations */
+      color: #0f172a; 
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); 
       animation: fadeInScaleUp 0.1s ease-out;
     }
     @media (prefers-color-scheme: dark) {
       .select-content {
-        border-color: #334155; /* dark:border-slate-700 */
-        background-color: #1e293b; /* dark:bg-slate-800 */
-        color: #f1f5f9; /* dark:text-slate-100 */
+        border-color: #334155; 
+        background-color: #1e293b; 
+        color: #f1f5f9; 
       }
     }
-    .select-content-inner { padding: 0.25rem; } /* p-1 */
+    .select-content-inner { padding: 0.25rem; } 
     .select-item {
       position: relative;
       display: flex;
@@ -857,30 +857,30 @@ const AppStyles = () => (
       cursor: pointer;
       user-select: none;
       align-items: center;
-      border-radius: 0.25rem; /* rounded-sm */
-      padding: 0.375rem 0.5rem 0.375rem 2rem; /* py-1.5 pl-8 pr-2 (reversed for check) -> py-1.5 pl-2 pr-8 */
-      padding-left: 0.5rem; /* pl-2 */
-      padding-right: 2rem; /* pr-8 */
+      border-radius: 0.25rem; 
+      padding: 0.375rem 0.5rem 0.375rem 2rem; 
+      padding-left: 0.5rem; 
+      padding-right: 2rem; 
       font-size: 0.875rem;
       outline: none;
     }
     .select-item:hover, .select-item-focused {
-      background-color: #f1f5f9; /* focus:bg-slate-100 */
-      color: #0f172a; /* focus:text-slate-900 */
+      background-color: #f1f5f9; 
+      color: #0f172a; 
     }
     .select-item-selected {
-      font-weight: 600; /* font-semibold */
-      background-color: #f1f5f9; /* bg-slate-100 */
-      color: #2563eb; /* text-blue-600 */
+      font-weight: 600; 
+      background-color: #f1f5f9; 
+      color: #2563eb; 
     }
     @media (prefers-color-scheme: dark) {
       .select-item:hover, .select-item-focused {
-        background-color: #334155; /* dark:focus:bg-slate-700 */
-        color: #f8fafc; /* dark:focus:text-slate-50 */
+        background-color: #334155; 
+        color: #f8fafc; 
       }
       .select-item-selected {
-        background-color: #334155; /* dark:bg-slate-700 */
-        color: #60a5fa; /* dark:text-blue-400 */
+        background-color: #334155; 
+        color: #60a5fa; 
       }
     }
     .select-item-label {
@@ -890,12 +890,12 @@ const AppStyles = () => (
     }
     .select-item-check {
       position: absolute;
-      right: 0.5rem; /* right-2 */
+      right: 0.5rem; 
       height: 1rem; width: 1rem;
-      color: #2563eb; /* text-blue-600 */
+      color: #2563eb; 
     }
     @media (prefers-color-scheme: dark) {
-      .select-item-check { color: #60a5fa; } /* dark:text-blue-400 */
+      .select-item-check { color: #60a5fa; } 
     }
 
     /* Total Project Labor Display */
@@ -926,6 +926,7 @@ const AppStyles = () => (
         border: 1px solid #e2e8f0; /* border-slate-200 */
         border-radius: 0.5rem; /* rounded-lg */
         overflow: hidden;
+        margin-bottom: 1.5rem; /* Added for spacing between room cards */
     }
     @media (prefers-color-scheme: dark) {
         .room-item-container { border-color: #334155; } /* dark:border-slate-700 */
@@ -988,13 +989,26 @@ const AppStyles = () => (
     }
     .room-delete-btn svg { width: 1rem; height: 1rem; } /* w-4 h-4 */
 
-    .room-content {
+    .room-content { /* For walls list */
         padding: 1rem; /* p-4 */
         border-top: 1px solid #e2e8f0; /* border-t border-slate-200 */
     }
     @media (prefers-color-scheme: dark) {
         .room-content { border-color: #334155; } /* dark:border-slate-700 */
     }
+    
+    .room-details-card { /* New card for room specific details */
+      margin-bottom: 1.5rem; /* mb-6 */
+      border: 1px solid #d1d5db; /* Example border */
+    }
+    .room-details-header {
+      background-color: #f3f4f6; /* Lighter than wall card header */
+    }
+    @media (prefers-color-scheme: dark) {
+      .room-details-header { background-color: #374151; }
+    }
+
+
     .btn-add-wall {
         margin-top: 0.5rem; /* mt-2 */
         background-color: #0ea5e9; /* bg-sky-500 */
@@ -1105,6 +1119,63 @@ const AppStyles = () => (
         to { opacity: 1; transform: scale(1); }
     }
     
+    /* Tooltip Styles */
+    .info-icon-container {
+      position: relative;
+      display: inline-flex; 
+      align-items: center;
+    }
+    .info-icon {
+      margin-left: 0.3rem; /* Adjusted margin */
+      cursor: help;
+      color: #3b82f6; /* blue-500 */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @media (prefers-color-scheme: dark) {
+      .info-icon {
+        color: #60a5fa; /* dark:blue-400 */
+      }
+    }
+    .tooltip-text {
+      visibility: hidden;
+      width: max-content; 
+      max-width: 280px; 
+      background-color: #1f2937; /* bg-gray-800 */
+      color: #fff;
+      text-align: left; /* Changed to left for better readability */
+      border-radius: 0.375rem; /* rounded-md */
+      padding: 0.5rem 0.75rem; /* p-2 px-3 */
+      position: absolute;
+      z-index: 100; /* Ensure tooltip is on top */
+      bottom: 135%; /* Position above the icon */
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.2s, visibility 0.2s;
+      font-size: 0.75rem; /* text-xs */
+      line-height: 1.4;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .info-icon-container:hover .tooltip-text,
+    .info-icon:focus + .tooltip-text, /* Show on focus for accessibility */
+    .info-icon:focus-within + .tooltip-text { /* Show if child of icon has focus */
+      visibility: visible;
+      opacity: 1;
+    }
+    .tooltip-text::after { /* Arrow */
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -6px; /* Adjusted for slightly larger arrow */
+      border-width: 6px;
+      border-style: solid;
+      border-color: #1f2937 transparent transparent transparent;
+    }
+
+
     /* Utility for screen readers only */
     .sr-only {
       position: absolute;
@@ -1128,18 +1199,18 @@ const Button = React.forwardRef<
     HTMLButtonElement,
     React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'default' | 'ghost' | 'link'; size?: 'default' | 'sm' | 'lg' | 'icon' | 'xs' | 'xs-sm'; baseClass?: string }
 >(({ className = '', children, variant = 'default', size = 'default', baseClass = 'btn', ...props }, ref) => {
-  const variantClass = `btn-${variant}`;
-  const sizeClass = `btn-size-${size}`;
+    const variantClass = `btn-${variant}`;
+    const sizeClass = `btn-size-${size}`;
 
-  return (
-      <button
-          ref={ref}
-          className={`${baseClass} ${variantClass} ${sizeClass} ${className}`}
-          {...props}
-      >
-        {children}
-      </button>
-  );
+    return (
+        <button
+            ref={ref}
+            className={`${baseClass} ${variantClass} ${sizeClass} ${className}`}
+            {...props}
+        >
+            {children}
+        </button>
+    );
 });
 Button.displayName = 'Button';
 
@@ -1201,15 +1272,15 @@ CardContent.displayName = 'CardContent';
 
 const Alert = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { variant?: 'default' | 'destructive' | 'success' }>(
     ({ className = '', variant = 'default', ...props }, ref) => {
-      const variantClass = `alert-${variant}`;
-      return (
-          <div
-              ref={ref}
-              role="alert"
-              className={`alert-base ${variantClass} ${className}`}
-              {...props}
-          />
-      );
+        const variantClass = `alert-${variant}`;
+        return (
+            <div
+                ref={ref}
+                role="alert"
+                className={`alert-base ${variantClass} ${className}`}
+                {...props}
+            />
+        );
     }
 );
 Alert.displayName = 'Alert';
@@ -1232,47 +1303,46 @@ AlertDescription.displayName = 'AlertDescription';
 const SelectContext = React.createContext<{ currentValue?: string; onValueChange: (value: string) => void; setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>; options?: {value: string, label: React.ReactNode}[]; }>({ onValueChange: () => {} });
 
 const Select: React.FC<{ children: React.ReactNode; onValueChange: (value: string) => void; value?: string | number; id?: string; className?: string; }> = ({ children, onValueChange, value, id, className }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const selectRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const selectRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
 
 
-  const handleToggle = () => setIsOpen(!isOpen);
-  const handleValueChange = (selectedValue: string) => { onValueChange(selectedValue); setIsOpen(false); };
+    const handleToggle = () => setIsOpen(!isOpen);
+    const handleValueChange = (selectedValue: string) => { onValueChange(selectedValue); setIsOpen(false); };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
-  // Adjust content width to trigger width
-  useEffect(() => {
-    if (isOpen && triggerRef.current && contentRef.current) {
-      const triggerWidth = triggerRef.current.offsetWidth;
-      contentRef.current.style.width = `${triggerWidth}px`;
-    }
-  }, [isOpen]);
+    useEffect(() => {
+        if (isOpen && triggerRef.current && contentRef.current) {
+            const triggerWidth = triggerRef.current.offsetWidth;
+            contentRef.current.style.width = `${triggerWidth}px`;
+        }
+    }, [isOpen]);
 
 
-  const contextValue = { currentValue: value !== undefined ? String(value) : undefined, onValueChange: handleValueChange, setIsOpen, options: React.Children.toArray(children).filter((child: any): child is React.ReactElement<{value: string, children: React.ReactNode}> => React.isValidElement(child) && child.type === SelectItem).map((child: React.ReactElement<{value: string, children: React.ReactNode}>) => ({value: child.props.value, label: child.props.children})) };
+    const contextValue = { currentValue: value !== undefined ? String(value) : undefined, onValueChange: handleValueChange, setIsOpen, options: React.Children.toArray(children).filter((child: any): child is React.ReactElement<{value: string, children: React.ReactNode}> => React.isValidElement(child) && child.type === SelectItem).map((child: React.ReactElement<{value: string, children: React.ReactNode}>) => ({value: child.props.value, label: child.props.children})) };
 
-  return (
-      <SelectContext.Provider value={contextValue}>
-        <div ref={selectRef} className={`select-container ${className || ''}`} id={id}>
-          {React.Children.map(children, child => {
-            if (React.isValidElement(child) && child.type === SelectTrigger) { return React.cloneElement(child as React.ReactElement<any>, { onClick: handleToggle, ref: triggerRef }); }
-            if (React.isValidElement(child) && child.type === SelectContent) { return isOpen ? React.cloneElement(child as React.ReactElement<any>, {ref: contentRef}) : null; }
-            return null;
-          })}
-        </div>
-      </SelectContext.Provider>
-  );
+    return (
+        <SelectContext.Provider value={contextValue}>
+            <div ref={selectRef} className={`select-container ${className || ''}`} id={id}>
+                {React.Children.map(children, child => {
+                    if (React.isValidElement(child) && child.type === SelectTrigger) { return React.cloneElement(child as React.ReactElement<any>, { onClick: handleToggle, ref: triggerRef }); }
+                    if (React.isValidElement(child) && child.type === SelectContent) { return isOpen ? React.cloneElement(child as React.ReactElement<any>, {ref: contentRef}) : null; }
+                    return null;
+                })}
+            </div>
+        </SelectContext.Provider>
+    );
 };
 
 const SelectTrigger = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>( ({ className = '', children, ...props }, ref) => ( <button ref={ref} type="button" className={`select-trigger ${className}`} {...props}> {children} <ChevronDown /> </button> ));
@@ -1287,7 +1357,14 @@ const SelectItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 SelectItem.displayName = 'SelectItem';
 
 
-// SVG Icon Components (styles will be applied via CSS if needed, or inline if specific)
+// SVG Icon Components
+const InfoIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+);
 const AlertCircle = (props: React.SVGProps<SVGSVGElement>) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>;
 const Plus = (props: React.SVGProps<SVGSVGElement>) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
 const Trash2 = (props: React.SVGProps<SVGSVGElement>) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
@@ -1312,146 +1389,419 @@ const AUTO_SAVE_DEBOUNCE_TIME = 2000;
 
 // Interfaces
 interface ClientInfo { clientName: string; clientAddress: string; clientPhone: string; clientEmail: string; }
-interface GeneralProjectInfo { designerBuilderName: string; projectManagerName: string; projectManagerPhone: string; invoiceTo: string; notes: string; projectType: string; roundTripMileage?: number; numberOfDaysForInstall?: number; inputDate: string; estimateSentDate: string; approvalDate: string; orderDate: string; orderReceivedDate: string; estimatedDateReadyForInstall: string; scheduledInstallDate: string; paperManufacturer: string; paperPatternNumber: string; paperColorNumber: string; paperProductPhotoLink: string; paperType: string; paperSpecialRequirements: string; ceilingHeight?: number; baseboardHeight?: number; verticalCrownHeight?: number; chairRailHeight?: number; }
+interface GeneralProjectInfo {
+    designerBuilderName: string;
+    projectManagerName: string;
+    projectManagerPhone: string;
+    invoiceTo: string;
+    notes: string;
+    projectType: string;
+    roundTripMileage?: number;
+    numberOfDaysForInstall?: number;
+    inputDate: string;
+    estimateSentDate: string;
+    approvalDate: string;
+    orderDate: string;
+    orderReceivedDate: string;
+    estimatedDateReadyForInstall: string;
+    scheduledInstallDate: string;
+}
+interface RoomSpecificInfo {
+    paperManufacturer: string;
+    paperPatternNumber: string;
+    paperColorNumber: string;
+    paperProductPhotoLink: string;
+    paperType: string;
+    paperSpecialRequirements: string;
+    ceilingHeight?: number;
+    baseboardHeight?: number;
+    verticalCrownHeight?: number;
+    chairRailHeight?: number;
+    isDetailsCollapsed?: boolean;
+}
 interface Wall { id: string; name: string; width?: number; heightOfWall?: number; totalArea?: number; paperWidthOption: number | 'custom'; paperWidthCustom?: number; lengthOfBoltOption: number | 'custom'; lengthOfBoltCustom?: number; patternVerticalRepeat?: number; patternMatch: number; verticalHeightOfMatchedRepeat?: number; pricedBy: number | 'materialPercent'; unitPriceOfWallpaper?: number; perimeterWallWidth?: number; numberOfCutsForProject?: number; numberOfRepeatsPerCut?: number; lengthOfCuts?: number; totalLengthNeeded?: number; numberOfCutLengthsPerBolt?: number; numberOfBolts?: number; numberOfYardsToOrder?: number; materialCost?: number; equivalentProjectSRCalculation?: number; baseLabor?: number; heightSurcharge?: number; subtotalLabor?: number; travelCharges?: number; grandTotalLabor?: number; isCollapsed?: boolean; }
-interface Room { id: string; name: string; walls: Wall[]; isCollapsed?: boolean; }
+interface Room { id: string; name: string; details: RoomSpecificInfo; walls: Wall[]; isCollapsed?: boolean; }
 interface Project { id: string; name: string; clientInfo: ClientInfo; generalProjectInfo: GeneralProjectInfo; rooms: Room[]; isClientInfoCollapsed?: boolean; isGeneralProjectInfoCollapsed?: boolean; }
 
 // Helper functions to create new entities
+const createNewRoomSpecificInfo = (): RoomSpecificInfo => ({
+    paperManufacturer: '', paperPatternNumber: '', paperColorNumber: '', paperProductPhotoLink: '', paperType: '', paperSpecialRequirements: '',
+    ceilingHeight: undefined, baseboardHeight: undefined, verticalCrownHeight: undefined, chairRailHeight: undefined, isDetailsCollapsed: false,
+});
 const createNewWall = (nameSuffix: string | number): Wall => ({ id: `wall-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`, name: `Wall ${nameSuffix}`, paperWidthOption: 20.5, lengthOfBoltOption: 180, patternMatch: 1, pricedBy: 85, heightOfWall: 96, isCollapsed: false, });
-const createNewRoom = (nameSuffix: string | number): Room => ({ id: `room-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`, name: `Room ${nameSuffix}`, walls: [createNewWall(1)], isCollapsed: false, });
+const createNewRoom = (nameSuffix: string | number): Room => ({ id: `room-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`, name: `Room ${nameSuffix}`, details: createNewRoomSpecificInfo(), walls: [createNewWall(1)], isCollapsed: false, });
 const createNewClientInfo = (): ClientInfo => ({ clientName: '', clientAddress: '', clientPhone: '', clientEmail: '' });
-const createNewGeneralProjectInfo = (): GeneralProjectInfo => ({ designerBuilderName: '', projectManagerName: '', projectManagerPhone: '', invoiceTo: '', notes: '', projectType: '', roundTripMileage: undefined, numberOfDaysForInstall: undefined, inputDate: '', estimateSentDate: '', approvalDate: '', orderDate: '', orderReceivedDate: '', estimatedDateReadyForInstall: '', scheduledInstallDate: '', paperManufacturer: '', paperPatternNumber: '', paperColorNumber: '', paperProductPhotoLink: '', paperType: '', paperSpecialRequirements: '', ceilingHeight: undefined, baseboardHeight: undefined, verticalCrownHeight: undefined, chairRailHeight: undefined, });
+const createNewGeneralProjectInfo = (): GeneralProjectInfo => ({ designerBuilderName: '', projectManagerName: '', projectManagerPhone: '', invoiceTo: '', notes: '', projectType: '', roundTripMileage: undefined, numberOfDaysForInstall: undefined, inputDate: '', estimateSentDate: '', approvalDate: '', orderDate: '', orderReceivedDate: '', estimatedDateReadyForInstall: '', scheduledInstallDate: '', });
 const createNewProject = (nameSuffix: string | number): Project => ({ id: `project-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`, name: `Project ${nameSuffix}`, clientInfo: createNewClientInfo(), generalProjectInfo: createNewGeneralProjectInfo(), rooms: [createNewRoom(1)], isClientInfoCollapsed: false, isGeneralProjectInfoCollapsed: false, });
 
 // Calculation Logic
-const calculateWallValues = (wall: Wall): Wall => {
-  const { width, paperWidthOption, paperWidthCustom, lengthOfBoltOption, lengthOfBoltCustom, patternVerticalRepeat, patternMatch, pricedBy, unitPriceOfWallpaper, heightOfWall, perimeterWallWidth, } = wall;
-  let paperWidth = paperWidthOption === 'custom' ? paperWidthCustom : paperWidthOption;
-  let lengthOfBolt = lengthOfBoltOption === 'custom' ? lengthOfBoltCustom : lengthOfBoltOption;
-  const calculationHeight = heightOfWall;
+const calculateWallValues = (wall: Wall, roomCeilingHeight?: number): Wall => {
+    const { width, heightOfWall, paperWidthOption, paperWidthCustom, lengthOfBoltOption, lengthOfBoltCustom, patternVerticalRepeat, patternMatch, pricedBy, unitPriceOfWallpaper, } = wall;
+    let paperWidth = paperWidthOption === 'custom' ? paperWidthCustom : paperWidthOption;
+    let lengthOfBolt = lengthOfBoltOption === 'custom' ? lengthOfBoltCustom : lengthOfBoltOption;
+    const calculationHeight = heightOfWall;
+    const totalArea = width !== undefined && calculationHeight !== undefined ? width * calculationHeight : undefined;
+    const verticalHeightOfMatchedRepeat = patternVerticalRepeat && patternMatch ? patternVerticalRepeat * patternMatch : undefined;
+    const numberOfCutsForProject = width && paperWidth && paperWidth > 0 ? Math.ceil(width / paperWidth) : undefined;
+    const effectiveHeightForRepeats = calculationHeight !== undefined ? calculationHeight + 4 : undefined;
+    const numberOfRepeatsPerCut = effectiveHeightForRepeats && verticalHeightOfMatchedRepeat && verticalHeightOfMatchedRepeat > 0 ? Math.ceil(effectiveHeightForRepeats / verticalHeightOfMatchedRepeat) : (effectiveHeightForRepeats ? 1 : undefined);
+    const lengthOfCuts = numberOfRepeatsPerCut && verticalHeightOfMatchedRepeat && verticalHeightOfMatchedRepeat > 0 ? numberOfRepeatsPerCut * verticalHeightOfMatchedRepeat : effectiveHeightForRepeats;
+    const totalLengthNeeded = lengthOfCuts && numberOfCutsForProject ? lengthOfCuts * numberOfCutsForProject : undefined;
+    const numberOfCutLengthsPerBolt = lengthOfBolt && lengthOfCuts && lengthOfCuts > 0 ? Math.floor(lengthOfBolt / lengthOfCuts) : undefined;
+    const numberOfBolts = numberOfCutsForProject && numberOfCutLengthsPerBolt && numberOfCutLengthsPerBolt > 0 ? Math.ceil(numberOfCutsForProject / numberOfCutLengthsPerBolt) : undefined;
+    const numberOfYardsToOrder = totalLengthNeeded ? Math.ceil(totalLengthNeeded / 36) : undefined;
+    const materialCost = (unitPriceOfWallpaper || 0) * (numberOfBolts || 0);
+    const equivalentProjectSRCalculation = totalLengthNeeded && lengthOfBolt && lengthOfBolt > 0 ? Math.ceil((totalLengthNeeded / lengthOfBolt) * 2) : undefined;
+    const baseLabor = equivalentProjectSRCalculation && pricedBy !== undefined ? (typeof pricedBy === 'number' ? equivalentProjectSRCalculation * pricedBy : (materialCost > 0 ? materialCost * 0.38 : 0)) : undefined;
 
-  const totalArea = width !== undefined && calculationHeight !== undefined ? width * calculationHeight : undefined;
-  const verticalHeightOfMatchedRepeat = patternVerticalRepeat && patternMatch ? patternVerticalRepeat * patternMatch : undefined;
-  const numberOfCutsForProject = width && paperWidth && paperWidth > 0 ? Math.ceil(width / paperWidth) : undefined;
-  const effectiveHeightForRepeats = calculationHeight !== undefined ? calculationHeight + 4 : undefined;
-  const numberOfRepeatsPerCut = effectiveHeightForRepeats && verticalHeightOfMatchedRepeat && verticalHeightOfMatchedRepeat > 0 ? Math.ceil(effectiveHeightForRepeats / verticalHeightOfMatchedRepeat) : (effectiveHeightForRepeats ? 1 : undefined);
-  const lengthOfCuts = numberOfRepeatsPerCut && verticalHeightOfMatchedRepeat && verticalHeightOfMatchedRepeat > 0 ? numberOfRepeatsPerCut * verticalHeightOfMatchedRepeat : effectiveHeightForRepeats;
-  const totalLengthNeeded = lengthOfCuts && numberOfCutsForProject ? lengthOfCuts * numberOfCutsForProject : undefined;
-  const numberOfCutLengthsPerBolt = lengthOfBolt && lengthOfCuts && lengthOfCuts > 0 ? Math.floor(lengthOfBolt / lengthOfCuts) : undefined;
-  const numberOfBolts = numberOfCutsForProject && numberOfCutLengthsPerBolt && numberOfCutLengthsPerBolt > 0 ? Math.ceil(numberOfCutsForProject / numberOfCutLengthsPerBolt) : undefined;
-  const numberOfYardsToOrder = totalLengthNeeded ? Math.ceil(totalLengthNeeded / 36) : undefined;
-  const materialCost = (unitPriceOfWallpaper || 0) * (numberOfBolts || 0);
-  const equivalentProjectSRCalculation = totalLengthNeeded && lengthOfBolt && lengthOfBolt > 0 ? Math.ceil((totalLengthNeeded / lengthOfBolt) * 2) : undefined;
-  const baseLabor = equivalentProjectSRCalculation && pricedBy !== undefined ? (typeof pricedBy === 'number' ? equivalentProjectSRCalculation * pricedBy : (materialCost > 0 ? materialCost * 0.38 : 0)) : undefined;
-  const heightSurcharge = calculationHeight && calculationHeight > 96 ? Math.max(0, Math.ceil((calculationHeight - 96) / 12)) * 100 : 0;
-  const subtotalLabor = baseLabor !== undefined ? baseLabor + heightSurcharge : undefined;
-  const travelCharges = perimeterWallWidth ? Math.round(perimeterWallWidth * 0.655 * 1) : 0;
-  const grandTotalLabor = subtotalLabor !== undefined ? subtotalLabor + travelCharges : undefined;
+    const heightToUseForSurcharge = roomCeilingHeight !== undefined && roomCeilingHeight > 0
+        ? roomCeilingHeight
+        : calculationHeight;
 
-  return { ...wall, totalArea, verticalHeightOfMatchedRepeat, numberOfCutsForProject, numberOfRepeatsPerCut, lengthOfCuts, totalLengthNeeded, numberOfCutLengthsPerBolt, numberOfBolts, numberOfYardsToOrder, materialCost, equivalentProjectSRCalculation, baseLabor, heightSurcharge, subtotalLabor, travelCharges, grandTotalLabor, };
+    let heightSurcharge = 0;
+    if (heightToUseForSurcharge && heightToUseForSurcharge > 96) {
+        heightSurcharge = ((heightToUseForSurcharge - 96) / 12) * 100;
+        heightSurcharge = Math.max(0, heightSurcharge);
+    }
+
+    const subtotalLabor = baseLabor !== undefined ? baseLabor + heightSurcharge : undefined; // This is the wall's own labor total
+    const travelCharges = 0; // Travel is project-level, not wall-level
+    const grandTotalLabor = subtotalLabor; // For a single wall, its grand total IS its subtotal (base + surcharge)
+
+    return { ...wall, totalArea, verticalHeightOfMatchedRepeat, numberOfCutsForProject, numberOfRepeatsPerCut, lengthOfCuts, totalLengthNeeded, numberOfCutLengthsPerBolt, numberOfBolts, numberOfYardsToOrder, materialCost, equivalentProjectSRCalculation, baseLabor, heightSurcharge, subtotalLabor, travelCharges, grandTotalLabor, };
 };
 
 function useDebounce<T>(value: T, delay: number): T { const [debouncedValue, setDebouncedValue] = useState<T>(value); useEffect(() => { const handler = setTimeout(() => { setDebouncedValue(value); }, delay); return () => { clearTimeout(handler); }; }, [value, delay]); return debouncedValue; }
 
-const WallInputCard = ({ wall, onChange, onDelete, onToggleCollapse }: { wall: Wall; onChange: (wallId: string, updates: Partial<Wall>) => void; onDelete: (wallId: string) => void; onToggleCollapse: (wallId: string) => void; }) => { const { id, name, isCollapsed } = wall; const handleInputChange = useCallback((field: keyof Wall, value: any) => { const numericFields: (keyof Wall)[] = ['width', 'heightOfWall', 'paperWidthCustom', 'lengthOfBoltCustom', 'patternVerticalRepeat', 'unitPriceOfWallpaper', 'perimeterWallWidth']; let processedValue = value; if (numericFields.includes(field)) { processedValue = value === '' ? undefined : Number(value); } onChange(id, { [field]: processedValue }); }, [id, onChange]); const renderReadOnlyInput = (label: string, fieldId: string, value?: number | string, unitOrClass?: string) => { const isBoldGreen = unitOrClass === 'font-bold-lg-green'; const unit = isBoldGreen ? undefined : unitOrClass; const extraClass = isBoldGreen ? unitOrClass : ''; return ( <div> <Label htmlFor={fieldId}>{label}</Label> <Input id={fieldId} type="text" value={value !== undefined && value !== null ? (unit ? `${value} ${unit}` : String(value)) : ''} className={`input-readonly ${extraClass}`} readOnly tabIndex={-1} /> </div> ); };
-  return (
-      <Card className="card-mb-6">
-        <div className="card-header-wall" onClick={() => onToggleCollapse(id)}>
-          <div className="flex items-center flex-grow-0 min-w-0">
-            <Button variant="ghost" size="icon" className="mr-2" baseClass="btn" style={{height: '2rem', width: '2rem'}}> {isCollapsed ? <ChevronDown /> : <ChevronUp />} </Button>
-            <Input id={`wallName-${id}`} value={wall.name || ''} onChange={(e) => { e.stopPropagation(); handleInputChange('name', e.target.value);}} onClick={(e) => e.stopPropagation()} className="input-wall-name" placeholder="Wall Name" />
-          </div>
-          <div className="flex items-center flex-shrink-0"> {isCollapsed && wall.grandTotalLabor !== undefined && ( <span className="text-sm text-green-700 dark:text-green-400 font-semibold mr-3" style={{fontSize: '0.875rem', fontWeight: 600, marginRight: '0.75rem', color: wall.grandTotalLabor < 0 ? '#ef4444' : '#16a34a'}}> Labor: ${wall.grandTotalLabor.toFixed(2)} </span> )} <Button variant="ghost" size="icon" onClick={(e) => {e.stopPropagation(); onDelete(id);}} className="text-red-500 hover:text-red-700 hover:bg-red-100 focus:ring-red-500" baseClass="btn" style={{height: '2rem', width: '2rem', borderRadius: '9999px', padding: '0.25rem'}} aria-label={`Delete ${name}`}> <Trash2 style={{height: '1rem', width: '1rem'}}/> </Button> </div>
-        </div>
-        {!isCollapsed && ( <CardContent className="card-content-grid-wall"> <div> <Label htmlFor={`heightOfWall-${id}`}>Height of Wall to Paper (in)</Label> <Input id={`heightOfWall-${id}`} type="number" value={wall.heightOfWall || ''} onChange={(e) => handleInputChange('heightOfWall', e.target.value)} className="mt-1" placeholder="e.g., 96" /> </div> <div> <Label htmlFor={`width-${id}`}>Width of Wall to Paper (in)</Label> <Input id={`width-${id}`} type="number" value={wall.width || ''} onChange={(e) => handleInputChange('width', e.target.value)} className="mt-1" placeholder="e.g., 144" /> </div> <div> <Label htmlFor={`paperWidthOption-${id}`}>Paper Width</Label> <Select id={`paperWidthOption-${id}`} onValueChange={(value) => { handleInputChange('paperWidthOption', value === 'custom' ? 'custom' : Number(value)); if (value !== 'custom') handleInputChange('paperWidthCustom', undefined); }} value={wall.paperWidthOption}> <SelectTrigger><SelectValue placeholder="Select width" /></SelectTrigger> <SelectContent> {PAPER_WIDTH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> {wall.paperWidthOption === 'custom' && (<div className="mt-2"><Label htmlFor={`paperWidthCustom-${id}`} className="label-xs">Custom Width (in)</Label><Input id={`paperWidthCustom-${id}`} type="number" value={wall.paperWidthCustom || ''} onChange={(e) => handleInputChange('paperWidthCustom', e.target.value)} className="mt-1" /></div>)} </div> <div> <Label htmlFor={`lengthOfBoltOption-${id}`}>Length of Packaged Bolt</Label> <Select id={`lengthOfBoltOption-${id}`} onValueChange={(value) => { handleInputChange('lengthOfBoltOption', value === 'custom' ? 'custom' : Number(value)); if (value !== 'custom') handleInputChange('lengthOfBoltCustom', undefined);}} value={wall.lengthOfBoltOption}> <SelectTrigger><SelectValue placeholder="Select length" /></SelectTrigger> <SelectContent> {BOLT_LENGTH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> {wall.lengthOfBoltOption === 'custom' && (<div className="mt-2"><Label htmlFor={`lengthOfBoltCustom-${id}`} className="label-xs">Custom Length (in)</Label><Input id={`lengthOfBoltCustom-${id}`} type="number" value={wall.lengthOfBoltCustom || ''} onChange={(e) => handleInputChange('lengthOfBoltCustom', e.target.value)} className="mt-1" /></div>)} </div> <div> <Label htmlFor={`patternVerticalRepeat-${id}`}>Pattern Vertical Repeat (in)</Label> <Input id={`patternVerticalRepeat-${id}`} type="number" value={wall.patternVerticalRepeat || ''} onChange={(e) => handleInputChange('patternVerticalRepeat', e.target.value)} className="mt-1" placeholder="0 if no repeat" /> </div> <div> <Label htmlFor={`patternMatch-${id}`}>Pattern Match</Label> <Select id={`patternMatch-${id}`} onValueChange={(value) => handleInputChange('patternMatch', Number(value))} value={wall.patternMatch}> <SelectTrigger><SelectValue placeholder="Select match" /></SelectTrigger> <SelectContent> {PATTERN_MATCH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> </div> <div> <Label htmlFor={`pricedBy-${id}`}>Installation Priced By</Label> <Select id={`pricedBy-${id}`} onValueChange={(value) => handleInputChange('pricedBy', value === 'materialPercent' ? 'materialPercent' : Number(value))} value={wall.pricedBy}> <SelectTrigger><SelectValue placeholder="Select pricing" /></SelectTrigger> <SelectContent> {PRICING_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> </div> <div> <Label htmlFor={`unitPriceOfWallpaper-${id}`}>Unit Price of Wallpaper ($)</Label> <Input id={`unitPriceOfWallpaper-${id}`} type="number" value={wall.unitPriceOfWallpaper || ''} onChange={(e) => handleInputChange('unitPriceOfWallpaper', e.target.value)} className="mt-1" placeholder="e.g., 75" /> </div> <div> <Label htmlFor={`perimeterWallWidth-${id}`}>Perimeter for Travel (in)</Label> <Input id={`perimeterWallWidth-${id}`} type="number" value={wall.perimeterWallWidth || ''} onChange={(e) => handleInputChange('perimeterWallWidth', e.target.value)} className="mt-1" placeholder="Optional" /> </div> {renderReadOnlyInput('Total Area to Paper (in²)', `totalArea-${id}`, wall.totalArea)} {renderReadOnlyInput('Vert. Height of Matched Repeat (in)', `verticalHeightOfMatchedRepeat-${id}`, wall.verticalHeightOfMatchedRepeat)} {renderReadOnlyInput('# of Cuts for Project', `numberOfCutsForProject-${id}`, wall.numberOfCutsForProject)} {renderReadOnlyInput('# of Repeats per Cut', `numberOfRepeatsPerCut-${id}`, wall.numberOfRepeatsPerCut)} {renderReadOnlyInput('Length of Cuts (incl. trim) (in)', `lengthOfCuts-${id}`, wall.lengthOfCuts)} {renderReadOnlyInput('Total Length Needed (in)', `totalLengthNeeded-${id}`, wall.totalLengthNeeded)} {renderReadOnlyInput('# of Cut Lengths per Bolt', `numberOfCutLengthsPerBolt-${id}`, wall.numberOfCutLengthsPerBolt)} {renderReadOnlyInput('# of Bolts to Order', `numberOfBolts-${id}`, wall.numberOfBolts)} {renderReadOnlyInput('# of Yards to Order', `numberOfYardsToOrder-${id}`, wall.numberOfYardsToOrder)} {renderReadOnlyInput('Equiv. Project S/R Calc.', `equivalentProjectSRCalculation-${id}`, wall.equivalentProjectSRCalculation)} {renderReadOnlyInput('Base Labor ($)', `baseLabor-${id}`, wall.baseLabor?.toFixed(2))} {renderReadOnlyInput('Height Surcharge ($)', `heightSurcharge-${id}`, wall.heightSurcharge?.toFixed(2))} {renderReadOnlyInput('Subtotal Labor ($)', `subtotalLabor-${id}`, wall.subtotalLabor?.toFixed(2))} {renderReadOnlyInput('Travel Charges ($)', `travelCharges-${id}`, wall.travelCharges?.toFixed(2))} {renderReadOnlyInput('Grand Total Labor ($)', `grandTotalLabor-${id}`, wall.grandTotalLabor?.toFixed(2), 'font-bold-lg-green')} </CardContent> )}
-      </Card>
-  );
+const WallInputCard = ({ wall, onChange, onDelete, onToggleCollapse }: { wall: Wall; onChange: (wallId: string, updates: Partial<Wall>) => void; onDelete: (wallId: string) => void; onToggleCollapse: (wallId: string) => void; }) => {
+    const { id, name, isCollapsed } = wall;
+    const handleInputChange = useCallback((field: keyof Wall, value: any) => { const numericFields: (keyof Wall)[] = ['width', 'heightOfWall', 'paperWidthCustom', 'lengthOfBoltCustom', 'patternVerticalRepeat', 'unitPriceOfWallpaper', 'perimeterWallWidth']; let processedValue = value; if (numericFields.includes(field)) { processedValue = value === '' ? undefined : Number(value); } onChange(id, { [field]: processedValue }); }, [id, onChange]);
+
+    const renderReadOnlyInput = (label: string, fieldId: string, value?: number | string, unitOrClass?: string, tooltipText?: string) => {
+        const isBoldGreen = unitOrClass === 'font-bold-lg-green';
+        const unit = isBoldGreen ? undefined : unitOrClass;
+        const extraClass = isBoldGreen ? unitOrClass : '';
+        return (
+            <div>
+                <div className="info-icon-container">
+                    <Label htmlFor={fieldId}>{label}</Label>
+                    {tooltipText && (
+                        <span className="info-icon" tabIndex={0} role="button" aria-label={`Info for ${label}`}>
+                            <InfoIcon />
+                            <span className="tooltip-text">{tooltipText}</span>
+                        </span>
+                    )}
+                </div>
+                <Input id={fieldId} type="text" value={value !== undefined && value !== null ? (unit ? `${value} ${unit}` : String(value)) : ''} className={`input-readonly ${extraClass}`} readOnly tabIndex={-1} />
+            </div>
+        );
+    };
+
+    return (
+        <Card className="card-mb-6">
+            <div className="card-header-wall" onClick={() => onToggleCollapse(id)}>
+                <div className="flex items-center flex-grow-0 min-w-0">
+                    <Button variant="ghost" size="icon" className="mr-2" baseClass="btn" style={{height: '2rem', width: '2rem'}}> {isCollapsed ? <ChevronDown /> : <ChevronUp />} </Button>
+                    <Input id={`wallName-${id}`} value={wall.name || ''} onChange={(e) => { e.stopPropagation(); handleInputChange('name', e.target.value);}} onClick={(e) => e.stopPropagation()} className="input-wall-name" placeholder="Wall Name" />
+                </div>
+                <div className="flex items-center flex-shrink-0"> {isCollapsed && wall.grandTotalLabor !== undefined && ( <span style={{fontSize: '0.875rem', fontWeight: 600, marginRight: '0.75rem', color: wall.grandTotalLabor < 0 ? '#ef4444' : '#16a34a'}}> Labor: ${wall.grandTotalLabor.toFixed(2)} </span> )} <Button variant="ghost" size="icon" onClick={(e) => {e.stopPropagation(); onDelete(id);}} baseClass="btn" style={{height: '2rem', width: '2rem', borderRadius: '9999px', padding: '0.25rem'}} aria-label={`Delete ${name}`}> <Trash2 style={{height: '1rem', width: '1rem'}}/> </Button> </div>
+            </div>
+            {!isCollapsed && ( <CardContent className="card-content-grid-wall">
+                <div> <Label htmlFor={`heightOfWall-${id}`}>Net Height of Wall to Paper (in)</Label> <Input id={`heightOfWall-${id}`} type="number" value={wall.heightOfWall || ''} onChange={(e) => handleInputChange('heightOfWall', e.target.value)} className="mt-1" placeholder="e.g., 96" /> </div>
+                <div> <Label htmlFor={`width-${id}`}>Width of Wall to Paper (in)</Label> <Input id={`width-${id}`} type="number" value={wall.width || ''} onChange={(e) => handleInputChange('width', e.target.value)} className="mt-1" placeholder="e.g., 144" /> </div>
+                <div> <Label htmlFor={`paperWidthOption-${id}`}>Paper Width</Label> <Select id={`paperWidthOption-${id}`} onValueChange={(value) => { handleInputChange('paperWidthOption', value === 'custom' ? 'custom' : Number(value)); if (value !== 'custom') handleInputChange('paperWidthCustom', undefined); }} value={wall.paperWidthOption}> <SelectTrigger><SelectValue placeholder="Select width" /></SelectTrigger> <SelectContent> {PAPER_WIDTH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> {wall.paperWidthOption === 'custom' && (<div className="mt-2"><Label htmlFor={`paperWidthCustom-${id}`} className="label-xs">Custom Width (in)</Label><Input id={`paperWidthCustom-${id}`} type="number" value={wall.paperWidthCustom || ''} onChange={(e) => handleInputChange('paperWidthCustom', e.target.value)} className="mt-1" /></div>)} </div>
+                <div> <Label htmlFor={`lengthOfBoltOption-${id}`}>Length of Packaged Bolt</Label> <Select id={`lengthOfBoltOption-${id}`} onValueChange={(value) => { handleInputChange('lengthOfBoltOption', value === 'custom' ? 'custom' : Number(value)); if (value !== 'custom') handleInputChange('lengthOfBoltCustom', undefined);}} value={wall.lengthOfBoltOption}> <SelectTrigger><SelectValue placeholder="Select length" /></SelectTrigger> <SelectContent> {BOLT_LENGTH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> {wall.lengthOfBoltOption === 'custom' && (<div className="mt-2"><Label htmlFor={`lengthOfBoltCustom-${id}`} className="label-xs">Custom Length (in)</Label><Input id={`lengthOfBoltCustom-${id}`} type="number" value={wall.lengthOfBoltCustom || ''} onChange={(e) => handleInputChange('lengthOfBoltCustom', e.target.value)} className="mt-1" /></div>)} </div>
+                <div> <Label htmlFor={`patternVerticalRepeat-${id}`}>Pattern Vertical Repeat (in)</Label> <Input id={`patternVerticalRepeat-${id}`} type="number" value={wall.patternVerticalRepeat || ''} onChange={(e) => handleInputChange('patternVerticalRepeat', e.target.value)} className="mt-1" placeholder="0 if no repeat" /> </div>
+                <div> <Label htmlFor={`patternMatch-${id}`}>Pattern Match</Label> <Select id={`patternMatch-${id}`} onValueChange={(value) => handleInputChange('patternMatch', Number(value))} value={wall.patternMatch}> <SelectTrigger><SelectValue placeholder="Select match" /></SelectTrigger> <SelectContent> {PATTERN_MATCH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> </div>
+                <div> <Label htmlFor={`pricedBy-${id}`}>Installation Priced By</Label> <Select id={`pricedBy-${id}`} onValueChange={(value) => handleInputChange('pricedBy', value === 'materialPercent' ? 'materialPercent' : Number(value))} value={wall.pricedBy}> <SelectTrigger><SelectValue placeholder="Select pricing" /></SelectTrigger> <SelectContent> {PRICING_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> </div>
+                <div> <Label htmlFor={`unitPriceOfWallpaper-${id}`}>Unit Price of Wallpaper ($ per Bolt)</Label> <Input id={`unitPriceOfWallpaper-${id}`} type="number" value={wall.unitPriceOfWallpaper || ''} onChange={(e) => handleInputChange('unitPriceOfWallpaper', e.target.value)} className="mt-1" placeholder="e.g., 75" /> </div>
+                <div> <Label htmlFor={`perimeterWallWidth-${id}`}>Perimeter (Optional, for notes)</Label> <Input id={`perimeterWallWidth-${id}`} type="number" value={wall.perimeterWallWidth || ''} onChange={(e) => handleInputChange('perimeterWallWidth', e.target.value)} className="mt-1" placeholder="e.g., 400" /> </div>
+                {renderReadOnlyInput('Total Area to Paper (in²)', `totalArea-${id}`, wall.totalArea, undefined, "Width of Wall × Net Height of Wall")}
+                {renderReadOnlyInput('Vert. Height of Matched Repeat (in)', `verticalHeightOfMatchedRepeat-${id}`, wall.verticalHeightOfMatchedRepeat, undefined, "Pattern Vert. Repeat × Pattern Match Multiplier")}
+                {renderReadOnlyInput('# of Cuts for Project', `numberOfCutsForProject-${id}`, wall.numberOfCutsForProject, undefined, "⌈Width of Wall / Paper Width⌉")}
+                {renderReadOnlyInput('# of Repeats per Cut', `numberOfRepeatsPerCut-${id}`, wall.numberOfRepeatsPerCut, undefined, "⌈(Net Height + 4″ Trim) / Vert. Height of Matched Repeat⌉ (or 1 if no repeat)")}
+                {renderReadOnlyInput('Length of Cuts (incl. trim) (in)', `lengthOfCuts-${id}`, wall.lengthOfCuts, undefined, "# Repeats per Cut × Vert. Height of Matched Repeat (or Net Height + 4″ Trim if no repeat)")}
+                {renderReadOnlyInput('Total Length Needed (in)', `totalLengthNeeded-${id}`, wall.totalLengthNeeded, undefined, "Length of Cuts × # of Cuts")}
+                {renderReadOnlyInput('# of Cut Lengths per Bolt', `numberOfCutLengthsPerBolt-${id}`, wall.numberOfCutLengthsPerBolt, undefined, "⌊Length of Bolt / Length of Cuts⌋")}
+                {renderReadOnlyInput('# of Bolts to Order', `numberOfBolts-${id}`, wall.numberOfBolts, undefined, "⌈# of Cuts / # of Cut Lengths per Bolt⌉")}
+                {renderReadOnlyInput('# of Yards to Order', `numberOfYardsToOrder-${id}`, wall.numberOfYardsToOrder, undefined, "⌈Total Length Needed / 36⌉")}
+                {renderReadOnlyInput('Equiv. Project S/R Calc.', `equivalentProjectSRCalculation-${id}`, wall.equivalentProjectSRCalculation, undefined, "⌈(Total Length Needed / Length of Bolt) × 2⌉")}
+                {renderReadOnlyInput('Base Labor ($)', `baseLabor-${id}`, wall.baseLabor?.toFixed(2), undefined, "Equiv. S/R Calc. × Price/SR (or 38% of Material Cost)")}
+                {renderReadOnlyInput('Height Surcharge ($)', `heightSurcharge-${id}`, wall.heightSurcharge?.toFixed(2), undefined, "((Room Ceiling Ht. - 96″) / 12) × $100 (if > 8ft)")}
+                {renderReadOnlyInput('Wall Labor Total ($)', `grandTotalLabor-${id}`, wall.grandTotalLabor?.toFixed(2), 'font-bold-lg-green', "Base Labor + Height Surcharge")}
+            </CardContent> )}
+        </Card>
+    );
 };
 
 const ProjectMenuModal = ({ isOpen, onClose, projects, currentProjectId, onSelectProject, onAddProject, onDeleteProject, searchTerm, onSearchTermChange }: { isOpen: boolean; onClose: () => void; projects: Project[]; currentProjectId: string | null; onSelectProject: (id: string) => void; onAddProject: () => void; onDeleteProject: (id: string) => void; searchTerm: string; onSearchTermChange: (term: string) => void; }) => { if (!isOpen) return null; const filteredProjects = projects.filter(proj => proj.name.toLowerCase().includes(searchTerm.toLowerCase()));
-  return (
-      <div className="project-menu-modal-overlay"> <div className="project-menu-modal-backdrop" onClick={onClose}></div> <div className={`project-menu-modal-content ${isOpen ? 'open' : ''}`}> <div className="project-menu-header"> <h2 className="project-menu-title">Projects</h2> <Button variant="ghost" size="icon" onClick={onClose} baseClass="btn" style={{color: '#64748b'}}> <XIcon /> </Button> </div> <div className="project-menu-search-container"> <div className="project-menu-search-input-wrapper"> <Input type="search" placeholder="Search projects..." value={searchTerm} onChange={(e) => onSearchTermChange(e.target.value)} className="project-menu-search-input" /> <Search /> </div> <Button onClick={() => {onAddProject();}} className="project-menu-new-btn"> <FolderPlus /> New Project </Button> </div> <div className="project-menu-list"> {filteredProjects.length > 0 ? filteredProjects.map(proj => ( <div key={proj.id} className={`project-menu-item ${currentProjectId === proj.id ? 'current' : ''}`}> <Button onClick={() => { onSelectProject(proj.id); onClose(); }} baseClass="btn project-menu-item-button" variant="ghost" > {proj.name} </Button> {projects.length > 1 && ( <Button onClick={(e) => { e.stopPropagation(); onDeleteProject(proj.id); }} variant="ghost" size="icon" baseClass="btn project-menu-item-delete-btn" aria-label="Delete project"> <Trash2 /> </Button> )} </div> )) : <p className="project-menu-empty-text">No projects match your search.</p>} {projects.length === 0 && !searchTerm && <p className="project-menu-empty-text">No projects yet. Click "New Project" to start.</p>} </div> </div> </div>
-  );
+    return (
+        <div className="project-menu-modal-overlay"> <div className="project-menu-modal-backdrop" onClick={onClose}></div> <div className={`project-menu-modal-content ${isOpen ? 'open' : ''}`}> <div className="project-menu-header"> <h2 className="project-menu-title">Projects</h2> <Button variant="ghost" size="icon" onClick={onClose} baseClass="btn" style={{color: '#64748b'}}> <XIcon /> </Button> </div> <div className="project-menu-search-container"> <div className="project-menu-search-input-wrapper"> <Input type="search" placeholder="Search projects..." value={searchTerm} onChange={(e) => onSearchTermChange(e.target.value)} className="project-menu-search-input" /> <Search /> </div> <Button onClick={() => {onAddProject();}} className="project-menu-new-btn"> <FolderPlus /> New Project </Button> </div> <div className="project-menu-list"> {filteredProjects.length > 0 ? filteredProjects.map(proj => ( <div key={proj.id} className={`project-menu-item ${currentProjectId === proj.id ? 'current' : ''}`}> <Button onClick={() => { onSelectProject(proj.id); onClose(); }} baseClass="btn project-menu-item-button" variant="ghost" > {proj.name} </Button> {projects.length > 1 && ( <Button onClick={(e) => { e.stopPropagation(); onDeleteProject(proj.id); }} variant="ghost" size="icon" baseClass="btn project-menu-item-delete-btn" aria-label="Delete project"> <Trash2 /> </Button> )} </div> )) : <p className="project-menu-empty-text">No projects match your search.</p>} {projects.length === 0 && !searchTerm && <p className="project-menu-empty-text">No projects yet. Click "New Project" to start.</p>} </div> </div> </div>
+    );
 };
 
 const App = () => {
-  const [projects, setProjects] = useState<Project[]>(() => { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { try { const parsedData = JSON.parse(savedData); return parsedData.projects.map((proj: Project) => ({ ...proj, isClientInfoCollapsed: proj.isClientInfoCollapsed === undefined ? false : proj.isClientInfoCollapsed, isGeneralProjectInfoCollapsed: proj.isGeneralProjectInfoCollapsed === undefined ? false : proj.isGeneralProjectInfoCollapsed, rooms: proj.rooms.map((room: Room) => ({ ...room, isCollapsed: room.isCollapsed === undefined ? false : room.isCollapsed, walls: room.walls.map((wall: Wall) => ({...calculateWallValues(wall), isCollapsed: wall.isCollapsed === undefined ? false : wall.isCollapsed})) })) })) || [createNewProject(1)]; } catch (e) { console.error("Failed to parse saved projects:", e); }} return [createNewProject(1)]; });
-  const [currentProjectId, setCurrentProjectId] = useState<string | null>(() => { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { try { const parsedData = JSON.parse(savedData); return parsedData.currentProjectId || (projects.length > 0 ? projects[0].id : null); } catch(e) {} } return projects.length > 0 ? projects[0].id : null; });
-  const [currentRoomId, setCurrentRoomId] = useState<string | null>(() => { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { try { const parsedData = JSON.parse(savedData); const cpid = parsedData.currentProjectId || (projects.length > 0 ? projects[0].id : null); return parsedData.currentRoomId || projects.find(p=>p.id === cpid)?.rooms[0]?.id || null; } catch(e) {} } const cpid = projects.length > 0 ? projects[0].id : null; return projects.find(p=>p.id === cpid)?.rooms[0]?.id || null; });
-  const [error, setError] = useState<string | null>(null);
-  const [infoMessage, setInfoMessage] = useState<string | null>(null);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  const [projectSearchTerm, setProjectSearchTerm] = useState('');
-  const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const debouncedHasUnsavedChanges = useDebounce(hasUnsavedChanges, AUTO_SAVE_DEBOUNCE_TIME);
-  useEffect(() => { if (debouncedHasUnsavedChanges && projects && projects.length > 0) { handleSave(true); setHasUnsavedChanges(false); } }, [debouncedHasUnsavedChanges, projects]);
-  useEffect(() => { if (infoMessage) { const timer = setTimeout(() => setInfoMessage(null), 3000); return () => clearTimeout(timer); }}, [infoMessage]);
-  useEffect(() => { if (error) { const timer = setTimeout(() => setError(null), 5000); return () => clearTimeout(timer); }}, [error]);
-  const currentProject = projects.find(p => p.id === currentProjectId);
-  const markUnsaved = () => { setHasUnsavedChanges(true); setSaveStatus('idle'); }
-  const handleAddProject = () => { const newProject = createNewProject(projects.length + 1); setProjects(prev => [...prev, newProject]); setCurrentProjectId(newProject.id); setCurrentRoomId(newProject.rooms[0]?.id || null); setInfoMessage(`Project "${newProject.name}" added.`); markUnsaved(); };
-  const handleDeleteProject = (projectId: string) => { if (projects.length === 1) { setError("Cannot delete the last project."); return; } const projectName = projects.find(p=>p.id === projectId)?.name || "Project"; setProjects(prev => prev.filter(p => p.id !== projectId)); if (currentProjectId === projectId) { const remainingProjects = projects.filter(p => p.id !== projectId); const firstProject = remainingProjects.length > 0 ? remainingProjects[0] : null; setCurrentProjectId(firstProject?.id || null); setCurrentRoomId(firstProject?.rooms[0]?.id || null); } setInfoMessage(`Project "${projectName}" deleted.`); markUnsaved(); if (projects.filter(p => p.id !== projectId).length === 0) { setIsProjectMenuOpen(false); setCurrentProjectId(null); setCurrentRoomId(null);} };
-  const handleProjectNameChange = (projectId: string, newName: string) => { setProjects(prev => prev.map(p => p.id === projectId ? { ...p, name: newName } : p)); markUnsaved(); };
-  const handleSelectProject = (projectId: string) => { setCurrentProjectId(projectId); setCurrentRoomId(projects.find(p => p.id === projectId)?.rooms[0]?.id || null); };
-  const handleAddRoom = () => { if (!currentProjectId || !currentProject) return; const newRoom = createNewRoom(currentProject.rooms.length + 1); setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: [...p.rooms, newRoom] } : p)); setCurrentRoomId(newRoom.id); setInfoMessage(`Room "${newRoom.name}" added to ${currentProject.name}.`); markUnsaved(); };
-  const handleDeleteRoom = (roomId: string) => { if (!currentProjectId || !currentProject) return; if (currentProject.rooms.length === 1) { setError(`Cannot delete the last room in project "${currentProject.name}".`); return; } const roomName = currentProject.rooms.find(r=>r.id === roomId)?.name || "Room"; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.filter(r => r.id !== roomId) } : p)); if (currentRoomId === roomId) { setCurrentRoomId(currentProject.rooms.filter(r => r.id !== roomId)[0]?.id || null); } setInfoMessage(`Room "${roomName}" deleted.`); markUnsaved(); };
-  const handleRoomNameChange = (roomId: string, newName: string) => { if (!currentProjectId || !currentProject) return; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === roomId ? {...r, name: newName} : r) } : p)); markUnsaved(); };
-  const toggleRoomCollapse = (roomId: string) => { if (!currentProjectId || !currentProject) return; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === roomId ? {...r, isCollapsed: !r.isCollapsed} : r) } : p)); markUnsaved(); };
-  const toggleClientInfoCollapse = (projectId: string) => { setProjects(prev => prev.map(p => p.id === projectId ? { ...p, isClientInfoCollapsed: !p.isClientInfoCollapsed } : p)); markUnsaved(); };
-  const toggleGeneralProjectInfoCollapse = (projectId: string) => { setProjects(prev => prev.map(p => p.id === projectId ? { ...p, isGeneralProjectInfoCollapsed: !p.isGeneralProjectInfoCollapsed } : p)); markUnsaved(); };
-  const handleAddWall = (targetRoomId: string) => { if (!currentProjectId) return; let targetRoomNameForMessage = "Unknown Room"; let wallCountInTargetRoomForNaming = 0; const projectInstance = projects.find(p => p.id === currentProjectId); if (projectInstance) { const roomInstance = projectInstance.rooms.find(r => r.id === targetRoomId); if (roomInstance) { targetRoomNameForMessage = roomInstance.name; wallCountInTargetRoomForNaming = roomInstance.walls.length; } else { console.error("Target room not found"); setError("Could not add wall: target room not found."); return; } } else { console.error("Current project not found"); setError("Could not add wall: current project not found."); return; } const newWall = createNewWall(wallCountInTargetRoomForNaming + 1); setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === targetRoomId ? { ...r, walls: [...r.walls, calculateWallValues(newWall)] } : r ) } : p )); setInfoMessage(`Wall "${newWall.name}" added to ${targetRoomNameForMessage}.`); markUnsaved(); };
-  const handleDeleteWall = (roomId: string, wallId: string) => { if (!currentProjectId) return; setProjects(prevProjects => prevProjects.map(proj => { if (proj.id !== currentProjectId) return proj; return { ...proj, rooms: proj.rooms.map(room => { if (room.id !== roomId) return room; if (room.walls.length === 1) { setError(`Cannot delete the last wall in room "${room.name}".`); return room; } const wallName = room.walls.find(w => w.id === wallId)?.name || "Wall"; setInfoMessage(`Wall "${wallName}" deleted from ${room.name}.`); return { ...room, walls: room.walls.filter(w => w.id !== wallId) }; })}; })); markUnsaved(); };
-  const handleWallChange = useCallback((roomId: string, wallId: string, updates: Partial<Wall>) => { setProjects(prevProjects => prevProjects.map(proj => { if (proj.id !== currentProjectId) return proj; return { ...proj, rooms: proj.rooms.map(room => { if (room.id !== roomId) return room; return { ...room, walls: room.walls.map(wall => wall.id === wallId ? calculateWallValues({ ...wall, ...updates }) : wall)}; })}; })); markUnsaved(); }, [currentProjectId]);
-  const toggleWallCollapse = (roomId: string, wallId: string) => { if (!currentProjectId) return; setProjects(prevProjects => prevProjects.map(proj => { if (proj.id !== currentProjectId) return proj; return { ...proj, rooms: proj.rooms.map(room => { if (room.id !== roomId) return room; return { ...room, walls: room.walls.map(wall => wall.id === wallId ? { ...wall, isCollapsed: !wall.isCollapsed } : wall)}; })}; })); markUnsaved(); };
-  const handleClientInfoChange = (field: keyof ClientInfo, value: any) => { if (!currentProjectId || !currentProject) return; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, clientInfo: { ...currentProject.clientInfo, [field]: value } } : p)); markUnsaved(); };
-  const handleGeneralProjectInfoChange = (field: keyof GeneralProjectInfo, value: any) => { if (!currentProjectId || !currentProject) return; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, generalProjectInfo: { ...currentProject.generalProjectInfo, [field]: value } } : p)); markUnsaved(); };
-  const handleNumericGeneralProjectInfoChange = (field: keyof GeneralProjectInfo, value: string) => { handleGeneralProjectInfoChange(field, value === '' ? undefined : Number(value)); };
-  const handleSave = (isAutoSave = false) => { if (!isAutoSave) {setInfoMessage(null); setHasUnsavedChanges(false);} setError(null); setSaveStatus('saving'); try { const dataToSave = { projects, currentProjectId, currentRoomId }; const jsonData = JSON.stringify(dataToSave, null, 2); localStorage.setItem('wallpaperCalculatorData_v3', jsonData); setTimeout(() => { setSaveStatus('saved'); if (!isAutoSave) setInfoMessage('All projects saved successfully!'); setTimeout(() => setSaveStatus('idle'), 2000); }, 500); } catch (e: any) { setSaveStatus('error'); setError(`Error saving data: ${e.message}`); } };
-  const handleLoad = () => { setError(null); setInfoMessage(null); try { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { const parsedData = JSON.parse(savedData); const loadedProjects: Project[] = parsedData.projects.map((proj: Project) => ({ ...proj, isClientInfoCollapsed: proj.isClientInfoCollapsed === undefined ? false : proj.isClientInfoCollapsed, isGeneralProjectInfoCollapsed: proj.isGeneralProjectInfoCollapsed === undefined ? false : proj.isGeneralProjectInfoCollapsed, rooms: proj.rooms.map((room: Room) => ({ ...room, isCollapsed: room.isCollapsed === undefined ? false : room.isCollapsed, walls: room.walls.map((wall: Wall) => ({...calculateWallValues(wall), isCollapsed: wall.isCollapsed === undefined ? false : wall.isCollapsed})) })) })); setProjects(loadedProjects || [createNewProject(1)]); const cpid = parsedData.currentProjectId || (loadedProjects.length > 0 ? loadedProjects[0].id : null); setCurrentProjectId(cpid); setCurrentRoomId(parsedData.currentRoomId || loadedProjects.find(p=>p.id === cpid)?.rooms[0]?.id || null); setInfoMessage('Projects loaded successfully!'); } else { setInfoMessage('No saved data found.'); } } catch (e: any) { setError(`Error loading data: ${e.message}`); } setSaveStatus('idle'); setHasUnsavedChanges(false); };
-  useEffect(() => { if (projects.length > 0) { if (!currentProjectId || !projects.find(p => p.id === currentProjectId)) { const firstProject = projects[0]; setCurrentProjectId(firstProject.id); setCurrentRoomId(firstProject.rooms[0]?.id || null); } else { const proj = projects.find(p => p.id === currentProjectId); if (proj && (!currentRoomId || !proj.rooms.find(r => r.id === currentRoomId))) { setCurrentRoomId(proj.rooms[0]?.id || null); } } } else { setCurrentProjectId(null); setCurrentRoomId(null); } }, [projects, currentProjectId, currentRoomId]);
-  const totalProjectLabor = useMemo(() => { if (!currentProject) return 0; return currentProject.rooms.reduce((projectTotal, room) => projectTotal + room.walls.reduce((roomWallTotal, wall) => roomWallTotal + (wall.grandTotalLabor || 0), 0), 0); }, [currentProject]);
-  const getRoomTotalLabor = useCallback((room: Room | undefined) => { if (!room) return 0; return room.walls.reduce((total, wall) => total + (wall.grandTotalLabor || 0), 0); }, []);
+    const [projects, setProjects] = useState<Project[]>(() => {
+        const savedData = localStorage.getItem('wallpaperCalculatorData_v3');
+        if (savedData) {
+            try {
+                const parsedData = JSON.parse(savedData);
+                return parsedData.projects.map((proj: Project) => ({
+                    ...proj,
+                    generalProjectInfo: proj.generalProjectInfo || createNewGeneralProjectInfo(),
+                    clientInfo: proj.clientInfo || createNewClientInfo(),
+                    isClientInfoCollapsed: proj.isClientInfoCollapsed === undefined ? false : proj.isClientInfoCollapsed,
+                    isGeneralProjectInfoCollapsed: proj.isGeneralProjectInfoCollapsed === undefined ? false : proj.isGeneralProjectInfoCollapsed,
+                    rooms: proj.rooms.map((room: Room) => ({
+                        ...room,
+                        details: room.details || createNewRoomSpecificInfo(),
+                        isCollapsed: room.isCollapsed === undefined ? false : room.isCollapsed,
+                        walls: room.walls.map((wall: Wall) => ({
+                            ...calculateWallValues(wall, room.details?.ceilingHeight),
+                            isCollapsed: wall.isCollapsed === undefined ? false : wall.isCollapsed
+                        }))
+                    }))
+                })) || [createNewProject(1)];
+            } catch (e) { console.error("Failed to parse saved projects:", e); }
+        }
+        return [createNewProject(1)];
+    });
+    const [currentProjectId, setCurrentProjectId] = useState<string | null>(() => { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { try { const parsedData = JSON.parse(savedData); return parsedData.currentProjectId || (projects.length > 0 ? projects[0].id : null); } catch(e) {} } return projects.length > 0 ? projects[0].id : null; });
+    const [currentRoomId, setCurrentRoomId] = useState<string | null>(() => { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { try { const parsedData = JSON.parse(savedData); const cpid = parsedData.currentProjectId || (projects.length > 0 ? projects[0].id : null); return parsedData.currentRoomId || projects.find(p=>p.id === cpid)?.rooms[0]?.id || null; } catch(e) {} } const cpid = projects.length > 0 ? projects[0].id : null; return projects.find(p=>p.id === cpid)?.rooms[0]?.id || null; });
+    const [error, setError] = useState<string | null>(null);
+    const [infoMessage, setInfoMessage] = useState<string | null>(null);
+    const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+    const [projectSearchTerm, setProjectSearchTerm] = useState('');
+    const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const debouncedHasUnsavedChanges = useDebounce(hasUnsavedChanges, AUTO_SAVE_DEBOUNCE_TIME);
 
-  if (projects.length === 0 && !currentProject) { return ( <div className="no-projects-container"> <AppStyles /> <div className="no-projects-content"> <FolderPlus className="no-projects-icon" /> <h1 className="no-projects-title">No Projects Yet</h1> <p className="no-projects-text">Get started by creating your first project.</p> <Button onClick={handleAddProject} className="no-projects-button"> <Plus /> Create New Project </Button> </div> <footer className="footer-text"> Wallpaper Calculator &copy; {new Date().getFullYear()} </footer> </div> ); }
+    const currentProject = useMemo(() => projects.find(p => p.id === currentProjectId), [projects, currentProjectId]);
 
-  return (
-      <div className="app-container">
-        <AppStyles />
-        <ProjectMenuModal isOpen={isProjectMenuOpen} onClose={() => setIsProjectMenuOpen(false)} projects={projects} currentProjectId={currentProjectId} onSelectProject={handleSelectProject} onAddProject={handleAddProject} onDeleteProject={handleDeleteProject} searchTerm={projectSearchTerm} onSearchTermChange={setProjectSearchTerm} />
-        <div className="sticky-header">
-          {error && (<Alert variant="destructive"><AlertCircle /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>)}
-          {infoMessage && (<Alert variant="success"><CheckCircle /><AlertTitle>Success</AlertTitle><AlertDescription>{infoMessage}</AlertDescription></Alert>)}
-          <div className="header-content">
-            <div className="header-left"> <Button variant="ghost" size="icon" onClick={() => setIsProjectMenuOpen(true)} className="btn-open-menu" aria-label="Open project menu"> <MenuIcon /> </Button> <h1 className="app-title">Wallpaper Calculator</h1> </div>
-            <div className="header-right"> <span className={`save-status ${saveStatus !== 'idle' || hasUnsavedChanges ? 'save-status-visible' : 'save-status-hidden'}`}> {hasUnsavedChanges && saveStatus === 'idle' && <span className="status-unsaved">Unsaved</span>} {saveStatus === 'saving' && <span className="status-saving">Saving...</span>} {saveStatus === 'saved' && <span className="status-saved">Saved</span>} {saveStatus === 'error' && <span className="status-error">Save failed</span>} </span> <Button onClick={() => handleLoad()} className="btn-loadall" size="xs-sm">Load All</Button> <Button onClick={() => handleSave()} className="btn-manualsave" size="xs-sm"> <Save /> Manual Save </Button> </div>
-          </div>
+    useEffect(() => { if (debouncedHasUnsavedChanges && projects && projects.length > 0) { handleSave(true); setHasUnsavedChanges(false); } }, [debouncedHasUnsavedChanges, projects]);
+    useEffect(() => { if (infoMessage) { const timer = setTimeout(() => setInfoMessage(null), 3000); return () => clearTimeout(timer); }}, [infoMessage]);
+    useEffect(() => { if (error) { const timer = setTimeout(() => setError(null), 5000); return () => clearTimeout(timer); }}, [error]);
+
+    const markUnsaved = () => { setHasUnsavedChanges(true); setSaveStatus('idle'); }
+    const handleAddProject = () => { const newProject = createNewProject(projects.length + 1); setProjects(prev => [...prev, newProject]); setCurrentProjectId(newProject.id); setCurrentRoomId(newProject.rooms[0]?.id || null); setInfoMessage(`Project "${newProject.name}" added.`); markUnsaved(); };
+    const handleDeleteProject = (projectId: string) => { if (projects.length === 1) { setError("Cannot delete the last project."); return; } const projectName = projects.find(p=>p.id === projectId)?.name || "Project"; setProjects(prev => prev.filter(p => p.id !== projectId)); if (currentProjectId === projectId) { const remainingProjects = projects.filter(p => p.id !== projectId); const firstProject = remainingProjects.length > 0 ? remainingProjects[0] : null; setCurrentProjectId(firstProject?.id || null); setCurrentRoomId(firstProject?.rooms[0]?.id || null); } setInfoMessage(`Project "${projectName}" deleted.`); markUnsaved(); if (projects.filter(p => p.id !== projectId).length === 0) { setIsProjectMenuOpen(false); setCurrentProjectId(null); setCurrentRoomId(null);} };
+    const handleProjectNameChange = (projectId: string, newName: string) => { setProjects(prev => prev.map(p => p.id === projectId ? { ...p, name: newName } : p)); markUnsaved(); };
+    const handleSelectProject = (projectId: string) => { setCurrentProjectId(projectId); setCurrentRoomId(projects.find(p => p.id === projectId)?.rooms[0]?.id || null); };
+
+    const handleAddRoom = () => {
+        if (!currentProjectId || !currentProject) return;
+        const newRoom = createNewRoom(currentProject.rooms.length + 1);
+        setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: [...p.rooms, newRoom] } : p));
+        setCurrentRoomId(newRoom.id);
+        setInfoMessage(`Room "${newRoom.name}" added to ${currentProject.name}.`);
+        markUnsaved();
+    };
+    const handleDeleteRoom = (roomId: string) => { if (!currentProjectId || !currentProject) return; if (currentProject.rooms.length === 1) { setError(`Cannot delete the last room in project "${currentProject.name}".`); return; } const roomName = currentProject.rooms.find(r=>r.id === roomId)?.name || "Room"; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.filter(r => r.id !== roomId) } : p)); if (currentRoomId === roomId) { setCurrentRoomId(currentProject.rooms.filter(r => r.id !== roomId)[0]?.id || null); } setInfoMessage(`Room "${roomName}" deleted.`); markUnsaved(); };
+    const handleRoomNameChange = (roomId: string, newName: string) => { if (!currentProjectId || !currentProject) return; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === roomId ? {...r, name: newName} : r) } : p)); markUnsaved(); };
+    const toggleRoomCollapse = (roomId: string) => { if (!currentProjectId || !currentProject) return; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === roomId ? {...r, isCollapsed: !r.isCollapsed} : r) } : p)); markUnsaved(); };
+
+    const handleRoomDetailsChange = (roomId: string, field: keyof RoomSpecificInfo, value: any) => {
+        if (!currentProjectId) return;
+        setProjects(prev => prev.map(p => {
+            if (p.id === currentProjectId) {
+                return {
+                    ...p,
+                    rooms: p.rooms.map(r => {
+                        if (r.id === roomId) {
+                            const updatedDetails = { ...r.details, [field]: value };
+                            if (field === 'ceilingHeight') {
+                                return {
+                                    ...r,
+                                    details: updatedDetails,
+                                    walls: r.walls.map(wall => calculateWallValues(wall, value as number | undefined))
+                                };
+                            }
+                            return { ...r, details: updatedDetails };
+                        }
+                        return r;
+                    })
+                };
+            }
+            return p;
+        }));
+        markUnsaved();
+    };
+    const handleNumericRoomDetailsChange = (roomId: string, field: keyof RoomSpecificInfo, value: string) => {
+        handleRoomDetailsChange(roomId, field, value === '' ? undefined : Number(value));
+    };
+    const toggleRoomDetailsCollapse = (roomId: string) => {
+        if (!currentProjectId) return;
+        setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === roomId ? {...r, details: {...r.details, isDetailsCollapsed: !r.details.isDetailsCollapsed}} : r) } : p));
+        markUnsaved();
+    };
+
+    const toggleClientInfoCollapse = (projectId: string) => { setProjects(prev => prev.map(p => p.id === projectId ? { ...p, isClientInfoCollapsed: !p.isClientInfoCollapsed } : p)); markUnsaved(); };
+    const toggleGeneralProjectInfoCollapse = (projectId: string) => { setProjects(prev => prev.map(p => p.id === projectId ? { ...p, isGeneralProjectInfoCollapsed: !p.isGeneralProjectInfoCollapsed } : p)); markUnsaved(); };
+
+    const handleAddWall = (targetRoomId: string) => {
+        if (!currentProjectId || !currentProject) return;
+        let targetRoomNameForMessage = "Unknown Room";
+        let wallCountInTargetRoomForNaming = 0;
+        const projectInstance = projects.find(p => p.id === currentProjectId);
+        let roomCeilingHeight: number | undefined = undefined;
+        if (projectInstance) {
+            const roomInstance = projectInstance.rooms.find(r => r.id === targetRoomId);
+            if (roomInstance) {
+                targetRoomNameForMessage = roomInstance.name;
+                wallCountInTargetRoomForNaming = roomInstance.walls.length;
+                roomCeilingHeight = roomInstance.details.ceilingHeight;
+            } else { console.error("Target room not found"); setError("Could not add wall: target room not found."); return; }
+        } else { console.error("Current project not found"); setError("Could not add wall: current project not found."); return; }
+        const newWall = createNewWall(wallCountInTargetRoomForNaming + 1);
+        setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === targetRoomId ? { ...r, walls: [...r.walls, calculateWallValues(newWall, roomCeilingHeight)] } : r ) } : p ));
+        setInfoMessage(`Wall "${newWall.name}" added to ${targetRoomNameForMessage}.`);
+        markUnsaved();
+    };
+
+    const handleDeleteWall = (roomId: string, wallId: string) => { if (!currentProjectId) return; setProjects(prevProjects => prevProjects.map(proj => { if (proj.id !== currentProjectId) return proj; return { ...proj, rooms: proj.rooms.map(room => { if (room.id !== roomId) return room; if (room.walls.length === 1) { setError(`Cannot delete the last wall in room "${room.name}".`); return room; } const wallName = room.walls.find(w => w.id === wallId)?.name || "Wall"; setInfoMessage(`Wall "${wallName}" deleted from ${room.name}.`); return { ...room, walls: room.walls.filter(w => w.id !== wallId) }; })}; })); markUnsaved(); };
+
+    const handleWallChange = useCallback((roomId: string, wallId: string, updates: Partial<Wall>) => {
+        setProjects(prevProjects => prevProjects.map(proj => {
+            if (proj.id !== currentProjectId) return proj;
+            const targetRoom = proj.rooms.find(r => r.id === roomId);
+            const roomCeilingHeight = targetRoom?.details?.ceilingHeight;
+            return { ...proj, rooms: proj.rooms.map(room => {
+                    if (room.id !== roomId) return room;
+                    return { ...room, walls: room.walls.map(wall => wall.id === wallId ? calculateWallValues({ ...wall, ...updates }, roomCeilingHeight) : wall)};
+                })};
+        }));
+        markUnsaved();
+    }, [currentProjectId]);
+
+    const toggleWallCollapse = (roomId: string, wallId: string) => { if (!currentProjectId) return; setProjects(prevProjects => prevProjects.map(proj => { if (proj.id !== currentProjectId) return proj; return { ...proj, rooms: proj.rooms.map(room => { if (room.id !== roomId) return room; return { ...room, walls: room.walls.map(wall => wall.id === wallId ? { ...wall, isCollapsed: !wall.isCollapsed } : wall)}; })}; })); markUnsaved(); };
+
+    const handleClientInfoChange = (field: keyof ClientInfo, value: any) => {
+        if (!currentProjectId || !currentProject) return;
+        setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, clientInfo: { ...p.clientInfo, [field]: value } } : p));
+        markUnsaved();
+    };
+    const handleGeneralProjectInfoChange = (field: keyof GeneralProjectInfo, value: any) => {
+        if (!currentProjectId || !currentProject) return;
+        setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, generalProjectInfo: { ...p.generalProjectInfo, [field]: value } } : p));
+        markUnsaved();
+    };
+    const handleNumericGeneralProjectInfoChange = (field: keyof GeneralProjectInfo, value: string) => { handleGeneralProjectInfoChange(field, value === '' ? undefined : Number(value)); };
+
+    const handleSave = useCallback((isAutoSave = false) => {
+        if (!isAutoSave) {setInfoMessage(null); setHasUnsavedChanges(false);}
+        setError(null);
+        setSaveStatus('saving');
+        try {
+            const dataToSave = { projects, currentProjectId, currentRoomId };
+            const jsonData = JSON.stringify(dataToSave, null, 2);
+            localStorage.setItem('wallpaperCalculatorData_v3', jsonData);
+            setTimeout(() => {
+                setSaveStatus('saved');
+                if (!isAutoSave) setInfoMessage('All projects saved successfully!');
+                setTimeout(() => setSaveStatus('idle'), 2000);
+            }, 500);
+        } catch (e: any) {
+            setSaveStatus('error');
+            setError(`Error saving data: ${e.message}`);
+        }
+    }, [projects, currentProjectId, currentRoomId]);
+
+    const handleLoad = () => { setError(null); setInfoMessage(null); try { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { const parsedData = JSON.parse(savedData); const loadedProjects: Project[] = parsedData.projects.map((proj: Project) => ({ ...proj, generalProjectInfo: proj.generalProjectInfo || createNewGeneralProjectInfo(), clientInfo: proj.clientInfo || createNewClientInfo(), isClientInfoCollapsed: proj.isClientInfoCollapsed === undefined ? false : proj.isClientInfoCollapsed, isGeneralProjectInfoCollapsed: proj.isGeneralProjectInfoCollapsed === undefined ? false : proj.isGeneralProjectInfoCollapsed, rooms: proj.rooms.map((room: Room) => ({ ...room, details: room.details || createNewRoomSpecificInfo(), isCollapsed: room.isCollapsed === undefined ? false : room.isCollapsed, walls: room.walls.map((wall: Wall) => ({...calculateWallValues(wall, room.details?.ceilingHeight), isCollapsed: wall.isCollapsed === undefined ? false : wall.isCollapsed})) })) })); setProjects(loadedProjects || [createNewProject(1)]); const cpid = parsedData.currentProjectId || (loadedProjects.length > 0 ? loadedProjects[0].id : null); setCurrentProjectId(cpid); setCurrentRoomId(parsedData.currentRoomId || loadedProjects.find(p=>p.id === cpid)?.rooms[0]?.id || null); setInfoMessage('Projects loaded successfully!'); } else { setInfoMessage('No saved data found.'); } } catch (e: any) { setError(`Error loading data: ${e.message}`); } setSaveStatus('idle'); setHasUnsavedChanges(false); };
+    useEffect(() => { if (projects.length > 0) { if (!currentProjectId || !projects.find(p => p.id === currentProjectId)) { const firstProject = projects[0]; setCurrentProjectId(firstProject.id); setCurrentRoomId(firstProject.rooms[0]?.id || null); } else { const proj = projects.find(p => p.id === currentProjectId); if (proj && (!currentRoomId || !proj.rooms.find(r => r.id === currentRoomId))) { setCurrentRoomId(proj.rooms[0]?.id || null); } } } else { setCurrentProjectId(null); setCurrentRoomId(null); } }, [projects, currentProjectId, currentRoomId]);
+
+    const projectTravelCharges = useMemo(() => {
+        if (!currentProject || !currentProject.generalProjectInfo) return 0;
+        const { roundTripMileage, numberOfDaysForInstall } = currentProject.generalProjectInfo;
+        if (roundTripMileage === undefined || numberOfDaysForInstall === undefined) return 0;
+        return Math.round((roundTripMileage * 0.655 * numberOfDaysForInstall));
+    }, [currentProject]);
+
+    const totalProjectLaborWithTravel = useMemo(() => {
+        if (!currentProject) return 0;
+        const laborFromWalls = currentProject.rooms.reduce((projectTotal, room) => projectTotal + room.walls.reduce((roomWallTotal, wall) => roomWallTotal + (wall.grandTotalLabor || 0), 0), 0);
+        return laborFromWalls + projectTravelCharges;
+    }, [currentProject, projectTravelCharges]);
+
+    const getRoomTotalLabor = useCallback((room: Room | undefined) => { if (!room) return 0; return room.walls.reduce((total, wall) => total + (wall.grandTotalLabor || 0), 0); }, []);
+
+    if (projects.length === 0 && !currentProject) { return ( <div className="no-projects-container"> <AppStyles /> <div className="no-projects-content"> <FolderPlus className="no-projects-icon" /> <h1 className="no-projects-title">No Projects Yet</h1> <p className="no-projects-text">Get started by creating your first project.</p> <Button onClick={handleAddProject} className="no-projects-button"> <Plus /> Create New Project </Button> </div> <footer className="footer-text"> Wallpaper Calculator &copy; {new Date().getFullYear()} </footer> </div> ); }
+
+    return (
+        <div className="app-container">
+            <AppStyles />
+            <ProjectMenuModal isOpen={isProjectMenuOpen} onClose={() => setIsProjectMenuOpen(false)} projects={projects} currentProjectId={currentProjectId} onSelectProject={handleSelectProject} onAddProject={handleAddProject} onDeleteProject={handleDeleteProject} searchTerm={projectSearchTerm} onSearchTermChange={setProjectSearchTerm} />
+            <div className="sticky-header">
+                {error && (<Alert variant="destructive"><AlertCircle /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>)}
+                {infoMessage && (<Alert variant="success"><CheckCircle /><AlertTitle>Success</AlertTitle><AlertDescription>{infoMessage}</AlertDescription></Alert>)}
+                <div className="header-content">
+                    <div className="header-left"> <Button variant="ghost" size="icon" onClick={() => setIsProjectMenuOpen(true)} className="btn-open-menu" aria-label="Open project menu"> <MenuIcon /> </Button> <h1 className="app-title">Wallpaper Calculator</h1> </div>
+                    <div className="header-right"> <span className={`save-status ${saveStatus !== 'idle' || hasUnsavedChanges ? 'save-status-visible' : 'save-status-hidden'}`}> {hasUnsavedChanges && saveStatus === 'idle' && <span className="status-unsaved">Unsaved</span>} {saveStatus === 'saving' && <span className="status-saving">Saving...</span>} {saveStatus === 'saved' && <span className="status-saved">Saved</span>} {saveStatus === 'error' && <span className="status-error">Save failed</span>} </span> <Button onClick={() => handleLoad()} className="btn-loadall" size="xs-sm">Load All</Button> <Button onClick={() => handleSave(false)} className="btn-manualsave" size="xs-sm"> <Save /> Manual Save </Button> </div>
+                </div>
+            </div>
+
+            {!currentProject && projects.length > 0 && ( <Card className="card-my-8"> <CardContent className="text-center py-10" style={{textAlign: 'center', paddingTop: '2.5rem', paddingBottom: '2.5rem'}}> <FolderPlus style={{height: '3rem', width: '3rem', color: '#94a3b8', margin: '0 auto 0.75rem auto'}} /> <p style={{color: '#475569', marginBottom: '1rem'}}>Please select or create a project to begin.</p> <Button onClick={() => setIsProjectMenuOpen(true)} className="mt-4 bg-blue-500 hover:bg-blue-600 text-white" style={{marginTop: '1rem', backgroundColor: '#3b82f6', color: 'white'}}>Open Project Menu</Button> </CardContent> </Card> )}
+
+            {currentProject && (
+                <>
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3" style={{marginBottom: '1rem', display:'flex', flexWrap: 'wrap', alignItems:'center', justifyContent:'space-between', gap:'0.75rem'}}> <Input value={currentProject.name} onChange={(e) => handleProjectNameChange(currentProject.id, e.target.value)} className="input-project-name" placeholder="Project Name" /> <div className="total-project-labor"> <DollarSign /> Total Project Labor: ${totalProjectLaborWithTravel.toFixed(2)} </div> </div>
+                    <Card className="card-mb-6">
+                        <CardHeader className="card-header-flex card-header-interactive" onClick={() => toggleClientInfoCollapse(currentProject.id)}> <CardTitle className="card-title-sky">Client Information</CardTitle> <Button variant="ghost" size="icon" baseClass="btn" style={{color: '#64748b'}}> {currentProject.isClientInfoCollapsed ? <ChevronDown /> : <ChevronUp />} </Button> </CardHeader>
+                        {!currentProject.isClientInfoCollapsed && ( <CardContent className="card-content-grid"> <div> <Label htmlFor="clientName">Client Name</Label> <Input id="clientName" value={currentProject.clientInfo.clientName} onChange={(e) => handleClientInfoChange("clientName", e.target.value)} /> </div> <div> <Label htmlFor="clientAddress">Client Address</Label> <Input id="clientAddress" value={currentProject.clientInfo.clientAddress} onChange={(e) => handleClientInfoChange("clientAddress", e.target.value)} /> </div> <div> <Label htmlFor="clientPhone">Client Phone</Label> <Input id="clientPhone" type="tel" value={currentProject.clientInfo.clientPhone} onChange={(e) => handleClientInfoChange("clientPhone", e.target.value)} /> </div> <div> <Label htmlFor="clientEmail">Client Email</Label> <Input id="clientEmail" type="email" value={currentProject.clientInfo.clientEmail} onChange={(e) => handleClientInfoChange("clientEmail", e.target.value)} /> </div> </CardContent> )}
+                    </Card>
+                    <Card className="card-mb-8">
+                        <CardHeader className="card-header-flex card-header-interactive" onClick={() => toggleGeneralProjectInfoCollapse(currentProject.id)}> <CardTitle className="card-title-blue">General Project Details</CardTitle> <Button variant="ghost" size="icon" baseClass="btn" style={{color: '#64748b'}}> {currentProject.isGeneralProjectInfoCollapsed ? <ChevronDown /> : <ChevronUp />} </Button> </CardHeader>
+                        {!currentProject.isGeneralProjectInfoCollapsed && ( <CardContent className="card-content-grid card-content-grid-3-cols"> {[ {label: "Designer/Builder", field: "designerBuilderName", type: "text"}, {label: "Project Manager", field: "projectManagerName", type: "text"}, {label: "PM Phone", field: "projectManagerPhone", type: "tel"}, {label: "Invoice To", field: "invoiceTo", type: "text"}, {label: "Project Type", field: "projectType", type: "text"}, {label: "Round Trip Mileage", field: "roundTripMileage", type: "number"}, {label: "# Days for Install", field: "numberOfDaysForInstall", type: "number"}, {label: "Input Date", field: "inputDate", type: "date"}, {label: "Estimate Sent", field: "estimateSentDate", type: "date"}, {label: "Approval Date", field: "approvalDate", type: "date"}, {label: "Order Date", field: "orderDate", type: "date"}, {label: "Order Rec'd", field: "orderReceivedDate", type: "date"}, {label: "Est. Ready Install", field: "estimatedDateReadyForInstall", type: "date"}, {label: "Sched. Install", field: "scheduledInstallDate", type: "date"}, ].map(item => ( <div key={item.field}> <Label htmlFor={`genProjInfo-${item.field}`}>{item.label}</Label> <Input id={`genProjInfo-${item.field}`} type={item.type} value={(currentProject.generalProjectInfo as any)[item.field] || ''} onChange={(e) => item.type === 'number' ? handleNumericGeneralProjectInfoChange(item.field as keyof GeneralProjectInfo, e.target.value) : handleGeneralProjectInfoChange(item.field as keyof GeneralProjectInfo, e.target.value)} className="mt-1" /> </div> ))} <div className="md:col-span-2 lg:col-span-3"> <Label htmlFor="genProjInfo-notes">Notes / Site Conditions</Label> <Textarea id="genProjInfo-notes" value={currentProject.generalProjectInfo.notes} onChange={(e) => handleGeneralProjectInfoChange("notes", e.target.value)} className="mt-1 textarea-h-20" /> </div></CardContent> )}
+                    </Card>
+
+                    {/* Rooms Section */}
+                    <Card className="card-mb-6">
+                        <CardHeader className="card-header-flex-column-sm"> <div> <CardTitle className="card-title-green">Rooms in {currentProject.name}</CardTitle> <CardDescription>Manage rooms, their specific details, and walls.</CardDescription> </div> <Button onClick={handleAddRoom} className="btn-add-wall" style={{backgroundColor: '#14b8a6', marginTop: 0}}> <Home className="mr-2" style={{height:'1.25rem', width:'1.25rem', marginRight:'0.5rem'}}/> Add New Room </Button> </CardHeader>
+                        {currentProject.rooms.length > 0 && ( <CardContent className="space-y-4" style={{paddingTop: '1rem', paddingBottom: '1rem'}}> {currentProject.rooms.map(room => { const roomTotalLabor = getRoomTotalLabor(room); return ( <div key={room.id} className="room-item-container"> <div className="room-header" onClick={() => toggleRoomCollapse(room.id)}> <div className="room-header-left"> <Button variant="ghost" size="icon" baseClass="btn" className="mr-2" style={{height: '2rem', width: '2rem', color: '#64748b'}}> {room.isCollapsed ? <ChevronDown /> : <ChevronUp />} </Button> <Input value={room.name} onChange={(e) => {e.stopPropagation(); handleRoomNameChange(room.id, e.target.value);}} onClick={(e) => e.stopPropagation()} className="input-room-name" placeholder="Room Name" /> </div> <div className="room-header-right"> {room.isCollapsed && roomTotalLabor > 0 && (<span className="room-labor-collapsed">Room Labor: ${roomTotalLabor.toFixed(2)}</span>)} {!room.isCollapsed && <span className="room-labor-expanded">({room.walls.length} wall{room.walls.length === 1 ? '' : 's'}) Labor: ${roomTotalLabor.toFixed(2)}</span>} {currentProject.rooms.length > 1 && ( <Button onClick={(e) => { e.stopPropagation(); handleDeleteRoom(room.id); }} variant="ghost" size="icon" baseClass="btn room-delete-btn" aria-label="Delete room"> <Trash2 /> </Button> )} </div> </div>
+                            {!room.isCollapsed && (
+                                <>
+                                    <Card className="room-details-card" style={{margin: '1rem', borderTop: '1px solid #e2e8f0'}}>
+                                        <CardHeader className="card-header-flex card-header-interactive room-details-header" onClick={() => toggleRoomDetailsCollapse(room.id)}>
+                                            <CardTitle className="card-title-purple" style={{fontSize: '1.1rem'}}>Room Paper & Dimension Details</CardTitle>
+                                            <Button variant="ghost" size="icon" baseClass="btn" style={{color: '#64748b'}}>
+                                                {room.details.isDetailsCollapsed ? <ChevronDown /> : <ChevronUp />}
+                                            </Button>
+                                        </CardHeader>
+                                        {!room.details.isDetailsCollapsed && (
+                                            <CardContent className="card-content-grid card-content-grid-3-cols">
+                                                {[
+                                                    {label: "Paper Manufacturer", field: "paperManufacturer", type: "text"},
+                                                    {label: "Paper Pattern #", field: "paperPatternNumber", type: "text"},
+                                                    {label: "Paper Color #", field: "paperColorNumber", type: "text"},
+                                                    {label: "Product Photo Link", field: "paperProductPhotoLink", type: "url"},
+                                                    {label: "Type of Paper", field: "paperType", type: "text"},
+                                                    {label: "Ceiling Height (overall, for surcharge)", field: "ceilingHeight", type: "number"},
+                                                    {label: "Baseboard Height (in)", field: "baseboardHeight", type: "number"},
+                                                    {label: "Crown Height (in)", field: "verticalCrownHeight", type: "number"},
+                                                    {label: "Chair Rail Ht (in)", field: "chairRailHeight", type: "number"},
+                                                ].map(item => (
+                                                    <div key={item.field}>
+                                                        <Label htmlFor={`roomDetail-${room.id}-${item.field}`}>{item.label}</Label>
+                                                        <Input id={`roomDetail-${room.id}-${item.field}`} type={item.type} value={(room.details as any)[item.field] || ''} onChange={(e) => item.type === 'number' ? handleNumericRoomDetailsChange(room.id, item.field as keyof RoomSpecificInfo, e.target.value) : handleRoomDetailsChange(room.id, item.field as keyof RoomSpecificInfo, e.target.value)} className="mt-1" />
+                                                    </div>
+                                                ))}
+                                                <div className="md:col-span-2 lg:col-span-3">
+                                                    <Label htmlFor={`roomDetail-${room.id}-paperSpecialRequirements`}>Paper Specific Special Requirements</Label>
+                                                    <Textarea id={`roomDetail-${room.id}-paperSpecialRequirements`} value={room.details.paperSpecialRequirements} onChange={(e) => handleRoomDetailsChange(room.id, "paperSpecialRequirements", e.target.value)} className="mt-1 textarea-h-20" />
+                                                </div>
+                                            </CardContent>
+                                        )}
+                                    </Card>
+                                    <div className="room-content"> {room.walls.map(wall => ( <WallInputCard key={wall.id} wall={wall} onChange={(wallId, updates) => handleWallChange(room.id, wallId, updates)} onDelete={(wallId) => handleDeleteWall(room.id, wallId)} onToggleCollapse={(wallId) => toggleWallCollapse(room.id, wallId)} /> ))} <Button onClick={() => handleAddWall(room.id)} className="btn-add-wall"> <Plus /> Add Wall to {room.name} </Button> </div>
+                                </>
+                            )}
+                        </div> ); })} </CardContent> )}
+                        {currentProject.rooms.length === 0 && ( <CardContent style={{textAlign: 'center', paddingTop: '2rem', paddingBottom: '2rem'}}> <Home style={{height: '2.5rem', width: '2.5rem', color: '#94a3b8', margin: '0 auto 0.5rem auto'}} /> <p style={{color: '#64748b', marginBottom: '0.75rem'}}>This project has no rooms yet.</p> <Button onClick={handleAddRoom} style={{backgroundColor: '#14b8a6', color: 'white'}}> <Plus className="mr-2" style={{height:'1rem', width:'1rem', marginRight:'0.5rem'}}/> Add First Room </Button> </CardContent> )}
+                    </Card>
+                </>
+            )}
+            <footer className="footer-text"> Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
         </div>
-
-        {!currentProject && projects.length > 0 && ( <Card className="card-my-8"> <CardContent className="text-center py-10" style={{textAlign: 'center', paddingTop: '2.5rem', paddingBottom: '2.5rem'}}> <FolderPlus style={{height: '3rem', width: '3rem', color: '#94a3b8', margin: '0 auto 0.75rem auto'}} /> <p style={{color: '#475569', marginBottom: '1rem'}}>Please select or create a project to begin.</p> <Button onClick={() => setIsProjectMenuOpen(true)} className="mt-4 bg-blue-500 hover:bg-blue-600 text-white" style={{marginTop: '1rem', backgroundColor: '#3b82f6', color: 'white'}}>Open Project Menu</Button> </CardContent> </Card> )}
-
-        {currentProject && (
-            <>
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3" style={{marginBottom: '1rem', display:'flex', flexWrap: 'wrap', alignItems:'center', justifyContent:'space-between', gap:'0.75rem'}}> <Input value={currentProject.name} onChange={(e) => handleProjectNameChange(currentProject.id, e.target.value)} className="input-project-name" placeholder="Project Name" /> <div className="total-project-labor"> <DollarSign /> Total Project Labor: ${totalProjectLabor.toFixed(2)} </div> </div>
-              <Card className="card-mb-6">
-                <CardHeader className="card-header-flex card-header-interactive" onClick={() => toggleClientInfoCollapse(currentProject.id)}> <CardTitle className="card-title-sky">Client Information</CardTitle> <Button variant="ghost" size="icon" baseClass="btn" style={{color: '#64748b'}}> {currentProject.isClientInfoCollapsed ? <ChevronDown /> : <ChevronUp />} </Button> </CardHeader>
-                {!currentProject.isClientInfoCollapsed && ( <CardContent className="card-content-grid"> <div> <Label htmlFor="clientName">Client Name</Label> <Input id="clientName" value={currentProject.clientInfo.clientName} onChange={(e) => handleClientInfoChange("clientName", e.target.value)} /> </div> <div> <Label htmlFor="clientAddress">Client Address</Label> <Input id="clientAddress" value={currentProject.clientInfo.clientAddress} onChange={(e) => handleClientInfoChange("clientAddress", e.target.value)} /> </div> <div> <Label htmlFor="clientPhone">Client Phone</Label> <Input id="clientPhone" type="tel" value={currentProject.clientInfo.clientPhone} onChange={(e) => handleClientInfoChange("clientPhone", e.target.value)} /> </div> <div> <Label htmlFor="clientEmail">Client Email</Label> <Input id="clientEmail" type="email" value={currentProject.clientInfo.clientEmail} onChange={(e) => handleClientInfoChange("clientEmail", e.target.value)} /> </div> </CardContent> )}
-              </Card>
-              <Card className="card-mb-8">
-                <CardHeader className="card-header-flex card-header-interactive" onClick={() => toggleGeneralProjectInfoCollapse(currentProject.id)}> <CardTitle className="card-title-blue">General Project Details</CardTitle> <Button variant="ghost" size="icon" baseClass="btn" style={{color: '#64748b'}}> {currentProject.isGeneralProjectInfoCollapsed ? <ChevronDown /> : <ChevronUp />} </Button> </CardHeader>
-                {!currentProject.isGeneralProjectInfoCollapsed && ( <CardContent className="card-content-grid card-content-grid-3-cols"> {[ {label: "Designer/Builder", field: "designerBuilderName", type: "text"}, {label: "Project Manager", field: "projectManagerName", type: "text"}, {label: "PM Phone", field: "projectManagerPhone", type: "tel"}, {label: "Invoice To", field: "invoiceTo", type: "text"}, {label: "Project Type", field: "projectType", type: "text"}, {label: "Round Trip Mileage", field: "roundTripMileage", type: "number"}, {label: "# Days for Install", field: "numberOfDaysForInstall", type: "number"}, {label: "Input Date", field: "inputDate", type: "date"}, {label: "Estimate Sent", field: "estimateSentDate", type: "date"}, {label: "Approval Date", field: "approvalDate", type: "date"}, {label: "Order Date", field: "orderDate", type: "date"}, {label: "Order Rec'd", field: "orderReceivedDate", type: "date"}, {label: "Est. Ready Install", field: "estimatedDateReadyForInstall", type: "date"}, {label: "Sched. Install", field: "scheduledInstallDate", type: "date"}, {label: "Paper Manufacturer", field: "paperManufacturer", type: "text"}, {label: "Paper Pattern #", field: "paperPatternNumber", type: "text"}, {label: "Paper Color #", field: "paperColorNumber", type: "text"}, {label: "Product Photo Link", field: "paperProductPhotoLink", type: "url"}, {label: "Type of Paper", field: "paperType", type: "text"}, {label: "Ceiling Height (in)", field: "ceilingHeight", type: "number"}, {label: "Baseboard Height (in)", field: "baseboardHeight", type: "number"}, {label: "Crown Height (in)", field: "verticalCrownHeight", type: "number"}, {label: "Chair Rail Ht (in)", field: "chairRailHeight", type: "number"}, ].map(item => ( <div key={item.field}> <Label htmlFor={`genProjInfo-${item.field}`}>{item.label}</Label> <Input id={`genProjInfo-${item.field}`} type={item.type} value={currentProject.generalProjectInfo[item.field as keyof GeneralProjectInfo] || ''} onChange={(e) => item.type === 'number' ? handleNumericGeneralProjectInfoChange(item.field as keyof GeneralProjectInfo, e.target.value) : handleGeneralProjectInfoChange(item.field as keyof GeneralProjectInfo, e.target.value)} className="mt-1" /> </div> ))} <div className="md:col-span-2 lg:col-span-3"> <Label htmlFor="genProjInfo-notes">Notes / Site Conditions</Label> <Textarea id="genProjInfo-notes" value={currentProject.generalProjectInfo.notes} onChange={(e) => handleGeneralProjectInfoChange("notes", e.target.value)} className="mt-1 textarea-h-20" /> </div> <div className="md:col-span-2 lg:col-span-3"> <Label htmlFor="genProjInfo-paperSpecialRequirements">Paper Specific Special Requirements</Label> <Textarea id="genProjInfo-paperSpecialRequirements" value={currentProject.generalProjectInfo.paperSpecialRequirements} onChange={(e) => handleGeneralProjectInfoChange("paperSpecialRequirements", e.target.value)} className="mt-1 textarea-h-20" /> </div> </CardContent> )}
-              </Card>
-              <Card className="card-mb-6">
-                <CardHeader className="card-header-flex-column-sm"> <div> <CardTitle className="card-title-green">Rooms in {currentProject.name}</CardTitle> <CardDescription>Manage rooms and their walls.</CardDescription> </div> <Button onClick={handleAddRoom} className="btn-add-wall" style={{backgroundColor: '#14b8a6', marginTop: 0}}> <Home className="mr-2" style={{height:'1.25rem', width:'1.25rem', marginRight:'0.5rem'}}/> Add New Room </Button> </CardHeader>
-                {currentProject.rooms.length > 0 && ( <CardContent className="space-y-4"> {currentProject.rooms.map(room => { const roomTotalLabor = getRoomTotalLabor(room); return ( <div key={room.id} className="room-item-container"> <div className="room-header" onClick={() => toggleRoomCollapse(room.id)}> <div className="room-header-left"> <Button variant="ghost" size="icon" baseClass="btn" className="mr-2" style={{height: '2rem', width: '2rem', color: '#64748b'}}> {room.isCollapsed ? <ChevronDown /> : <ChevronUp />} </Button> <Input value={room.name} onChange={(e) => {e.stopPropagation(); handleRoomNameChange(room.id, e.target.value);}} onClick={(e) => e.stopPropagation()} className="input-room-name" placeholder="Room Name" /> </div> <div className="room-header-right"> {room.isCollapsed && roomTotalLabor > 0 && (<span className="room-labor-collapsed">Room Labor: ${roomTotalLabor.toFixed(2)}</span>)} {!room.isCollapsed && <span className="room-labor-expanded">({room.walls.length} wall{room.walls.length === 1 ? '' : 's'}) Labor: ${roomTotalLabor.toFixed(2)}</span>} {currentProject.rooms.length > 1 && ( <Button onClick={(e) => { e.stopPropagation(); handleDeleteRoom(room.id); }} variant="ghost" size="icon" baseClass="btn room-delete-btn" aria-label="Delete room"> <Trash2 /> </Button> )} </div> </div> {!room.isCollapsed && ( <div className="room-content"> {room.walls.map(wall => ( <WallInputCard key={wall.id} wall={wall} onChange={(wallId, updates) => handleWallChange(room.id, wallId, updates)} onDelete={(wallId) => handleDeleteWall(room.id, wallId)} onToggleCollapse={(wallId) => toggleWallCollapse(room.id, wallId)} /> ))} <Button onClick={() => handleAddWall(room.id)} className="btn-add-wall"> <Plus /> Add Wall to {room.name} </Button> </div> )} </div> ); })} </CardContent> )}
-                {currentProject.rooms.length === 0 && ( <CardContent style={{textAlign: 'center', paddingTop: '2rem', paddingBottom: '2rem'}}> <Home style={{height: '2.5rem', width: '2.5rem', color: '#94a3b8', margin: '0 auto 0.5rem auto'}} /> <p style={{color: '#64748b', marginBottom: '0.75rem'}}>This project has no rooms yet.</p> <Button onClick={handleAddRoom} style={{backgroundColor: '#14b8a6', color: 'white'}}> <Plus className="mr-2" style={{height:'1rem', width:'1rem', marginRight:'0.5rem'}}/> Add First Room </Button> </CardContent> )}
-              </Card>
-            </>
-        )}
-        <footer className="footer-text"> Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
-      </div>
-  );
+    );
 };
 
 export default App;
