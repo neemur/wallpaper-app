@@ -1411,7 +1411,7 @@ const PAPER_WIDTH_OPTIONS = [ { label: '20.5"', value: 20.5 }, { label: '27"', v
 const BOLT_LENGTH_OPTIONS = [ { label: '5 yd/180"', value: 180 }, { label: '8 yd/288"', value: 288 }, { label: '9 yd/324"', value: 324 }, { label: '10 yd/360"', value: 360 }, { label: '11 yd/393"', value: 393 }, { label: '12 yd/432"', value: 432 }, { label: '15 yd/540"', value: 540 }, { label: '30 yd/1080"', value: 1080 }, { label: '42 yd/1512"', value: 1512 }, { label: 'Custom (in)', value: 'custom' }];
 const PATTERN_MATCH_OPTIONS = [ { label: 'Straight', value: 1 }, { label: 'Half Drop', value: 0.5 }, { label: '1/3 Drop', value: 0.33 }, { label: '1/4 Drop', value: 0.25 }];
 const PRICING_OPTIONS = [ { label: '$65/SR Liner', value: 65 }, { label: '$85/SR Pretrimmed', value: 85 }, { label: '$125/SR Untrimmed', value: 125 }, { label: '$150/SR Untrimmed/Grasscloth/Fabric', value: 150 }, { label: '38% of Material Cost', value: 'materialPercent' }];
-const SR_MULTIPLIER_OPTIONS = [ {label: "1 S/R per Bolt", value: 1}, {label: "2 S/R per Bolt (Standard)", value: 2}, {label: "1/3 S/R per Bolt", value: 1/3}, {label: "Custom", value: "custom"}];
+const SR_MULTIPLIER_OPTIONS = [ {label: "2/3 S/R per Bolt", value: 2/3}, {label: "1 S/R per Bolt", value: 1}, {label: "2 S/R per Bolt (Standard)", value: 2}, {label: "Custom", value: "custom"}];
 
 const AUTO_SAVE_DEBOUNCE_TIME = 2000;
 
