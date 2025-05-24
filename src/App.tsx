@@ -1174,6 +1174,32 @@ const AppStyles = () => (
       border-style: solid;
       border-color: #1f2937 transparent transparent transparent;
     }
+    
+    .field-highlight-input {
+      background-color: #d1fae5 !important; /* Light green, similar to green-50 */
+      transition: background-color 0.3s ease-out, border-color 0.3s ease-out;
+    }
+    .field-highlight-output {
+      background-color: #fee2e2 !important; /* Light red, similar to red-50 */
+      transition: background-color 0.3s ease-out, border-color 0.3s ease-out;      
+    }
+    @media (prefers-color-scheme: dark) {
+      .field-highlight-input {
+        background-color: #064e3b !important; /* Darker green, similar to dark:green-900 */
+      }
+      .field-highlight-output {
+        background-color: #7f1d1d !important; /* Darker red, similar to dark:red-900 */
+      }
+    }
+    .label-highlight {
+        color: #1d4ed8 !important; /* blue-700 */
+        font-weight: bold;
+    }
+     @media (prefers-color-scheme: dark) {
+        .label-highlight {
+             color: #60a5fa !important; /* dark:blue-400 */
+        }
+     }
 
 
     /* Utility for screen readers only */
@@ -1214,9 +1240,9 @@ const Button = React.forwardRef<
 });
 Button.displayName = 'Button';
 
-const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-    ({ className = '', type = "text", ...props }, ref) => (
-        <input ref={ref} type={type} className={`input-base ${className}`} {...props} />
+const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { onWheel?: (e: React.WheelEvent<HTMLInputElement>) => void }>(
+    ({ className = '', type = "text", onWheel, ...props }, ref) => (
+        <input ref={ref} type={type} className={`input-base ${className}`} {...props} onWheel={onWheel} />
     )
 );
 Input.displayName = 'Input';
@@ -1385,6 +1411,8 @@ const PAPER_WIDTH_OPTIONS = [ { label: '20.5"', value: 20.5 }, { label: '27"', v
 const BOLT_LENGTH_OPTIONS = [ { label: '5 yd/180"', value: 180 }, { label: '8 yd/288"', value: 288 }, { label: '9 yd/324"', value: 324 }, { label: '10 yd/360"', value: 360 }, { label: '11 yd/393"', value: 393 }, { label: '12 yd/432"', value: 432 }, { label: '15 yd/540"', value: 540 }, { label: '30 yd/1080"', value: 1080 }, { label: '42 yd/1512"', value: 1512 }, { label: 'Custom (in)', value: 'custom' }];
 const PATTERN_MATCH_OPTIONS = [ { label: 'Straight', value: 1 }, { label: 'Half Drop', value: 0.5 }, { label: '1/3 Drop', value: 0.33 }, { label: '1/4 Drop', value: 0.25 }];
 const PRICING_OPTIONS = [ { label: '$65/SR Liner', value: 65 }, { label: '$85/SR Pretrimmed', value: 85 }, { label: '$125/SR Untrimmed', value: 125 }, { label: '$150/SR Untrimmed/Grasscloth/Fabric', value: 150 }, { label: '38% of Material Cost', value: 'materialPercent' }];
+const SR_MULTIPLIER_OPTIONS = [ {label: "1 S/R per Bolt", value: 1}, {label: "2 S/R per Bolt (Standard)", value: 2}, {label: "1/3 S/R per Bolt", value: 1/3}, {label: "Custom", value: "custom"}];
+
 const AUTO_SAVE_DEBOUNCE_TIME = 2000;
 
 // Interfaces
@@ -1419,7 +1447,41 @@ interface RoomSpecificInfo {
     chairRailHeight?: number;
     isDetailsCollapsed?: boolean;
 }
-interface Wall { id: string; name: string; width?: number; heightOfWall?: number; totalArea?: number; paperWidthOption: number | 'custom'; paperWidthCustom?: number; lengthOfBoltOption: number | 'custom'; lengthOfBoltCustom?: number; patternVerticalRepeat?: number; patternMatch: number; verticalHeightOfMatchedRepeat?: number; pricedBy: number | 'materialPercent'; unitPriceOfWallpaper?: number; perimeterWallWidth?: number; numberOfCutsForProject?: number; numberOfRepeatsPerCut?: number; lengthOfCuts?: number; totalLengthNeeded?: number; numberOfCutLengthsPerBolt?: number; numberOfBolts?: number; numberOfYardsToOrder?: number; materialCost?: number; equivalentProjectSRCalculation?: number; baseLabor?: number; heightSurcharge?: number; subtotalLabor?: number; travelCharges?: number; grandTotalLabor?: number; isCollapsed?: boolean; }
+interface Wall {
+    id: string;
+    name: string;
+    width?: number;
+    heightOfWall?: number;
+    // totalArea?: number; // Removed
+    paperWidthOption: number | 'custom';
+    paperWidthCustom?: number;
+    lengthOfBoltOption: number | 'custom';
+    lengthOfBoltCustom?: number;
+    patternVerticalRepeat?: number;
+    patternMatch: number;
+    verticalHeightOfMatchedRepeat?: number;
+    pricedBy: number | 'materialPercent';
+    unitPriceOfWallpaper?: number;
+    perimeterWallWidth?: number;
+    srMultiplierOption: number | 'custom'; // New field
+    srMultiplierCustom?: number; // New field
+    numberOfCutsForProject?: number;
+    numberOfRepeatsPerCut?: number;
+    lengthOfCuts?: number;
+    totalLengthNeeded?: number; // Calculated Total Length Needed
+    totalLengthPurchased?: number; // New field: Length of Bolt * # of Bolts
+    numberOfCutLengthsPerBolt?: number;
+    numberOfBolts?: number;
+    numberOfYardsToOrder?: number;
+    materialCost?: number;
+    equivalentProjectSRCalculation?: number;
+    baseLabor?: number;
+    heightSurcharge?: number;
+    subtotalLabor?: number; // Renamed from grandTotalLabor for wall-specific total
+    travelCharges?: number; // Will always be 0 from this function
+    grandTotalLabor?: number; // Kept for consistency, but represents wall subtotal
+    isCollapsed?: boolean;
+}
 interface Room { id: string; name: string; details: RoomSpecificInfo; walls: Wall[]; isCollapsed?: boolean; }
 interface Project { id: string; name: string; clientInfo: ClientInfo; generalProjectInfo: GeneralProjectInfo; rooms: Room[]; isClientInfoCollapsed?: boolean; isGeneralProjectInfoCollapsed?: boolean; }
 
@@ -1428,7 +1490,17 @@ const createNewRoomSpecificInfo = (): RoomSpecificInfo => ({
     paperManufacturer: '', paperPatternNumber: '', paperColorNumber: '', paperProductPhotoLink: '', paperType: '', paperSpecialRequirements: '',
     ceilingHeight: undefined, baseboardHeight: undefined, verticalCrownHeight: undefined, chairRailHeight: undefined, isDetailsCollapsed: false,
 });
-const createNewWall = (nameSuffix: string | number): Wall => ({ id: `wall-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`, name: `Wall ${nameSuffix}`, paperWidthOption: 20.5, lengthOfBoltOption: 180, patternMatch: 1, pricedBy: 85, heightOfWall: 96, isCollapsed: false, });
+const createNewWall = (nameSuffix: string | number): Wall => ({
+    id: `wall-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+    name: `Wall ${nameSuffix}`,
+    paperWidthOption: 20.5,
+    lengthOfBoltOption: 180,
+    patternMatch: 1,
+    pricedBy: 85,
+    heightOfWall: 96,
+    srMultiplierOption: 2, // Default S/R per Bolt Multiplier
+    isCollapsed: false,
+});
 const createNewRoom = (nameSuffix: string | number): Room => ({ id: `room-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`, name: `Room ${nameSuffix}`, details: createNewRoomSpecificInfo(), walls: [createNewWall(1)], isCollapsed: false, });
 const createNewClientInfo = (): ClientInfo => ({ clientName: '', clientAddress: '', clientPhone: '', clientEmail: '' });
 const createNewGeneralProjectInfo = (): GeneralProjectInfo => ({ designerBuilderName: '', projectManagerName: '', projectManagerPhone: '', invoiceTo: '', notes: '', projectType: '', roundTripMileage: undefined, numberOfDaysForInstall: undefined, inputDate: '', estimateSentDate: '', approvalDate: '', orderDate: '', orderReceivedDate: '', estimatedDateReadyForInstall: '', scheduledInstallDate: '', });
@@ -1436,22 +1508,43 @@ const createNewProject = (nameSuffix: string | number): Project => ({ id: `proje
 
 // Calculation Logic
 const calculateWallValues = (wall: Wall, roomCeilingHeight?: number): Wall => {
-    const { width, heightOfWall, paperWidthOption, paperWidthCustom, lengthOfBoltOption, lengthOfBoltCustom, patternVerticalRepeat, patternMatch, pricedBy, unitPriceOfWallpaper, } = wall;
+    const {
+        width, heightOfWall,
+        paperWidthOption, paperWidthCustom,
+        lengthOfBoltOption, lengthOfBoltCustom,
+        patternVerticalRepeat, patternMatch,
+        pricedBy, unitPriceOfWallpaper,
+        srMultiplierOption, srMultiplierCustom
+    } = wall;
+
     let paperWidth = paperWidthOption === 'custom' ? paperWidthCustom : paperWidthOption;
     let lengthOfBolt = lengthOfBoltOption === 'custom' ? lengthOfBoltCustom : lengthOfBoltOption;
     const calculationHeight = heightOfWall;
-    const totalArea = width !== undefined && calculationHeight !== undefined ? width * calculationHeight : undefined;
+
     const verticalHeightOfMatchedRepeat = patternVerticalRepeat && patternMatch ? patternVerticalRepeat * patternMatch : undefined;
     const numberOfCutsForProject = width && paperWidth && paperWidth > 0 ? Math.ceil(width / paperWidth) : undefined;
     const effectiveHeightForRepeats = calculationHeight !== undefined ? calculationHeight + 4 : undefined;
     const numberOfRepeatsPerCut = effectiveHeightForRepeats && verticalHeightOfMatchedRepeat && verticalHeightOfMatchedRepeat > 0 ? Math.ceil(effectiveHeightForRepeats / verticalHeightOfMatchedRepeat) : (effectiveHeightForRepeats ? 1 : undefined);
     const lengthOfCuts = numberOfRepeatsPerCut && verticalHeightOfMatchedRepeat && verticalHeightOfMatchedRepeat > 0 ? numberOfRepeatsPerCut * verticalHeightOfMatchedRepeat : effectiveHeightForRepeats;
-    const totalLengthNeeded = lengthOfCuts && numberOfCutsForProject ? lengthOfCuts * numberOfCutsForProject : undefined;
+    const totalLengthNeeded = lengthOfCuts && numberOfCutsForProject ? lengthOfCuts * numberOfCutsForProject : undefined; // This is the calculated need
     const numberOfCutLengthsPerBolt = lengthOfBolt && lengthOfCuts && lengthOfCuts > 0 ? Math.floor(lengthOfBolt / lengthOfCuts) : undefined;
     const numberOfBolts = numberOfCutsForProject && numberOfCutLengthsPerBolt && numberOfCutLengthsPerBolt > 0 ? Math.ceil(numberOfCutsForProject / numberOfCutLengthsPerBolt) : undefined;
-    const numberOfYardsToOrder = totalLengthNeeded ? Math.ceil(totalLengthNeeded / 36) : undefined;
+
+    // Calculate totalLengthPurchased first, as it's now a dependency for others
+    const totalLengthPurchased = (lengthOfBolt || 0) * (numberOfBolts || 0);
+
+    // Updated to use totalLengthPurchased
+    const numberOfYardsToOrder = totalLengthPurchased ? Math.ceil(totalLengthPurchased / 36) : undefined;
+
     const materialCost = (unitPriceOfWallpaper || 0) * (numberOfBolts || 0);
-    const equivalentProjectSRCalculation = totalLengthNeeded && lengthOfBolt && lengthOfBolt > 0 ? Math.ceil((totalLengthNeeded / lengthOfBolt) * 2) : undefined;
+
+    const srMultiplier = srMultiplierOption === 'custom' ? (srMultiplierCustom || 0) : (srMultiplierOption || 0);
+
+    // Updated to use totalLengthPurchased
+    const equivalentProjectSRCalculation = totalLengthPurchased && lengthOfBolt && lengthOfBolt > 0 && srMultiplier
+        ? Math.ceil((totalLengthPurchased / lengthOfBolt) * srMultiplier)
+        : undefined;
+
     const baseLabor = equivalentProjectSRCalculation && pricedBy !== undefined ? (typeof pricedBy === 'number' ? equivalentProjectSRCalculation * pricedBy : (materialCost > 0 ? materialCost * 0.38 : 0)) : undefined;
 
     const heightToUseForSurcharge = roomCeilingHeight !== undefined && roomCeilingHeight > 0
@@ -1464,35 +1557,172 @@ const calculateWallValues = (wall: Wall, roomCeilingHeight?: number): Wall => {
         heightSurcharge = Math.max(0, heightSurcharge);
     }
 
-    const subtotalLabor = baseLabor !== undefined ? baseLabor + heightSurcharge : undefined; // This is the wall's own labor total
-    const travelCharges = 0; // Travel is project-level, not wall-level
-    const grandTotalLabor = subtotalLabor; // For a single wall, its grand total IS its subtotal (base + surcharge)
+    const subtotalLabor = baseLabor !== undefined ? baseLabor + heightSurcharge : undefined;
+    const travelCharges = 0;
+    const grandTotalLabor = subtotalLabor;
 
-    return { ...wall, totalArea, verticalHeightOfMatchedRepeat, numberOfCutsForProject, numberOfRepeatsPerCut, lengthOfCuts, totalLengthNeeded, numberOfCutLengthsPerBolt, numberOfBolts, numberOfYardsToOrder, materialCost, equivalentProjectSRCalculation, baseLabor, heightSurcharge, subtotalLabor, travelCharges, grandTotalLabor, };
+
+    return { ...wall, verticalHeightOfMatchedRepeat, numberOfCutsForProject, numberOfRepeatsPerCut, lengthOfCuts, totalLengthNeeded, totalLengthPurchased, numberOfCutLengthsPerBolt, numberOfBolts, numberOfYardsToOrder, materialCost, equivalentProjectSRCalculation, baseLabor, heightSurcharge, subtotalLabor, travelCharges, grandTotalLabor, };
 };
 
 function useDebounce<T>(value: T, delay: number): T { const [debouncedValue, setDebouncedValue] = useState<T>(value); useEffect(() => { const handler = setTimeout(() => { setDebouncedValue(value); }, delay); return () => { clearTimeout(handler); }; }, [value, delay]); return debouncedValue; }
 
+// Define field dependencies for highlighting
+const fieldDependencies: Record<string, { inputs: string[], outputs: string[] }> = {
+    width: { inputs: [], outputs: ['numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    heightOfWall: { inputs: [], outputs: ['effectiveHeightForRepeats', 'numberOfRepeatsPerCut', 'lengthOfCuts', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'heightSurcharge', 'grandTotalLabor'] },
+    paperWidthOption: { inputs: [], outputs: ['numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    paperWidthCustom: { inputs: ['paperWidthOption'], outputs: ['numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    lengthOfBoltOption: { inputs: [], outputs: ['numberOfCutLengthsPerBolt', 'numberOfBolts', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    lengthOfBoltCustom: { inputs: ['lengthOfBoltOption'], outputs: ['numberOfCutLengthsPerBolt', 'numberOfBolts', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    patternVerticalRepeat: { inputs: [], outputs: ['verticalHeightOfMatchedRepeat', 'numberOfRepeatsPerCut', 'lengthOfCuts', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    patternMatch: { inputs: [], outputs: ['verticalHeightOfMatchedRepeat', 'numberOfRepeatsPerCut', 'lengthOfCuts', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    pricedBy: { inputs: [], outputs: ['baseLabor', 'grandTotalLabor'] },
+    unitPriceOfWallpaper: { inputs: [], outputs: ['materialCost', 'baseLabor', 'grandTotalLabor'] },
+    srMultiplierOption: { inputs: [], outputs: ['equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    srMultiplierCustom: { inputs: ['srMultiplierOption'], outputs: ['equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    // Calculated fields
+    verticalHeightOfMatchedRepeat: { inputs: ['patternVerticalRepeat', 'patternMatch'], outputs: ['numberOfRepeatsPerCut', 'lengthOfCuts'] },
+    numberOfCutsForProject: { inputs: ['width', 'paperWidthOption', 'paperWidthCustom'], outputs: ['totalLengthNeeded', 'numberOfBolts'] },
+    numberOfRepeatsPerCut: { inputs: ['heightOfWall', 'verticalHeightOfMatchedRepeat'], outputs: ['lengthOfCuts'] },
+    lengthOfCuts: { inputs: ['numberOfRepeatsPerCut', 'verticalHeightOfMatchedRepeat', 'heightOfWall'], outputs: ['totalLengthNeeded', 'numberOfCutLengthsPerBolt'] },
+    totalLengthNeeded: { inputs: ['lengthOfCuts', 'numberOfCutsForProject'], outputs: [] }, // totalLengthNeeded is no longer a direct input to Yards or SR Calc, but it's still useful to keep as an intermediary calculation.
+    totalLengthPurchased: { inputs: ['lengthOfBoltOption', 'lengthOfBoltCustom', 'numberOfBolts'], outputs: ['numberOfYardsToOrder', 'equivalentProjectSRCalculation'] }, // Now the primary input
+    numberOfCutLengthsPerBolt: { inputs: ['lengthOfBoltOption', 'lengthOfBoltCustom', 'lengthOfCuts'], outputs: ['numberOfBolts'] },
+    numberOfBolts: { inputs: ['numberOfCutsForProject', 'numberOfCutLengthsPerBolt'], outputs: ['materialCost', 'totalLengthPurchased'] },
+
+    // Updated inputs
+    numberOfYardsToOrder: { inputs: ['totalLengthPurchased'], outputs: [] },
+    // Updated inputs
+    equivalentProjectSRCalculation: { inputs: ['totalLengthPurchased', 'lengthOfBoltOption', 'lengthOfBoltCustom', 'srMultiplierOption', 'srMultiplierCustom'], outputs: ['baseLabor'] },
+
+    materialCost: { inputs: ['unitPriceOfWallpaper', 'numberOfBolts'], outputs: ['baseLabor'] },
+    baseLabor: { inputs: ['equivalentProjectSRCalculation', 'pricedBy', 'materialCost'], outputs: ['grandTotalLabor'] },
+    heightSurcharge: { inputs: ['heightOfWall' /* indirectly roomCeilingHeight */], outputs: ['grandTotalLabor'] },
+    grandTotalLabor: { inputs: ['baseLabor', 'heightSurcharge'], outputs: [] },
+};
+
+
 const WallInputCard = ({ wall, onChange, onDelete, onToggleCollapse }: { wall: Wall; onChange: (wallId: string, updates: Partial<Wall>) => void; onDelete: (wallId: string) => void; onToggleCollapse: (wallId: string) => void; }) => {
     const { id, name, isCollapsed } = wall;
-    const handleInputChange = useCallback((field: keyof Wall, value: any) => { const numericFields: (keyof Wall)[] = ['width', 'heightOfWall', 'paperWidthCustom', 'lengthOfBoltCustom', 'patternVerticalRepeat', 'unitPriceOfWallpaper', 'perimeterWallWidth']; let processedValue = value; if (numericFields.includes(field)) { processedValue = value === '' ? undefined : Number(value); } onChange(id, { [field]: processedValue }); }, [id, onChange]);
+    const [highlightedInputs, setHighlightedInputs] = useState<string[]>([]);
+    const [highlightedOutputs, setHighlightedOutputs] = useState<string[]>([]);
 
-    const renderReadOnlyInput = (label: string, fieldId: string, value?: number | string, unitOrClass?: string, tooltipText?: string) => {
+    const handleNumberInputWheel = (event: React.WheelEvent<HTMLInputElement>) => {
+        if (document.activeElement === event.currentTarget) {
+            event.preventDefault();
+        }
+    };
+
+    const handleMouseEnterField = (fieldKey: keyof Wall | string) => {
+        const related = fieldDependencies[fieldKey as string];
+        if (related) {
+            setHighlightedInputs([...related.inputs]);
+            setHighlightedOutputs([...related.outputs]);
+        } else {
+            setHighlightedInputs([fieldKey as string]);
+            setHighlightedOutputs([]);
+        }
+    };
+
+    const handleMouseLeaveField = () => {
+        setHighlightedInputs([]);
+        setHighlightedOutputs([]);
+    };
+
+    const handleInputChange = useCallback((field: keyof Wall, value: any) => {
+        const numericFields: (keyof Wall)[] = ['width', 'heightOfWall', 'paperWidthCustom', 'lengthOfBoltCustom', 'patternVerticalRepeat', 'unitPriceOfWallpaper', 'perimeterWallWidth', 'srMultiplierCustom'];
+        let processedValue = value;
+        if (numericFields.includes(field)) {
+            processedValue = value === '' ? undefined : Number(value);
+        }
+        onChange(id, { [field]: processedValue });
+    }, [id, onChange]);
+
+    const getFieldHighlightClass = (fieldKey: keyof Wall | string) => {
+        if (highlightedInputs.includes(fieldKey as string)) {
+            return 'field-highlight-input'; // Field is an input for the highlighted relationship
+        } else if (highlightedOutputs.includes(fieldKey as string)) {
+            return 'field-highlight-output'; // Field is an output for the highlighted relationship
+        }
+        return '';
+    };
+
+    const getLabelHighlightClass = (fieldKey: keyof Wall | string) => {
+        if (highlightedInputs.includes(fieldKey as string) && highlightedOutputs.includes(fieldKey as string)) {
+            return 'label-highlight-input-output';
+        } else if (highlightedInputs.includes(fieldKey as string)) {
+            return 'label-highlight-input';
+        } else if (highlightedOutputs.includes(fieldKey as string)) {
+            return 'label-highlight-output';
+        }
+        return '';
+    };
+
+    const renderReadOnlyInput = (label: string, fieldKey: keyof Wall, value?: number | string, unitOrClass?: string, baseTooltipText?: string) => {
         const isBoldGreen = unitOrClass === 'font-bold-lg-green';
         const unit = isBoldGreen ? undefined : unitOrClass;
         const extraClass = isBoldGreen ? unitOrClass : '';
+
+        let dynamicTooltip = baseTooltipText || label;
+        if (baseTooltipText) {
+            if (fieldKey === 'numberOfCutsForProject') {
+                dynamicTooltip = `⌈Wall Width (${wall.width || 'N/A'}) / Paper Width (${(wall.paperWidthOption === 'custom' ? wall.paperWidthCustom : wall.paperWidthOption) || 'N/A'})⌉`;
+            } else if (fieldKey === 'totalLengthNeeded') {
+                dynamicTooltip = `Length of Cuts (${wall.lengthOfCuts?.toFixed(2) || 'N/A'}) × # Cuts (${wall.numberOfCutsForProject || 'N/A'})`;
+            } else if (fieldKey === 'totalLengthPurchased') {
+                dynamicTooltip = `# Bolts (${wall.numberOfBolts || 'N/A'}) × Bolt Length (${(wall.lengthOfBoltOption === 'custom' ? wall.lengthOfBoltCustom : wall.lengthOfBoltOption) || 'N/A'})`;
+            } else if (fieldKey === 'equivalentProjectSRCalculation') {
+                dynamicTooltip = `⌈(Calc. Total Length (${wall.totalLengthNeeded?.toFixed(2) || 'N/A'}) / Bolt Length (${(wall.lengthOfBoltOption === 'custom' ? wall.lengthOfBoltCustom : wall.lengthOfBoltOption) || 'N/A'})) × S/R Multiplier (${(wall.srMultiplierOption === 'custom' ? wall.srMultiplierCustom : wall.srMultiplierOption) || 'N/A'})⌉`;
+            }
+        }
+
         return (
-            <div>
+            <div
+                onMouseEnter={() => handleMouseEnterField(fieldKey)}
+                onMouseLeave={handleMouseLeaveField}
+                className={getFieldHighlightClass(fieldKey)}
+            >
                 <div className="info-icon-container">
-                    <Label htmlFor={fieldId}>{label}</Label>
-                    {tooltipText && (
+                    <Label htmlFor={`${id}-${fieldKey}`} className={getLabelHighlightClass(fieldKey)}>{label}</Label>
+                    {baseTooltipText && (
                         <span className="info-icon" tabIndex={0} role="button" aria-label={`Info for ${label}`}>
                             <InfoIcon />
-                            <span className="tooltip-text">{tooltipText}</span>
+                            <span className="tooltip-text">{dynamicTooltip}</span>
                         </span>
                     )}
                 </div>
-                <Input id={fieldId} type="text" value={value !== undefined && value !== null ? (unit ? `${value} ${unit}` : String(value)) : ''} className={`input-readonly ${extraClass}`} readOnly tabIndex={-1} />
+                <Input id={`${id}-${fieldKey}`} type="text" value={value !== undefined && value !== null ? (unit ? `${value} ${unit}` : String(value)) : ''} className={`input-readonly ${extraClass}`} readOnly tabIndex={-1} />
+            </div>
+        );
+    };
+
+    const renderInput = (label: string, fieldKey: keyof Wall, type: string = "number", placeholder?: string, options?: { label: string, value: string | number }[]) => {
+        return (
+            <div
+                onMouseEnter={() => handleMouseEnterField(fieldKey)}
+                onMouseLeave={handleMouseLeaveField}
+                className={getFieldHighlightClass(fieldKey)}
+            >
+                <Label htmlFor={`${id}-${fieldKey}`} className={getLabelHighlightClass(fieldKey)}>{label}</Label>
+                {options ? (
+                    <Select id={`${id}-${fieldKey}`} onValueChange={(val) => handleInputChange(fieldKey, val === 'custom' ? 'custom' : Number(val))} value={(wall as any)[fieldKey]}>
+                        <SelectTrigger><SelectValue placeholder={`Select ${label.toLowerCase()}`} /></SelectTrigger>
+                        <SelectContent>
+                            {options.map(opt => <SelectItem key={String(opt.value)} value={String(opt.value)}>{opt.label}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                ) : (
+                    <Input
+                        id={`${id}-${fieldKey}`}
+                        type={type}
+                        value={(wall as any)[fieldKey] || ''}
+                        onChange={(e) => handleInputChange(fieldKey, e.target.value)}
+                        onWheel={type === "number" ? handleNumberInputWheel : undefined}
+                        className="mt-1"
+                        placeholder={placeholder}
+                    />
+                )}
             </div>
         );
     };
@@ -1501,34 +1731,59 @@ const WallInputCard = ({ wall, onChange, onDelete, onToggleCollapse }: { wall: W
         <Card className="card-mb-6">
             <div className="card-header-wall" onClick={() => onToggleCollapse(id)}>
                 <div className="flex items-center flex-grow-0 min-w-0">
-                    <Button variant="ghost" size="icon" className="mr-2" baseClass="btn" style={{height: '2rem', width: '2rem'}}> {isCollapsed ? <ChevronDown /> : <ChevronUp />} </Button>
-                    <Input id={`wallName-${id}`} value={wall.name || ''} onChange={(e) => { e.stopPropagation(); handleInputChange('name', e.target.value);}} onClick={(e) => e.stopPropagation()} className="input-wall-name" placeholder="Wall Name" />
+                    <Button variant="ghost" size="icon" className="mr-2" baseClass="btn" style={{ height: '2rem', width: '2rem' }}> {isCollapsed ? <ChevronDown /> : <ChevronUp />} </Button>
+                    <Input id={`wallName-${id}`} value={wall.name || ''} onChange={(e) => { e.stopPropagation(); handleInputChange('name', e.target.value); }} onClick={(e) => e.stopPropagation()} className="input-wall-name" placeholder="Wall Name" />
                 </div>
-                <div className="flex items-center flex-shrink-0"> {isCollapsed && wall.grandTotalLabor !== undefined && ( <span style={{fontSize: '0.875rem', fontWeight: 600, marginRight: '0.75rem', color: wall.grandTotalLabor < 0 ? '#ef4444' : '#16a34a'}}> Labor: ${wall.grandTotalLabor.toFixed(2)} </span> )} <Button variant="ghost" size="icon" onClick={(e) => {e.stopPropagation(); onDelete(id);}} baseClass="btn" style={{height: '2rem', width: '2rem', borderRadius: '9999px', padding: '0.25rem'}} aria-label={`Delete ${name}`}> <Trash2 style={{height: '1rem', width: '1rem'}}/> </Button> </div>
+                <div className="flex items-center flex-shrink-0"> {isCollapsed && wall.grandTotalLabor !== undefined && ( <span style={{ fontSize: '0.875rem', fontWeight: 600, marginRight: '0.75rem', color: wall.grandTotalLabor < 0 ? '#ef4444' : '#16a34a' }}> Wall Labor: ${wall.grandTotalLabor.toFixed(2)} </span> )} <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(id); }} baseClass="btn" style={{ height: '2rem', width: '2rem', borderRadius: '9999px', padding: '0.25rem' }} aria-label={`Delete ${name}`}> <Trash2 style={{ height: '1rem', width: '1rem' }} /> </Button> </div>
             </div>
             {!isCollapsed && ( <CardContent className="card-content-grid-wall">
-                <div> <Label htmlFor={`heightOfWall-${id}`}>Net Height of Wall to Paper (in)</Label> <Input id={`heightOfWall-${id}`} type="number" value={wall.heightOfWall || ''} onChange={(e) => handleInputChange('heightOfWall', e.target.value)} className="mt-1" placeholder="e.g., 96" /> </div>
-                <div> <Label htmlFor={`width-${id}`}>Width of Wall to Paper (in)</Label> <Input id={`width-${id}`} type="number" value={wall.width || ''} onChange={(e) => handleInputChange('width', e.target.value)} className="mt-1" placeholder="e.g., 144" /> </div>
-                <div> <Label htmlFor={`paperWidthOption-${id}`}>Paper Width</Label> <Select id={`paperWidthOption-${id}`} onValueChange={(value) => { handleInputChange('paperWidthOption', value === 'custom' ? 'custom' : Number(value)); if (value !== 'custom') handleInputChange('paperWidthCustom', undefined); }} value={wall.paperWidthOption}> <SelectTrigger><SelectValue placeholder="Select width" /></SelectTrigger> <SelectContent> {PAPER_WIDTH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> {wall.paperWidthOption === 'custom' && (<div className="mt-2"><Label htmlFor={`paperWidthCustom-${id}`} className="label-xs">Custom Width (in)</Label><Input id={`paperWidthCustom-${id}`} type="number" value={wall.paperWidthCustom || ''} onChange={(e) => handleInputChange('paperWidthCustom', e.target.value)} className="mt-1" /></div>)} </div>
-                <div> <Label htmlFor={`lengthOfBoltOption-${id}`}>Length of Packaged Bolt</Label> <Select id={`lengthOfBoltOption-${id}`} onValueChange={(value) => { handleInputChange('lengthOfBoltOption', value === 'custom' ? 'custom' : Number(value)); if (value !== 'custom') handleInputChange('lengthOfBoltCustom', undefined);}} value={wall.lengthOfBoltOption}> <SelectTrigger><SelectValue placeholder="Select length" /></SelectTrigger> <SelectContent> {BOLT_LENGTH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> {wall.lengthOfBoltOption === 'custom' && (<div className="mt-2"><Label htmlFor={`lengthOfBoltCustom-${id}`} className="label-xs">Custom Length (in)</Label><Input id={`lengthOfBoltCustom-${id}`} type="number" value={wall.lengthOfBoltCustom || ''} onChange={(e) => handleInputChange('lengthOfBoltCustom', e.target.value)} className="mt-1" /></div>)} </div>
-                <div> <Label htmlFor={`patternVerticalRepeat-${id}`}>Pattern Vertical Repeat (in)</Label> <Input id={`patternVerticalRepeat-${id}`} type="number" value={wall.patternVerticalRepeat || ''} onChange={(e) => handleInputChange('patternVerticalRepeat', e.target.value)} className="mt-1" placeholder="0 if no repeat" /> </div>
-                <div> <Label htmlFor={`patternMatch-${id}`}>Pattern Match</Label> <Select id={`patternMatch-${id}`} onValueChange={(value) => handleInputChange('patternMatch', Number(value))} value={wall.patternMatch}> <SelectTrigger><SelectValue placeholder="Select match" /></SelectTrigger> <SelectContent> {PATTERN_MATCH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> </div>
-                <div> <Label htmlFor={`pricedBy-${id}`}>Installation Priced By</Label> <Select id={`pricedBy-${id}`} onValueChange={(value) => handleInputChange('pricedBy', value === 'materialPercent' ? 'materialPercent' : Number(value))} value={wall.pricedBy}> <SelectTrigger><SelectValue placeholder="Select pricing" /></SelectTrigger> <SelectContent> {PRICING_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select> </div>
-                <div> <Label htmlFor={`unitPriceOfWallpaper-${id}`}>Unit Price of Wallpaper ($ per Bolt)</Label> <Input id={`unitPriceOfWallpaper-${id}`} type="number" value={wall.unitPriceOfWallpaper || ''} onChange={(e) => handleInputChange('unitPriceOfWallpaper', e.target.value)} className="mt-1" placeholder="e.g., 75" /> </div>
-                <div> <Label htmlFor={`perimeterWallWidth-${id}`}>Perimeter (Optional, for notes)</Label> <Input id={`perimeterWallWidth-${id}`} type="number" value={wall.perimeterWallWidth || ''} onChange={(e) => handleInputChange('perimeterWallWidth', e.target.value)} className="mt-1" placeholder="e.g., 400" /> </div>
-                {renderReadOnlyInput('Total Area to Paper (in²)', `totalArea-${id}`, wall.totalArea, undefined, "Width of Wall × Net Height of Wall")}
-                {renderReadOnlyInput('Vert. Height of Matched Repeat (in)', `verticalHeightOfMatchedRepeat-${id}`, wall.verticalHeightOfMatchedRepeat, undefined, "Pattern Vert. Repeat × Pattern Match Multiplier")}
-                {renderReadOnlyInput('# of Cuts for Project', `numberOfCutsForProject-${id}`, wall.numberOfCutsForProject, undefined, "⌈Width of Wall / Paper Width⌉")}
-                {renderReadOnlyInput('# of Repeats per Cut', `numberOfRepeatsPerCut-${id}`, wall.numberOfRepeatsPerCut, undefined, "⌈(Net Height + 4″ Trim) / Vert. Height of Matched Repeat⌉ (or 1 if no repeat)")}
-                {renderReadOnlyInput('Length of Cuts (incl. trim) (in)', `lengthOfCuts-${id}`, wall.lengthOfCuts, undefined, "# Repeats per Cut × Vert. Height of Matched Repeat (or Net Height + 4″ Trim if no repeat)")}
-                {renderReadOnlyInput('Total Length Needed (in)', `totalLengthNeeded-${id}`, wall.totalLengthNeeded, undefined, "Length of Cuts × # of Cuts")}
-                {renderReadOnlyInput('# of Cut Lengths per Bolt', `numberOfCutLengthsPerBolt-${id}`, wall.numberOfCutLengthsPerBolt, undefined, "⌊Length of Bolt / Length of Cuts⌋")}
-                {renderReadOnlyInput('# of Bolts to Order', `numberOfBolts-${id}`, wall.numberOfBolts, undefined, "⌈# of Cuts / # of Cut Lengths per Bolt⌉")}
-                {renderReadOnlyInput('# of Yards to Order', `numberOfYardsToOrder-${id}`, wall.numberOfYardsToOrder, undefined, "⌈Total Length Needed / 36⌉")}
-                {renderReadOnlyInput('Equiv. Project S/R Calc.', `equivalentProjectSRCalculation-${id}`, wall.equivalentProjectSRCalculation, undefined, "⌈(Total Length Needed / Length of Bolt) × 2⌉")}
-                {renderReadOnlyInput('Base Labor ($)', `baseLabor-${id}`, wall.baseLabor?.toFixed(2), undefined, "Equiv. S/R Calc. × Price/SR (or 38% of Material Cost)")}
-                {renderReadOnlyInput('Height Surcharge ($)', `heightSurcharge-${id}`, wall.heightSurcharge?.toFixed(2), undefined, "((Room Ceiling Ht. - 96″) / 12) × $100 (if > 8ft)")}
-                {renderReadOnlyInput('Wall Labor Total ($)', `grandTotalLabor-${id}`, wall.grandTotalLabor?.toFixed(2), 'font-bold-lg-green', "Base Labor + Height Surcharge")}
+                {renderInput("Net Height of Wall to Paper (in)", "heightOfWall", "number", "e.g., 96")}
+                {renderInput("Width of Wall to Paper (in)", "width", "number", "e.g., 144")}
+                <div>
+                    <div onMouseEnter={() => handleMouseEnterField('paperWidthOption')} onMouseLeave={handleMouseLeaveField} className={getFieldHighlightClass('paperWidthOption')}>
+                        <Label htmlFor={`${id}-paperWidthOption`} className={getLabelHighlightClass('paperWidthOption')}>Paper Width</Label>
+                        <Select id={`${id}-paperWidthOption`} onValueChange={(value) => { handleInputChange('paperWidthOption', value === 'custom' ? 'custom' : Number(value)); if (value !== 'custom') handleInputChange('paperWidthCustom', undefined); }} value={wall.paperWidthOption}> <SelectTrigger><SelectValue placeholder="Select width" /></SelectTrigger> <SelectContent> {PAPER_WIDTH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select>
+                    </div>
+                    {wall.paperWidthOption === 'custom' && (<div className={`mt-2 ${getFieldHighlightClass('paperWidthCustom')}`} onMouseEnter={() => handleMouseEnterField('paperWidthCustom')} onMouseLeave={handleMouseLeaveField}><Label htmlFor={`${id}-paperWidthCustom`} className={`label-xs ${getLabelHighlightClass('paperWidthCustom')}`}>Custom Width (in)</Label><Input id={`${id}-paperWidthCustom`} type="number" value={wall.paperWidthCustom || ''} onChange={(e) => handleInputChange('paperWidthCustom', e.target.value)} onWheel={handleNumberInputWheel} className="mt-1" /></div>)}
+                </div>
+                <div>
+                    <div onMouseEnter={() => handleMouseEnterField('lengthOfBoltOption')} onMouseLeave={handleMouseLeaveField} className={getFieldHighlightClass('lengthOfBoltOption')}>
+                        <Label htmlFor={`${id}-lengthOfBoltOption`} className={getLabelHighlightClass('lengthOfBoltOption')}>Length of Packaged Bolt</Label>
+                        <Select id={`${id}-lengthOfBoltOption`} onValueChange={(value) => { handleInputChange('lengthOfBoltOption', value === 'custom' ? 'custom' : Number(value)); if (value !== 'custom') handleInputChange('lengthOfBoltCustom', undefined); }} value={wall.lengthOfBoltOption}> <SelectTrigger><SelectValue placeholder="Select length" /></SelectTrigger> <SelectContent> {BOLT_LENGTH_OPTIONS.map((option) => <SelectItem key={option.value} value={String(option.value)}>{option.label}</SelectItem>)} </SelectContent> </Select>
+                    </div>
+                    {wall.lengthOfBoltOption === 'custom' && (<div className={`mt-2 ${getFieldHighlightClass('lengthOfBoltCustom')}`} onMouseEnter={() => handleMouseEnterField('lengthOfBoltCustom')} onMouseLeave={handleMouseLeaveField}><Label htmlFor={`${id}-lengthOfBoltCustom`} className={`label-xs ${getLabelHighlightClass('lengthOfBoltCustom')}`}>Custom Length (in)</Label><Input id={`${id}-lengthOfBoltCustom`} type="number" value={wall.lengthOfBoltCustom || ''} onChange={(e) => handleInputChange('lengthOfBoltCustom', e.target.value)} onWheel={handleNumberInputWheel} className="mt-1" /></div>)}
+                </div>
+                {renderInput("Pattern Vertical Repeat (in)", "patternVerticalRepeat", "number", "0 if no repeat")}
+                {renderInput("Pattern Match", "patternMatch", "select", undefined, PATTERN_MATCH_OPTIONS)}
+                {renderInput("Installation Priced By", "pricedBy", "select", undefined, PRICING_OPTIONS)}
+                {renderInput("Unit Price of Wallpaper ($ per Bolt)", "unitPriceOfWallpaper", "number", "e.g., 75")}
+                <div>
+                    <div onMouseEnter={() => handleMouseEnterField('srMultiplierOption')} onMouseLeave={handleMouseLeaveField} className={getFieldHighlightClass('srMultiplierOption')}>
+                        <Label htmlFor={`${id}-srMultiplierOption`} className={getLabelHighlightClass('srMultiplierOption')}>S/R per Bolt Multiplier</Label>
+                        <Select id={`${id}-srMultiplierOption`} onValueChange={(value) => { handleInputChange('srMultiplierOption', value === 'custom' ? 'custom' : Number(value)); if (value !== 'custom') handleInputChange('srMultiplierCustom', undefined); }} value={wall.srMultiplierOption}>
+                            <SelectTrigger><SelectValue placeholder="Select S/R Multiplier" /></SelectTrigger>
+                            <SelectContent>
+                                {SR_MULTIPLIER_OPTIONS.map((option) => <SelectItem key={String(option.value)} value={String(option.value)}>{option.label}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    {wall.srMultiplierOption === 'custom' && (<div className={`mt-2 ${getFieldHighlightClass('srMultiplierCustom')}`} onMouseEnter={() => handleMouseEnterField('srMultiplierCustom')} onMouseLeave={handleMouseLeaveField}><Label htmlFor={`${id}-srMultiplierCustom`} className={`label-xs ${getLabelHighlightClass('srMultiplierCustom')}`}>Custom S/R Multiplier</Label><Input id={`${id}-srMultiplierCustom`} type="number" value={wall.srMultiplierCustom || ''} onChange={(e) => handleInputChange('srMultiplierCustom', e.target.value)} onWheel={handleNumberInputWheel} className="mt-1" /></div>)}
+                </div>
+                {renderInput("Perimeter (Optional, for notes)", "perimeterWallWidth", "number", "e.g., 400")}
+
+                {renderReadOnlyInput('Vert. Height of Matched Repeat (in)', "verticalHeightOfMatchedRepeat", wall.verticalHeightOfMatchedRepeat, undefined, `Pattern Vert. Repeat (${wall.patternVerticalRepeat || 'N/A'}) × Pattern Match (${wall.patternMatch || 'N/A'})`)}
+                {renderReadOnlyInput('# of Cuts for Project', "numberOfCutsForProject", wall.numberOfCutsForProject, undefined, `⌈Wall Width (${wall.width || 'N/A'}) / Paper Width (${(wall.paperWidthOption === 'custom' ? wall.paperWidthCustom : wall.paperWidthOption) || 'N/A'})⌉`)}
+                {renderReadOnlyInput('# of Repeats per Cut', "numberOfRepeatsPerCut", wall.numberOfRepeatsPerCut, undefined, `⌈(Net Height (${wall.heightOfWall || 'N/A'}) + 4″) / Vert. Height of Matched Repeat (${wall.verticalHeightOfMatchedRepeat?.toFixed(2) || 'N/A'})⌉`)}
+                {renderReadOnlyInput('Length of Cuts (incl. trim) (in)', "lengthOfCuts", wall.lengthOfCuts?.toFixed(2), undefined, `# Repeats per Cut (${wall.numberOfRepeatsPerCut || 'N/A'}) × Vert. Height of Matched Repeat (${wall.verticalHeightOfMatchedRepeat?.toFixed(2) || 'N/A'})`)}
+                {renderReadOnlyInput('Calculated Total Length Needed (in)', "totalLengthNeeded", wall.totalLengthNeeded?.toFixed(2), undefined, `Length of Cuts (${wall.lengthOfCuts?.toFixed(2) || 'N/A'}) × # of Cuts (${wall.numberOfCutsForProject || 'N/A'})`)}
+                {renderReadOnlyInput('# of Cut Lengths per Bolt', "numberOfCutLengthsPerBolt", wall.numberOfCutLengthsPerBolt, undefined, `⌊Bolt Length (${(wall.lengthOfBoltOption === 'custom' ? wall.lengthOfBoltCustom : wall.lengthOfBoltOption) || 'N/A'}) / Length of Cuts (${wall.lengthOfCuts?.toFixed(2) || 'N/A'})⌋`)}
+                {renderReadOnlyInput('# of Bolts to Order', "numberOfBolts", wall.numberOfBolts, undefined, `⌈# of Cuts (${wall.numberOfCutsForProject || 'N/A'}) / # Cut Lengths per Bolt (${wall.numberOfCutLengthsPerBolt || 'N/A'})⌉`)}
+                {renderReadOnlyInput('Total Material from Bolts (in)', "totalLengthPurchased", wall.totalLengthPurchased?.toFixed(2), undefined, `# Bolts (${wall.numberOfBolts || 'N/A'}) × Bolt Length (${(wall.lengthOfBoltOption === 'custom' ? wall.lengthOfBoltCustom : wall.lengthOfBoltOption) || 'N/A'})`)}
+                {renderReadOnlyInput('# of Yards to Order', "numberOfYardsToOrder", wall.numberOfYardsToOrder, undefined, `⌈Calculated Total Length Needed (${wall.totalLengthNeeded?.toFixed(2) || 'N/A'}) / 36⌉`)}
+                {renderReadOnlyInput('Equiv. Project S/R Calc.', "equivalentProjectSRCalculation", wall.equivalentProjectSRCalculation, undefined, `⌈(Calc. Total Length (${wall.totalLengthNeeded?.toFixed(2) || 'N/A'}) / Bolt Length (${(wall.lengthOfBoltOption === 'custom' ? wall.lengthOfBoltCustom : wall.lengthOfBoltOption) || 'N/A'})) × S/R Multiplier (${(wall.srMultiplierOption === 'custom' ? wall.srMultiplierCustom : wall.srMultiplierOption) || 'N/A'})⌉`)}
+                {renderReadOnlyInput('Base Labor ($)', "baseLabor", wall.baseLabor?.toFixed(2), undefined, `Equiv. S/R Calc. (${wall.equivalentProjectSRCalculation || 'N/A'}) × Price/SR (or 38% of Material Cost)`)}
+                {renderReadOnlyInput('Height Surcharge ($)', "heightSurcharge", wall.heightSurcharge?.toFixed(2), undefined, `((Room Ceiling Ht. - 96″) / 12) × $100`)}
+                {renderReadOnlyInput('Wall Labor Total ($)', "grandTotalLabor", wall.grandTotalLabor?.toFixed(2), 'font-bold-lg-green', "Base Labor + Height Surcharge")}
             </CardContent> )}
         </Card>
     );
@@ -1587,6 +1842,12 @@ const App = () => {
     const handleDeleteProject = (projectId: string) => { if (projects.length === 1) { setError("Cannot delete the last project."); return; } const projectName = projects.find(p=>p.id === projectId)?.name || "Project"; setProjects(prev => prev.filter(p => p.id !== projectId)); if (currentProjectId === projectId) { const remainingProjects = projects.filter(p => p.id !== projectId); const firstProject = remainingProjects.length > 0 ? remainingProjects[0] : null; setCurrentProjectId(firstProject?.id || null); setCurrentRoomId(firstProject?.rooms[0]?.id || null); } setInfoMessage(`Project "${projectName}" deleted.`); markUnsaved(); if (projects.filter(p => p.id !== projectId).length === 0) { setIsProjectMenuOpen(false); setCurrentProjectId(null); setCurrentRoomId(null);} };
     const handleProjectNameChange = (projectId: string, newName: string) => { setProjects(prev => prev.map(p => p.id === projectId ? { ...p, name: newName } : p)); markUnsaved(); };
     const handleSelectProject = (projectId: string) => { setCurrentProjectId(projectId); setCurrentRoomId(projects.find(p => p.id === projectId)?.rooms[0]?.id || null); };
+    const handleNumberInputWheel = (event: React.WheelEvent<HTMLInputElement>) => {
+        // Prevent the default scroll behavior only if the input is focused
+        if (document.activeElement === event.currentTarget) {
+            event.preventDefault();
+        }
+    };
 
     const handleAddRoom = () => {
         if (!currentProjectId || !currentProject) return;
@@ -1735,7 +1996,7 @@ const App = () => {
                 {infoMessage && (<Alert variant="success"><CheckCircle /><AlertTitle>Success</AlertTitle><AlertDescription>{infoMessage}</AlertDescription></Alert>)}
                 <div className="header-content">
                     <div className="header-left"> <Button variant="ghost" size="icon" onClick={() => setIsProjectMenuOpen(true)} className="btn-open-menu" aria-label="Open project menu"> <MenuIcon /> </Button> <h1 className="app-title">Wallpaper Calculator</h1> </div>
-                    <div className="header-right"> <span className={`save-status ${saveStatus !== 'idle' || hasUnsavedChanges ? 'save-status-visible' : 'save-status-hidden'}`}> {hasUnsavedChanges && saveStatus === 'idle' && <span className="status-unsaved">Unsaved</span>} {saveStatus === 'saving' && <span className="status-saving">Saving...</span>} {saveStatus === 'saved' && <span className="status-saved">Saved</span>} {saveStatus === 'error' && <span className="status-error">Save failed</span>} </span> <Button onClick={() => handleLoad()} className="btn-loadall" size="xs-sm">Load All</Button> <Button onClick={() => handleSave(false)} className="btn-manualsave" size="xs-sm"> <Save /> Manual Save </Button> </div>
+                    <div className="header-right"> <span className={`save-status ${saveStatus !== 'idle' || hasUnsavedChanges ? 'save-status-visible' : 'save-status-hidden'}`}> {hasUnsavedChanges && saveStatus === 'idle' && <span className="status-unsaved">Unsaved</span>} {saveStatus === 'saving' && <span className="status-saving">Saving...</span>} {saveStatus === 'saved' && <span className="status-saved">Saved</span>} {saveStatus === 'error' && <span className="status-error">Save failed</span>} </span> <Button onClick={() => handleSave(false)} className="btn-manualsave" size="xs-sm"> <Save /> Manual Save </Button> </div>
                 </div>
             </div>
 
@@ -1779,9 +2040,10 @@ const App = () => {
                                                     {label: "Crown Height (in)", field: "verticalCrownHeight", type: "number"},
                                                     {label: "Chair Rail Ht (in)", field: "chairRailHeight", type: "number"},
                                                 ].map(item => (
-                                                    <div key={item.field}>
+                                                    <div
+                                                        key={item.field}>
                                                         <Label htmlFor={`roomDetail-${room.id}-${item.field}`}>{item.label}</Label>
-                                                        <Input id={`roomDetail-${room.id}-${item.field}`} type={item.type} value={(room.details as any)[item.field] || ''} onChange={(e) => item.type === 'number' ? handleNumericRoomDetailsChange(room.id, item.field as keyof RoomSpecificInfo, e.target.value) : handleRoomDetailsChange(room.id, item.field as keyof RoomSpecificInfo, e.target.value)} className="mt-1" />
+                                                        <Input id={`roomDetail-${room.id}-${item.field}`} type={item.type} value={(room.details as any)[item.field] || ''} onChange={(e) => item.type === 'number' ? handleNumericRoomDetailsChange(room.id, item.field as keyof RoomSpecificInfo, e.target.value) : handleRoomDetailsChange(room.id, item.field as keyof RoomSpecificInfo, e.target.value)} className="mt-1" onWheel={item.type === "number" ? handleNumberInputWheel : undefined} />
                                                     </div>
                                                 ))}
                                                 <div className="md:col-span-2 lg:col-span-3">
