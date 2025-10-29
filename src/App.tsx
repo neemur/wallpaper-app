@@ -58,8 +58,8 @@ const App = () => {
                         details: room.details || createNewRoomSpecificInfo(),
                         isCollapsed: room.isCollapsed === undefined ? false : room.isCollapsed,
                         walls: room.walls.map((wall: Wall) => ({
-                            // Updated per PDF point #3
-                            ...calculateWallValues(wall, room.details?.ceilingHeight, room.details?.isCeiling),
+                            // Updated to pass full details object
+                            ...calculateWallValues(wall, room.details),
                             isCollapsed: wall.isCollapsed === undefined ? false : wall.isCollapsed
                         }))
                     }))
@@ -108,6 +108,7 @@ const App = () => {
     const handleRoomNameChange = (roomId: string, newName: string) => { if (!currentProjectId || !currentProject) return; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === roomId ? { ...r, name: newName } : r) } : p)); markUnsaved(); };
     const toggleRoomCollapse = (roomId: string) => { if (!currentProjectId || !currentProject) return; setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === roomId ? { ...r, isCollapsed: !r.isCollapsed } : r) } : p)); markUnsaved(); };
 
+    // Updated per request point #2
     const handleRoomDetailsChange = (roomId: string, field: keyof RoomSpecificInfo, value: any) => {
         if (!currentProjectId) return;
         setProjects(prev => prev.map(p => {
@@ -117,22 +118,20 @@ const App = () => {
                     rooms: p.rooms.map(r => {
                         if (r.id === roomId) {
                             const updatedDetails = { ...r.details, [field]: value };
-                            // Updated per PDF point #3
-                            if (field === 'ceilingHeight') {
+
+                            // Check if the changed field affects wall height or ceiling surcharge
+                            const heightFields: (keyof RoomSpecificInfo)[] = ['ceilingHeight', 'baseboardHeight', 'verticalCrownHeight', 'chairRailHeight', 'isCeiling'];
+
+                            if (heightFields.includes(field)) {
                                 return {
                                     ...r,
                                     details: updatedDetails,
-                                    walls: r.walls.map(wall => calculateWallValues(wall, value as number | undefined, r.details.isCeiling))
+                                    // Recalculate all walls with the *new* details object
+                                    walls: r.walls.map(wall => calculateWallValues(wall, updatedDetails))
                                 };
                             }
-                            // Added per PDF point #3
-                            if (field === 'isCeiling') {
-                                return {
-                                    ...r,
-                                    details: updatedDetails,
-                                    walls: r.walls.map(wall => calculateWallValues(wall, r.details.ceilingHeight, value as boolean | undefined))
-                                };
-                            }
+
+                            // For other fields, just update details
                             return { ...r, details: updatedDetails };
                         }
                         return r;
@@ -160,20 +159,18 @@ const App = () => {
         let targetRoomNameForMessage = "Unknown Room";
         let wallCountInTargetRoomForNaming = 0;
         const projectInstance = projects.find(p => p.id === currentProjectId);
-        let roomCeilingHeight: number | undefined = undefined;
-        let isRoomCeiling: boolean | undefined = undefined; // Added per PDF point #3
+        let roomDetails: RoomSpecificInfo | undefined = undefined; // Updated
         if (projectInstance) {
             const roomInstance = projectInstance.rooms.find(r => r.id === targetRoomId);
             if (roomInstance) {
                 targetRoomNameForMessage = roomInstance.name;
                 wallCountInTargetRoomForNaming = roomInstance.walls.length;
-                roomCeilingHeight = roomInstance.details.ceilingHeight;
-                isRoomCeiling = roomInstance.details.isCeiling; // Added per PDF point #3
+                roomDetails = roomInstance.details; // Get full details object
             } else { console.error("Target room not found"); setError("Could not add wall: target room not found."); return; }
         } else { console.error("Current project not found"); setError("Could not add wall: current project not found."); return; }
         const newWall = createNewWall(wallCountInTargetRoomForNaming + 1);
-        // Updated per PDF point #3
-        setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === targetRoomId ? { ...r, walls: [...r.walls, calculateWallValues(newWall, roomCeilingHeight, isRoomCeiling)] } : r) } : p));
+        // Updated to pass full details object
+        setProjects(prev => prev.map(p => p.id === currentProjectId ? { ...p, rooms: p.rooms.map(r => r.id === targetRoomId ? { ...r, walls: [...r.walls, calculateWallValues(newWall, roomDetails)] } : r) } : p));
         // Updated per PDF point #2
         setInfoMessage(`Space "${newWall.name}" added to ${targetRoomNameForMessage}.`);
         markUnsaved();
@@ -183,17 +180,17 @@ const App = () => {
             if (room.walls.length === 1) { setError(`Cannot delete the last space in room "${room.name}".`); return room; } const wallName = room.walls.find(w => w.id === wallId)?.name || "Space"; // Updated per PDF point #2
             setInfoMessage(`Space "${wallName}" deleted from ${room.name}.`); return { ...room, walls: room.walls.filter(w => w.id !== wallId) }; }) }; })); markUnsaved(); };
 
+    // Updated per request point #2
     const handleWallChange = useCallback((roomId: string, wallId: string, updates: Partial<Wall>) => {
         setProjects(prevProjects => prevProjects.map(proj => {
             if (proj.id !== currentProjectId) return proj;
             const targetRoom = proj.rooms.find(r => r.id === roomId);
-            const roomCeilingHeight = targetRoom?.details?.ceilingHeight;
-            const isRoomCeiling = targetRoom?.details?.isCeiling; // Added per PDF point #3
+            const roomDetails = targetRoom?.details; // Get the room details
             return {
                 ...proj, rooms: proj.rooms.map(room => {
                     if (room.id !== roomId) return room;
-                    // Updated per PDF point #3
-                    return { ...room, walls: room.walls.map(wall => wall.id === wallId ? calculateWallValues({ ...wall, ...updates }, roomCeilingHeight, isRoomCeiling) : wall) };
+                    // Updated to pass full details object
+                    return { ...room, walls: room.walls.map(wall => wall.id === wallId ? calculateWallValues({ ...wall, ...updates }, roomDetails) : wall) };
                 })
             };
         }));
@@ -233,7 +230,7 @@ const App = () => {
         }
     }, [projects, currentProjectId, currentRoomId]);
 
-    const handleLoad = () => { setError(null); setInfoMessage(null); try { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { const parsedData = JSON.parse(savedData); const loadedProjects: Project[] = parsedData.projects.map((proj: Project) => ({ ...proj, generalProjectInfo: proj.generalProjectInfo || createNewGeneralProjectInfo(), clientInfo: proj.clientInfo || createNewClientInfo(), isClientInfoCollapsed: proj.isClientInfoCollapsed === undefined ? false : proj.isClientInfoCollapsed, isGeneralProjectInfoCollapsed: proj.isGeneralProjectInfoCollapsed === undefined ? false : proj.isGeneralProjectInfoCollapsed, rooms: proj.rooms.map((room: Room) => ({ ...room, details: room.details || createNewRoomSpecificInfo(), isCollapsed: room.isCollapsed === undefined ? false : room.isCollapsed, walls: room.walls.map((wall: Wall) => ({ ...calculateWallValues(wall, room.details?.ceilingHeight, room.details?.isCeiling), isCollapsed: wall.isCollapsed === undefined ? false : wall.isCollapsed })) })) })); setProjects(loadedProjects || [createNewProject(1)]); const cpid = parsedData.currentProjectId || (loadedProjects.length > 0 ? loadedProjects[0].id : null); setCurrentProjectId(cpid); setCurrentRoomId(parsedData.currentRoomId || loadedProjects.find(p => p.id === cpid)?.rooms[0]?.id || null); setInfoMessage('Projects loaded successfully!'); } else { setInfoMessage('No saved data found.'); } } catch (e: any) { setError(`Error loading data: ${e.message}`); } setSaveStatus('idle'); setHasUnsavedChanges(false); };
+    const handleLoad = () => { setError(null); setInfoMessage(null); try { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { const parsedData = JSON.parse(savedData); const loadedProjects: Project[] = parsedData.projects.map((proj: Project) => ({ ...proj, generalProjectInfo: proj.generalProjectInfo || createNewGeneralProjectInfo(), clientInfo: proj.clientInfo || createNewClientInfo(), isClientInfoCollapsed: proj.isClientInfoCollapsed === undefined ? false : proj.isClientInfoCollapsed, isGeneralProjectInfoCollapsed: proj.isGeneralProjectInfoCollapsed === undefined ? false : proj.isGeneralProjectInfoCollapsed, rooms: proj.rooms.map((room: Room) => ({ ...room, details: room.details || createNewRoomSpecificInfo(), isCollapsed: room.isCollapsed === undefined ? false : room.isCollapsed, walls: room.walls.map((wall: Wall) => ({ ...calculateWallValues(wall, room.details), isCollapsed: wall.isCollapsed === undefined ? false : wall.isCollapsed })) })) })); setProjects(loadedProjects || [createNewProject(1)]); const cpid = parsedData.currentProjectId || (loadedProjects.length > 0 ? loadedProjects[0].id : null); setCurrentProjectId(cpid); setCurrentRoomId(parsedData.currentRoomId || loadedProjects.find(p => p.id === cpid)?.rooms[0]?.id || null); setInfoMessage('Projects loaded successfully!'); } else { setInfoMessage('No saved data found.'); } } catch (e: any) { setError(`Error loading data: ${e.message}`); } setSaveStatus('idle'); setHasUnsavedChanges(false); };
     useEffect(() => { if (projects.length > 0) { if (!currentProjectId || !projects.find(p => p.id === currentProjectId)) { const firstProject = projects[0]; setCurrentProjectId(firstProject.id); setCurrentRoomId(firstProject.rooms[0]?.id || null); } else { const proj = projects.find(p => p.id === currentProjectId); if (proj && (!currentRoomId || !proj.rooms.find(r => r.id === currentRoomId))) { setCurrentRoomId(proj.rooms[0]?.id || null); } } } else { setCurrentProjectId(null); setCurrentRoomId(null); } }, [projects, currentProjectId, currentRoomId]);
 
     // Updated per PDF point #12
@@ -250,7 +247,20 @@ const App = () => {
         return laborFromWalls + projectTravelCharges;
     }, [currentProject, projectTravelCharges]);
 
+    // Added per request point #3
+    const totalProjectPaper = useMemo(() => {
+        if (!currentProject) return 0;
+        return currentProject.rooms.reduce((projectTotal, room) =>
+                projectTotal + room.walls.reduce((roomWallTotal, wall) =>
+                        roomWallTotal + (wall.paperGrandTotal || 0)
+                    , 0)
+            , 0);
+    }, [currentProject]);
+
     const getRoomTotalLabor = useCallback((room: Room | undefined) => { if (!room) return 0; return room.walls.reduce((total, wall) => total + (wall.grandTotalLabor || 0), 0); }, []);
+
+    // Added per request point #1
+    const getRoomTotalPaper = useCallback((room: Room | undefined) => { if (!room) return 0; return room.walls.reduce((total, wall) => total + (wall.paperGrandTotal || 0), 0); }, []);
 
     if (projects.length === 0 && !currentProject) {
         return (
@@ -263,7 +273,7 @@ const App = () => {
                         <Plus /> Create New Project
                     </Button>
                 </div>
-                <footer className="footer-text"> Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
+                <footer className="footer-text"> Abode Couture Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
             </div>
         );
     }
@@ -275,7 +285,7 @@ const App = () => {
                 {error && (<Alert variant="destructive"><AlertCircle /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>)}
                 {infoMessage && (<Alert variant="success"><CheckCircle /><AlertTitle>Success</AlertTitle><AlertDescription>{infoMessage}</AlertDescription></Alert>)}
                 <div className="header-content">
-                    <div className="header-left"> <Button variant="ghost" size="icon" onClick={() => setIsProjectMenuOpen(true)} className="btn-open-menu" aria-label="Open project menu"> <MenuIcon /> </Button> <h1 className="app-title">Wallpaper Calculator</h1> </div>
+                    <div className="header-left"> <Button variant="ghost" size="icon" onClick={() => setIsProjectMenuOpen(true)} className="btn-open-menu" aria-label="Open project menu"> <MenuIcon /> </Button> <h1 className="app-title">Abode Couture Wallpaper Calculator</h1> </div>
                     <div className="header-right"> <span className={`save-status ${saveStatus !== 'idle' || hasUnsavedChanges ? 'save-status-visible' : 'save-status-hidden'}`}> {hasUnsavedChanges && saveStatus === 'idle' && <span className="status-unsaved">Unsaved</span>} {saveStatus === 'saving' && <span className="status-saving">Saving...</span>} {saveStatus === 'saved' && <span className="status-saved">Saved</span>} {saveStatus === 'error' && <span className="status-error">Save failed</span>} </span> <Button onClick={() => handleSave(false)} className="btn-manualsave" size="xs-sm"> <Save /> Manual Save </Button> </div>
                 </div>
             </div>
@@ -292,7 +302,19 @@ const App = () => {
 
             {currentProject && (
                 <>
-                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3" style={{ marginBottom: '1rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}> <Input value={currentProject.name} onChange={(e) => handleProjectNameChange(currentProject.id, e.target.value)} className="input-project-name" placeholder="Project Name" /> <div className="total-project-labor"> <DollarSign /> Total Project Labor: ${totalProjectLaborWithTravel.toFixed(2)} </div> </div>
+                    {/* Updated per request point #3 */}
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3" style={{ marginBottom: '1rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+                        <Input value={currentProject.name} onChange={(e) => handleProjectNameChange(currentProject.id, e.target.value)} className="input-project-name" placeholder="Project Name" />
+                        <div className="flex flex-wrap gap-x-6 gap-y-2"> {/* Wrapper for totals */}
+                            <div className="total-project-labor" style={{ color: '#059669' }}> {/* Green for paper */}
+                                <DollarSign /> Total Project Paper: ${totalProjectPaper.toFixed(2)}
+                            </div>
+                            <div className="total-project-labor"> {/* Default color for labor */}
+                                <DollarSign /> Total Project Labor: ${totalProjectLaborWithTravel.toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+
                     <Card className="card-mb-6">
                         <CardHeader className="card-header-flex card-header-interactive" onClick={() => toggleClientInfoCollapse(currentProject.id)}> <CardTitle className="card-title-sky">Client Information</CardTitle> <Button variant="ghost" size="icon" baseClass="btn" style={{ color: '#64748b' }}> {currentProject.isClientInfoCollapsed ? <ChevronDown /> : <ChevronUp />} </Button> </CardHeader>
                         {!currentProject.isClientInfoCollapsed && (
@@ -374,6 +396,7 @@ const App = () => {
                             <CardContent className="space-y-4" style={{ paddingTop: '1rem', paddingBottom: '1rem' }}>
                                 {currentProject.rooms.map(room => {
                                     const roomTotalLabor = getRoomTotalLabor(room);
+                                    const roomTotalPaper = getRoomTotalPaper(room); // Added per request
                                     return (
                                         <div key={room.id} className="room-item-container">
                                             <div className="room-header" onClick={() => toggleRoomCollapse(room.id)}>
@@ -384,9 +407,23 @@ const App = () => {
                                                     <Input value={room.name} onChange={(e) => { e.stopPropagation(); handleRoomNameChange(room.id, e.target.value); }} onClick={(e) => e.stopPropagation()} className="input-room-name" placeholder="Room Name" />
                                                 </div>
                                                 <div className="room-header-right">
-                                                    {room.isCollapsed && roomTotalLabor > 0 && (<span className="room-labor-collapsed">Room Labor: ${roomTotalLabor.toFixed(2)}</span>)}
-                                                    {/* Updated per PDF point #2 */}
-                                                    {!room.isCollapsed && <span className="room-labor-expanded">({room.walls.length} space{room.walls.length === 1 ? '' : 's'}) Labor: ${roomTotalLabor.toFixed(2)}</span>}
+                                                    {/* Updated to show paper and labor totals */}
+                                                    {room.isCollapsed && (roomTotalPaper > 0 || roomTotalLabor > 0) && (
+                                                        <>
+                                                            <span className="room-labor-collapsed" style={{ color: '#059669' }}>Paper: ${roomTotalPaper.toFixed(2)}</span>
+                                                            <span className="room-labor-collapsed">Labor: ${roomTotalLabor.toFixed(2)}</span>
+                                                        </>
+                                                    )}
+                                                    {!room.isCollapsed && (
+                                                        <>
+                                                            <span className="room-labor-expanded" style={{ color: '#059669' }}>
+                                                                ({room.walls.length} space{room.walls.length === 1 ? '' : 's'}) Paper: ${roomTotalPaper.toFixed(2)}
+                                                            </span>
+                                                            <span className="room-labor-expanded">
+                                                                Labor: ${roomTotalLabor.toFixed(2)}
+                                                            </span>
+                                                        </>
+                                                    )}
                                                     {currentProject.rooms.length > 1 && (
                                                         <Button onClick={(e) => { e.stopPropagation(); handleDeleteRoom(room.id); }} variant="ghost" size="icon" baseClass="btn room-delete-btn" aria-label="Delete room">
                                                             <Trash2 />
@@ -465,7 +502,7 @@ const App = () => {
                     </Card>
                 </>
             )}
-            <footer className="footer-text"> Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
+            <footer className="footer-text">Abode Couture Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
         </div>
     );
 };

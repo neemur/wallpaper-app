@@ -45,8 +45,7 @@ export interface Wall {
     name: string;
     width?: number; // This will now store the SUM of individualWidths
     individualWidths?: (number | undefined)[]; // Added per PDF point #5
-    heightOfWall?: number;
-    // totalArea?: number; // Removed
+    heightOfWall?: number; // Now calculated from RoomSpecificInfo
     paperWidthOption: number | 'custom';
     paperWidthCustom?: number;
     lengthOfBoltOption: number | 'custom';
@@ -56,9 +55,6 @@ export interface Wall {
     verticalHeightOfMatchedRepeat?: number;
     pricedBy: number | 'materialPercent';
     unitPriceOfWallpaper?: number;
-    // perimeterWallWidth?: number; // Removed per PDF point #4
-    // srMultiplierOption: number | 'custom'; // Removed per PDF point #8
-    // srMultiplierCustom?: number; // Removed per PDF point #8
     comparableLengthOfBolt?: number | 'custom'; // Added per PDF point #7
     comparableLengthOfBoltCustom?: number; // Added per PDF point #7
     numberOfCutsForProject?: number;
@@ -78,6 +74,11 @@ export interface Wall {
     travelCharges?: number; // Will always be 0 from this function
     grandTotalLabor?: number; // Kept for consistency, but represents wall subtotal
     isCollapsed?: boolean;
+
+    // Added per request point #1
+    shippingAndTariffs?: number;
+    salesPricePlusSalesTax?: number;
+    paperGrandTotal?: number;
 }
 
 export interface Room {

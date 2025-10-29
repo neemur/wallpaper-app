@@ -52,9 +52,16 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({ wall, onChange, on
     };
 
     const handleInputChange = useCallback((field: keyof Wall, value: any) => {
-        // Updated per PDF points #4, #7, #8
-        // Note: 'width' is handled separately by handleIndividualWidthChange
-        const numericFields: (keyof Wall)[] = ['heightOfWall', 'paperWidthCustom', 'lengthOfBoltCustom', 'patternVerticalRepeat', 'unitPriceOfWallpaper', 'comparableLengthOfBoltCustom'];
+        // Updated for new fields
+        const numericFields: (keyof Wall)[] = [
+            // 'heightOfWall', // No longer a direct input
+            'paperWidthCustom',
+            'lengthOfBoltCustom',
+            'patternVerticalRepeat',
+            'unitPriceOfWallpaper',
+            'comparableLengthOfBoltCustom',
+            'shippingAndTariffs' // Added per request point #1
+        ];
         let processedValue = value;
         if (numericFields.includes(field)) {
             processedValue = value === '' ? undefined : Number(value);
@@ -106,23 +113,31 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({ wall, onChange, on
 
     const renderReadOnlyInput = (label: string, fieldKey: keyof Wall, value?: number | string, unitOrClass?: string, baseTooltipText?: string) => {
         const isBoldGreen = unitOrClass === 'font-bold-lg-green';
-        const unit = isBoldGreen ? undefined : unitOrClass;
-        const extraClass = isBoldGreen ? unitOrClass : '';
+        const isBoldBlue = unitOrClass === 'font-bold-lg-blue'; // For paper total
+        const unit = (isBoldGreen || isBoldBlue) ? undefined : unitOrClass;
+        let extraClass = '';
+        if (isBoldGreen) extraClass = unitOrClass;
+        if (isBoldBlue) extraClass = unitOrClass;
+
 
         let dynamicTooltip = baseTooltipText || label;
         if (baseTooltipText) {
             if (fieldKey === 'numberOfCutsForProject') {
-                // Updated per PDF points #5 & #9
                 dynamicTooltip = `(⌈Perimeter (${wall.width || 'N/A'}) / Paper Width (${(wall.paperWidthOption === 'custom' ? wall.paperWidthCustom : wall.paperWidthOption) || 'N/A'})⌉) + 1`;
             } else if (fieldKey === 'totalLengthNeeded') {
                 dynamicTooltip = `Length of Cuts (${wall.lengthOfCuts?.toFixed(2) || 'N/A'}) × # Cuts (${wall.numberOfCutsForProject || 'N/A'})`;
             } else if (fieldKey === 'totalLengthPurchased') {
                 dynamicTooltip = `# Bolts (${wall.numberOfBolts || 'N/A'}) × Bolt Length (${(wall.lengthOfBoltOption === 'custom' ? wall.lengthOfBoltCustom : wall.lengthOfBoltOption) || 'N/A'})`;
             } else if (fieldKey === 'equivalentProjectSRCalculation') {
-                // Updated per PDF point #8
                 dynamicTooltip = `⌈(Calc. Total Length (${wall.totalLengthNeeded?.toFixed(2) || 'N/A'}) / Comp. Bolt Length (${(wall.comparableLengthOfBolt === 'custom' ? wall.comparableLengthOfBoltCustom : wall.comparableLengthOfBolt) || 'N/A'})) × 2⌉`;
             } else if (fieldKey === 'width') {
                 dynamicTooltip = "Sum of all individual wall widths";
+            } else if (fieldKey === 'heightOfWall') {
+                dynamicTooltip = "IF Chair Rail Ht > 0: Ceiling Ht - Crown Ht - Chair Rail Ht. ELSE: Ceiling Ht - Crown Ht - Baseboard Ht.";
+            } else if (fieldKey === 'salesPricePlusSalesTax') {
+                dynamicTooltip = `(Material Cost [${wall.materialCost?.toFixed(2) || 'N/A'}] * 1.2) * 1.06`;
+            } else if (fieldKey === 'paperGrandTotal') {
+                dynamicTooltip = `Sales Price Plus Tax [${wall.salesPricePlusSalesTax?.toFixed(2) || 'N/A'}] + Shipping [${wall.shippingAndTariffs?.toFixed(2) || 'N/A'}]`;
             }
         }
 
@@ -185,6 +200,12 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({ wall, onChange, on
                     <Input id={`wallName-${id}`} value={wall.name || ''} onChange={(e) => { e.stopPropagation(); handleInputChange('name', e.target.value); }} onClick={(e) => e.stopPropagation()} className="input-wall-name" placeholder="Space Name" />
                 </div>
                 <div className="flex items-center flex-shrink-0" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                    {/* Updated to show paper total */}
+                    {isCollapsed && (wall.paperGrandTotal !== undefined && wall.paperGrandTotal > 0) && (
+                        <span style={{ fontSize: '0.875rem', fontWeight: 600, marginRight: '0.75rem', color: '#059669' }}>
+                            Paper: ${wall.paperGrandTotal.toFixed(2)}
+                        </span>
+                    )}
                     {isCollapsed && wall.grandTotalLabor !== undefined && (
                         <span style={{ fontSize: '0.875rem', fontWeight: 600, marginRight: '0.75rem', color: wall.grandTotalLabor < 0 ? '#ef4444' : '#16a34a' }}>
                             {/* Updated per PDF point #13 */}
@@ -198,7 +219,8 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({ wall, onChange, on
             </div>
             {!isCollapsed && (
                 <CardContent className="card-content-grid-wall">
-                    {renderInput("Net Height of Wall to Paper (in)", "heightOfWall", "number", "e.g., 96")}
+                    {/* Changed from Input to ReadOnly per request point #2 */}
+                    {renderReadOnlyInput("Net Ht of Wall to Paper (in)", "heightOfWall", wall.heightOfWall?.toFixed(2), undefined, "IF Chair Rail Ht > 0: Ceiling Ht - Crown Ht - Chair Rail Ht. ELSE: Ceiling Ht - Crown Ht - Baseboard Ht.")}
 
                     {/* --- Dynamic Width Inputs (PDF Point #5) --- */}
                     <div
@@ -277,29 +299,31 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({ wall, onChange, on
                     </div>
                     {renderInput("Installation Priced By", "pricedBy", "select", undefined, PRICING_OPTIONS)}
                     {renderInput("Unit Price of Wallpaper ($ per Bolt)", "unitPriceOfWallpaper", "number", "e.g., 75")}
-                    {/* Removed S/R Multiplier fields per PDF point #8 */}
-                    {/* Removed Perimeter field per PDF point #4 */}
+
+                    {/* Added per request point #1 */}
+                    {renderInput("Shipping & Tariffs ($)", "shippingAndTariffs", "number", "e.g., 50")}
 
                     {renderReadOnlyInput('Vert. Height of Matched Repeat (in)', "verticalHeightOfMatchedRepeat", wall.verticalHeightOfMatchedRepeat, undefined, `Pattern Vert. Repeat (${wall.patternVerticalRepeat || 'N/A'}) × Pattern Match (${wall.patternMatch || 'N/A'})`)}
-                    {/* Updated tooltip per PDF points #5 & #9 */}
                     {renderReadOnlyInput('# of Cuts for Project', "numberOfCutsForProject", wall.numberOfCutsForProject, undefined, `(⌈Perimeter (${wall.width || 'N/A'}) / Paper Width (${(wall.paperWidthOption === 'custom' ? wall.paperWidthCustom : wall.paperWidthOption) || 'N/A'})⌉) + 1`)}
-                    {renderReadOnlyInput('# of Repeats per Cut', "numberOfRepeatsPerCut", wall.numberOfRepeatsPerCut, undefined, `⌈(Net Height (${wall.heightOfWall || 'N/A'}) + 4″) / Vert. Height of Matched Repeat (${wall.verticalHeightOfMatchedRepeat?.toFixed(2) || 'N/A'})⌉`)}
+                    {renderReadOnlyInput('# of Repeats per Cut', "numberOfRepeatsPerCut", wall.numberOfRepeatsPerCut, undefined, `⌈(Net Height (${wall.heightOfWall?.toFixed(2) || 'N/A'}) + 4″) / Vert. Height of Matched Repeat (${wall.verticalHeightOfMatchedRepeat?.toFixed(2) || 'N/A'})⌉`)}
                     {renderReadOnlyInput('Length of Cuts (incl. trim) (in)', "lengthOfCuts", wall.lengthOfCuts?.toFixed(2), undefined, `# Repeats per Cut (${wall.numberOfRepeatsPerCut || 'N/A'}) × Vert. Height of Matched Repeat (${wall.verticalHeightOfMatchedRepeat?.toFixed(2) || 'N/A'})`)}
                     {renderReadOnlyInput('Calculated Total Length Needed (in)', "totalLengthNeeded", wall.totalLengthNeeded?.toFixed(2), undefined, `Length of Cuts (${wall.lengthOfCuts?.toFixed(2) || 'N/A'}) × # of Cuts (${wall.numberOfCutsForProject || 'N/A'})`)}
                     {renderReadOnlyInput('# of Cut Lengths per Bolt', "numberOfCutLengthsPerBolt", wall.numberOfCutLengthsPerBolt, undefined, `⌊Bolt Length (${(wall.lengthOfBoltOption === 'custom' ? wall.lengthOfBoltCustom : wall.lengthOfBoltOption) || 'N/A'}) / Length of Cuts (${wall.lengthOfCuts?.toFixed(2) || 'N/A'})⌋`)}
-                    {/* Typo Fix: numberOfCfsForProject -> numberOfCutsForProject */}
                     {renderReadOnlyInput('# of Bolts to Order', "numberOfBolts", wall.numberOfBolts, undefined, `⌈# of Cuts (${wall.numberOfCutsForProject || 'N/A'}) / # Cut Lengths per Bolt (${wall.numberOfCutLengthsPerBolt || 'N/A'})⌉`)}
                     {renderReadOnlyInput('Total Material from Bolts (in)', "totalLengthPurchased", wall.totalLengthPurchased?.toFixed(2), undefined, `# Bolts (${wall.numberOfBolts || 'N/A'}) × Bolt Length (${(wall.lengthOfBoltOption === 'custom' ? wall.lengthOfBoltCustom : wall.lengthOfBoltOption) || 'N/A'})`)}
                     {renderReadOnlyInput('# of Yards to Order', "numberOfYardsToOrder", wall.numberOfYardsToOrder, undefined, `⌈Total Material from Bolts (${wall.totalLengthPurchased?.toFixed(2) || 'N/A'}) / 36⌉`)}
-                    {/* Updated tooltip per PDF point #8 */}
                     {renderReadOnlyInput('Equiv. Project S/R Calc.', "equivalentProjectSRCalculation", wall.equivalentProjectSRCalculation, undefined, `⌈(Calc. Total Length (${wall.totalLengthNeeded?.toFixed(2) || 'N/A'}) / Comp. Bolt Length (${(wall.comparableLengthOfBolt === 'custom' ? wall.comparableLengthOfBoltCustom : wall.comparableLengthOfBolt) || 'N/A'})) × 2⌉`)}
+
+                    {/* Labor Totals */}
                     {renderReadOnlyInput('Base Labor ($)', "baseLabor", wall.baseLabor?.toFixed(2), undefined, `Equiv. S/R Calc. (${wall.equivalentProjectSRCalculation || 'N/A'}) × Price/SR (or 38% of Material Cost)`)}
-                    {/* Updated tooltip per PDF point #10 */}
                     {renderReadOnlyInput('Height Surcharge ($)', "heightSurcharge", wall.heightSurcharge?.toFixed(2), undefined, `(Round((Ceiling Ht. or Wall Ht. - 96″) / 12)) × $100`)}
-                    {/* Added per PDF point #11 */}
                     {renderReadOnlyInput('Ceiling Surcharge ($)', "ceilingSurcharge", wall.ceilingSurcharge?.toFixed(2), undefined, `If Ceiling, Base Labor (${wall.baseLabor?.toFixed(2) || 'N/A'}) × 1.5`)}
-                    {/* Updated label and tooltip per PDF points #11 & #13 */}
                     {renderReadOnlyInput('Space Grand Total ($)', "grandTotalLabor", wall.grandTotalLabor?.toFixed(2), 'font-bold-lg-green', "Base Labor + Height Surcharge + Ceiling Surcharge")}
+
+                    {/* Added per request point #1 - Paper Totals */}
+                    <div className="md:col-span-1"></div> {/* Spacer */}
+                    {renderReadOnlyInput('Sales Price Plus Sales Tax ($)', "salesPricePlusSalesTax", wall.salesPricePlusSalesTax?.toFixed(2), undefined, `(Material Cost [${wall.materialCost?.toFixed(2) || 'N/A'}] * 1.2) * 1.06`)}
+                    {renderReadOnlyInput('Paper Grand Total ($)', "paperGrandTotal", wall.paperGrandTotal?.toFixed(2), 'font-bold-lg-blue', `Sales Price Plus Tax [${wall.salesPricePlusSalesTax?.toFixed(2) || 'N/A'}] + Shipping [${wall.shippingAndTariffs?.toFixed(2) || 'N/A'}]`)}
                 </CardContent>
             )}
         </Card>

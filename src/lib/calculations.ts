@@ -1,24 +1,53 @@
 // --- src/lib/calculations.ts ---
-import { Wall } from './types';
+import { RoomSpecificInfo, Wall } from './types';
 
 // Calculation Logic
-export const calculateWallValues = (wall: Wall, roomCeilingHeight?: number, isCeiling?: boolean): Wall => {
+// Updated signature to accept full RoomSpecificInfo per request point #2
+export const calculateWallValues = (wall: Wall, roomDetails?: RoomSpecificInfo): Wall => {
+
+    // --- New Calculation for heightOfWall (Point 2) ---
     const {
-        width, heightOfWall,
+        ceilingHeight,
+        baseboardHeight,
+        verticalCrownHeight,
+        chairRailHeight
+    } = roomDetails || {};
+    const isCeiling = roomDetails?.isCeiling;
+
+    let calculatedHeightOfWall: number | undefined;
+    if (ceilingHeight && ceilingHeight > 0) {
+        if (chairRailHeight && chairRailHeight > 0) {
+            // If Chair Rail exists: Ceiling - Crown - Chair Rail
+            calculatedHeightOfWall = ceilingHeight - (verticalCrownHeight || 0) - chairRailHeight;
+        } else {
+            // If no Chair Rail: Ceiling - Crown - Baseboard
+            calculatedHeightOfWall = ceilingHeight - (verticalCrownHeight || 0) - (baseboardHeight || 0);
+        }
+        calculatedHeightOfWall = Math.max(0, calculatedHeightOfWall); // Ensure it's not negative
+    } else {
+        // Fallback if no ceiling height is provided in room details
+        calculatedHeightOfWall = wall.heightOfWall;
+    }
+    // --- End of heightOfWall Calculation ---
+
+    const {
+        width,
+        // heightOfWall, // This is now calculated above
         paperWidthOption, paperWidthCustom,
         lengthOfBoltOption, lengthOfBoltCustom,
         patternVerticalRepeat, patternMatch,
         pricedBy, unitPriceOfWallpaper,
-        // srMultiplierOption, srMultiplierCustom, // Removed
-        comparableLengthOfBolt, comparableLengthOfBoltCustom // Added
+        comparableLengthOfBolt, comparableLengthOfBoltCustom,
+        shippingAndTariffs // Added per request point #1
     } = wall;
 
     let paperWidth = paperWidthOption === 'custom' ? paperWidthCustom : paperWidthOption;
     let lengthOfBolt = lengthOfBoltOption === 'custom' ? lengthOfBoltCustom : lengthOfBoltOption;
-    const calculationHeight = heightOfWall;
+
+    // Use the new calculatedHeightOfWall
+    const calculationHeight = calculatedHeightOfWall;
 
     const verticalHeightOfMatchedRepeat = patternVerticalRepeat && patternMatch ? patternVerticalRepeat * patternMatch : undefined;
-    // Updated per PDF point #9
     const numberOfCutsForProject = width && paperWidth && paperWidth > 0 ? Math.ceil(width / paperWidth) + 1 : undefined;
     const effectiveHeightForRepeats = calculationHeight !== undefined ? calculationHeight + 4 : undefined;
     const numberOfRepeatsPerCut = effectiveHeightForRepeats && verticalHeightOfMatchedRepeat && verticalHeightOfMatchedRepeat > 0 ? Math.ceil(effectiveHeightForRepeats / verticalHeightOfMatchedRepeat) : (effectiveHeightForRepeats ? 1 : undefined);
@@ -26,18 +55,11 @@ export const calculateWallValues = (wall: Wall, roomCeilingHeight?: number, isCe
     const totalLengthNeeded = lengthOfCuts && numberOfCutsForProject ? lengthOfCuts * numberOfCutsForProject : undefined; // This is the calculated need
     const numberOfCutLengthsPerBolt = lengthOfBolt && lengthOfCuts && lengthOfCuts > 0 ? Math.floor(lengthOfBolt / lengthOfCuts) : undefined;
     const numberOfBolts = numberOfCutsForProject && numberOfCutLengthsPerBolt && numberOfCutLengthsPerBolt > 0 ? Math.ceil(numberOfCutsForProject / numberOfCutLengthsPerBolt) : undefined;
-
-    // Calculate totalLengthPurchased first, as it's now a dependency for others
     const totalLengthPurchased = (lengthOfBolt || 0) * (numberOfBolts || 0);
-
-    // Updated to use totalLengthPurchased
     const numberOfYardsToOrder = totalLengthPurchased ? Math.ceil(totalLengthPurchased / 36) : undefined;
 
     const materialCost = (unitPriceOfWallpaper || 0) * (numberOfBolts || 0);
 
-    // const srMultiplier = srMultiplierOption === 'custom' ? (srMultiplierCustom || 0) : (srMultiplierOption || 0); // Removed
-
-    // Updated per PDF point #8
     let compLength = comparableLengthOfBolt === 'custom' ? (comparableLengthOfBoltCustom || 0) : (comparableLengthOfBolt || 0);
     const equivalentProjectSRCalculation = totalLengthNeeded && compLength && compLength > 0
         ? Math.ceil((totalLengthNeeded / compLength) * 2)
@@ -45,74 +67,96 @@ export const calculateWallValues = (wall: Wall, roomCeilingHeight?: number, isCe
 
     const baseLabor = equivalentProjectSRCalculation && pricedBy !== undefined ? (typeof pricedBy === 'number' ? equivalentProjectSRCalculation * pricedBy : (materialCost > 0 ? materialCost * 0.38 : 0)) : undefined;
 
-    const heightToUseForSurcharge = roomCeilingHeight !== undefined && roomCeilingHeight > 0
-        ? roomCeilingHeight
+    // Use room's ceilingHeight for surcharge, fallback to calculatedHeightOfWall
+    const heightToUseForSurcharge = roomDetails?.ceilingHeight !== undefined && roomDetails.ceilingHeight > 0
+        ? roomDetails.ceilingHeight
         : calculationHeight;
 
-    // Added per PDF point #11
     const ceilingSurcharge = (isCeiling && baseLabor !== undefined) ? (baseLabor * 1.5) : 0;
 
     let heightSurcharge = 0;
     if (heightToUseForSurcharge && heightToUseForSurcharge > 96) {
-        // Updated per PDF point #10
         heightSurcharge = Math.round((heightToUseForSurcharge - 96) / 12) * 100;
         heightSurcharge = Math.max(0, heightSurcharge);
     }
 
-    // Updated per PDF point #11
     const subtotalLabor = baseLabor !== undefined ? baseLabor + heightSurcharge + ceilingSurcharge : undefined;
-    const travelCharges = 0;
     const grandTotalLabor = subtotalLabor;
 
+    // --- New Paper Total Calculations (Point 1) ---
+    // Assuming (materialCost * 1.2) * 1.06
+    const salesPricePlusSalesTax = materialCost > 0 ? (materialCost * 1.2 * 1.06) : 0;
+    const paperGrandTotal = salesPricePlusSalesTax + (shippingAndTariffs || 0);
+    // --- End of Paper Total Calculations ---
 
-    return { ...wall, verticalHeightOfMatchedRepeat, numberOfCutsForProject, numberOfRepeatsPerCut, lengthOfCuts, totalLengthNeeded, totalLengthPurchased, numberOfCutLengthsPerBolt, numberOfBolts, numberOfYardsToOrder, materialCost, equivalentProjectSRCalculation, baseLabor, heightSurcharge, ceilingSurcharge, subtotalLabor, travelCharges, grandTotalLabor, };
+    return {
+        ...wall,
+        heightOfWall: calculatedHeightOfWall, // Store the calculated height
+        verticalHeightOfMatchedRepeat,
+        numberOfCutsForProject,
+        numberOfRepeatsPerCut,
+        lengthOfCuts,
+        totalLengthNeeded,
+        totalLengthPurchased,
+        numberOfCutLengthsPerBolt,
+        numberOfBolts,
+        numberOfYardsToOrder,
+        materialCost,
+        equivalentProjectSRCalculation,
+        baseLabor,
+        heightSurcharge,
+        ceilingSurcharge,
+        subtotalLabor,
+        grandTotalLabor,
+        salesPricePlusSalesTax, // Added per request
+        paperGrandTotal, // Added per request
+        shippingAndTariffs: shippingAndTariffs || 0 // Ensure it's a number
+    };
 };
 
 
 // Define field dependencies for highlighting
 export const fieldDependencies: Record<string, { inputs: string[], outputs: string[] }> = {
     // This 'width' is now the SUM field
-    width: { inputs: ['individualWidths'], outputs: ['numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    width: { inputs: ['individualWidths'], outputs: ['numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
     // Added per PDF point #5
-    individualWidths: { inputs: [], outputs: ['width', 'numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
-    heightOfWall: { inputs: [], outputs: ['effectiveHeightForRepeats', 'numberOfRepeatsPerCut', 'lengthOfCuts', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'heightSurcharge', 'grandTotalLabor'] },
-    paperWidthOption: { inputs: [], outputs: ['numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
-    paperWidthCustom: { inputs: ['paperWidthOption'], outputs: ['numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
-    lengthOfBoltOption: { inputs: [], outputs: ['numberOfCutLengthsPerBolt', 'numberOfBolts', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
-    lengthOfBoltCustom: { inputs: ['lengthOfBoltOption'], outputs: ['numberOfCutLengthsPerBolt', 'numberOfBolts', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
-    patternVerticalRepeat: { inputs: [], outputs: ['verticalHeightOfMatchedRepeat', 'numberOfRepeatsPerCut', 'lengthOfCuts', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
-    patternMatch: { inputs: [], outputs: ['verticalHeightOfMatchedRepeat', 'numberOfRepeatsPerCut', 'lengthOfCuts', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+    individualWidths: { inputs: [], outputs: ['width', 'numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
+    // heightOfWall is now an output of room details
+    heightOfWall: { inputs: [/* 'ceilingHeight', 'baseboardHeight', 'verticalCrownHeight', 'chairRailHeight' from RoomDetails */], outputs: ['effectiveHeightForRepeats', 'numberOfRepeatsPerCut', 'lengthOfCuts', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'heightSurcharge', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
+    paperWidthOption: { inputs: [], outputs: ['numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
+    paperWidthCustom: { inputs: ['paperWidthOption'], outputs: ['numberOfCutsForProject', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
+    lengthOfBoltOption: { inputs: [], outputs: ['numberOfCutLengthsPerBolt', 'numberOfBolts', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
+    lengthOfBoltCustom: { inputs: ['lengthOfBoltOption'], outputs: ['numberOfCutLengthsPerBolt', 'numberOfBolts', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
+    patternVerticalRepeat: { inputs: [], outputs: ['verticalHeightOfMatchedRepeat', 'numberOfRepeatsPerCut', 'lengthOfCuts', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
+    patternMatch: { inputs: [], outputs: ['verticalHeightOfMatchedRepeat', 'numberOfRepeatsPerCut', 'lengthOfCuts', 'totalLengthNeeded', 'numberOfBolts', 'materialCost', 'totalLengthPurchased', 'numberOfYardsToOrder', 'equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
     pricedBy: { inputs: [], outputs: ['baseLabor', 'grandTotalLabor'] },
-    unitPriceOfWallpaper: { inputs: [], outputs: ['materialCost', 'baseLabor', 'grandTotalLabor'] },
-    // srMultiplierOption: { inputs: [], outputs: ['equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] }, // Removed
-    // srMultiplierCustom: { inputs: ['srMultiplierOption'], outputs: ['equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] }, // Removed
-    // Added per PDF point #7
+    unitPriceOfWallpaper: { inputs: [], outputs: ['materialCost', 'baseLabor', 'grandTotalLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
     comparableLengthOfBolt: { inputs: [], outputs: ['equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
     comparableLengthOfBoltCustom: { inputs: ['comparableLengthOfBolt'], outputs: ['equivalentProjectSRCalculation', 'baseLabor', 'grandTotalLabor'] },
+
+    // Added per request point #1
+    shippingAndTariffs: { inputs: [], outputs: ['paperGrandTotal'] },
 
     // Calculated fields
     verticalHeightOfMatchedRepeat: { inputs: ['patternVerticalRepeat', 'patternMatch'], outputs: ['numberOfRepeatsPerCut', 'lengthOfCuts'] },
     numberOfCutsForProject: { inputs: ['width', 'individualWidths', 'paperWidthOption', 'paperWidthCustom'], outputs: ['totalLengthNeeded', 'numberOfBolts'] },
     numberOfRepeatsPerCut: { inputs: ['heightOfWall', 'verticalHeightOfMatchedRepeat'], outputs: ['lengthOfCuts'] },
     lengthOfCuts: { inputs: ['numberOfRepeatsPerCut', 'verticalHeightOfMatchedRepeat', 'heightOfWall'], outputs: ['totalLengthNeeded', 'numberOfCutLengthsPerBolt'] },
-    // Updated per PDF point #8
     totalLengthNeeded: { inputs: ['lengthOfCuts', 'numberOfCutsForProject'], outputs: ['equivalentProjectSRCalculation'] },
-    // Updated per PDF point #8
     totalLengthPurchased: { inputs: ['lengthOfBoltOption', 'lengthOfBoltCustom', 'numberOfBolts'], outputs: ['numberOfYardsToOrder'] },
     numberOfCutLengthsPerBolt: { inputs: ['lengthOfBoltOption', 'lengthOfBoltCustom', 'lengthOfCuts'], outputs: ['numberOfBolts'] },
-    numberOfBolts: { inputs: ['numberOfCutsForProject', 'numberOfCutLengthsPerBolt'], outputs: ['materialCost', 'totalLengthPurchased'] },
+    numberOfBolts: { inputs: ['numberOfCutsForProject', 'numberOfCutLengthsPerBolt'], outputs: ['materialCost', 'totalLengthPurchased', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
 
-    // Updated inputs per PDF point #8
     numberOfYardsToOrder: { inputs: ['totalLengthPurchased'], outputs: [] },
-    // Updated inputs per PDF point #8
     equivalentProjectSRCalculation: { inputs: ['totalLengthNeeded', 'comparableLengthOfBolt', 'comparableLengthOfBoltCustom'], outputs: ['baseLabor'] },
 
-    materialCost: { inputs: ['unitPriceOfWallpaper', 'numberOfBolts'], outputs: ['baseLabor'] },
-    // Updated per PDF point #11
+    materialCost: { inputs: ['unitPriceOfWallpaper', 'numberOfBolts'], outputs: ['baseLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },
     baseLabor: { inputs: ['equivalentProjectSRCalculation', 'pricedBy', 'materialCost'], outputs: ['ceilingSurcharge', 'grandTotalLabor'] },
     heightSurcharge: { inputs: ['heightOfWall' /* indirectly roomCeilingHeight */], outputs: ['grandTotalLabor'] },
-    // Added per PDF point #11
     ceilingSurcharge: { inputs: ['baseLabor' /* indirectly isCeiling */], outputs: ['grandTotalLabor'] },
-    // Updated per PDF point #11
     grandTotalLabor: { inputs: ['baseLabor', 'heightSurcharge', 'ceilingSurcharge'], outputs: [] },
+
+    // Added per request point #1
+    salesPricePlusSalesTax: { inputs: ['materialCost'], outputs: ['paperGrandTotal'] },
+    paperGrandTotal: { inputs: ['salesPricePlusSalesTax', 'shippingAndTariffs'], outputs: [] },
 };

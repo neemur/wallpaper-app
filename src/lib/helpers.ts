@@ -34,10 +34,10 @@ export const createNewWall = (nameSuffix: string | number): Wall => ({
     lengthOfBoltOption: 180,
     patternMatch: 1,
     pricedBy: 85, // Default updated to '$85 for liner paper'
-    heightOfWall: 96,
-    // srMultiplierOption: 2, // Removed per PDF point #8
+    heightOfWall: undefined, // Changed from 96, now calculated from Room Details
     comparableLengthOfBolt: 288, // Added per PDF point #7
     isCollapsed: false,
+    shippingAndTariffs: undefined, // Added per request point #1
 });
 
 export const createNewRoom = (nameSuffix: string | number): Room => ({
@@ -77,8 +77,8 @@ export const createNewProject = (nameSuffix: string | number): Project => {
     const newRoom = createNewRoom(1);
     const newWall = createNewWall(1);
     // Recalculate the wall with potential room ceiling height
-    // Updated per PDF point #3
-    newRoom.walls = [calculateWallValues(newWall, newRoom.details.ceilingHeight, newRoom.details.isCeiling)];
+    // Updated to pass full details object
+    newRoom.walls = [calculateWallValues(newWall, newRoom.details)];
 
     return {
         id: `project-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
