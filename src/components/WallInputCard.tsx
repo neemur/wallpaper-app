@@ -321,7 +321,11 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({ wall, onChange, on
                     {renderReadOnlyInput('Space Grand Total ($)', "grandTotalLabor", wall.grandTotalLabor?.toFixed(2), 'font-bold-lg-green', "Base Labor + Height Surcharge + Ceiling Surcharge")}
 
                     {/* Added per request point #1 - Paper Totals */}
-                    <div className="md:col-span-1"></div> {/* Spacer */}
+                    {/*<div className="md:col-span-1"></div> /!* Spacer *!/*/}
+                    {/*materialCost: { inputs: ['unitPriceOfWallpaper', 'numberOfBolts'], outputs: ['baseLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },*/}
+
+                    {renderReadOnlyInput('Material Cost ($)', "materialCost", wall.materialCost?.toFixed(2), 'font-bold-lg-green', "unitPriceOfWallpaper * numberOfBolts")}
+
                     {renderReadOnlyInput('Sales Price Plus Sales Tax ($)', "salesPricePlusSalesTax", wall.salesPricePlusSalesTax?.toFixed(2), undefined, `(Material Cost [${wall.materialCost?.toFixed(2) || 'N/A'}] * 1.2) * 1.06`)}
                     {renderReadOnlyInput('Paper Grand Total ($)', "paperGrandTotal", wall.paperGrandTotal?.toFixed(2), 'font-bold-lg-blue', `Sales Price Plus Tax [${wall.salesPricePlusSalesTax?.toFixed(2) || 'N/A'}] + Shipping [${wall.shippingAndTariffs?.toFixed(2) || 'N/A'}]`)}
                 </CardContent>
