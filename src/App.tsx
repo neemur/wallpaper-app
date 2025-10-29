@@ -1,5 +1,5 @@
 // --- src/App.tsx ---
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'; // Added useRef
 import { useDebounce } from './lib/hooks';
 import {
     Project,
@@ -15,7 +15,8 @@ import {
     createNewWall,
     createNewGeneralProjectInfo,
     createNewClientInfo,
-    createNewRoomSpecificInfo
+    createNewRoomSpecificInfo,
+    isProject // Added
 } from './lib/helpers';
 import { calculateWallValues } from './lib/calculations';
 import { AUTO_SAVE_DEBOUNCE_TIME } from './lib/constants';
@@ -25,6 +26,7 @@ import {
     ChevronDown,
     ChevronUp,
     DollarSign,
+    Download, // Added
     FolderPlus,
     Home,
     MenuIcon,
@@ -233,6 +235,71 @@ const App = () => {
     const handleLoad = () => { setError(null); setInfoMessage(null); try { const savedData = localStorage.getItem('wallpaperCalculatorData_v3'); if (savedData) { const parsedData = JSON.parse(savedData); const loadedProjects: Project[] = parsedData.projects.map((proj: Project) => ({ ...proj, generalProjectInfo: proj.generalProjectInfo || createNewGeneralProjectInfo(), clientInfo: proj.clientInfo || createNewClientInfo(), isClientInfoCollapsed: proj.isClientInfoCollapsed === undefined ? false : proj.isClientInfoCollapsed, isGeneralProjectInfoCollapsed: proj.isGeneralProjectInfoCollapsed === undefined ? false : proj.isGeneralProjectInfoCollapsed, rooms: proj.rooms.map((room: Room) => ({ ...room, details: room.details || createNewRoomSpecificInfo(), isCollapsed: room.isCollapsed === undefined ? false : room.isCollapsed, walls: room.walls.map((wall: Wall) => ({ ...calculateWallValues(wall, room.details), isCollapsed: wall.isCollapsed === undefined ? false : wall.isCollapsed })) })) })); setProjects(loadedProjects || [createNewProject(1)]); const cpid = parsedData.currentProjectId || (loadedProjects.length > 0 ? loadedProjects[0].id : null); setCurrentProjectId(cpid); setCurrentRoomId(parsedData.currentRoomId || loadedProjects.find(p => p.id === cpid)?.rooms[0]?.id || null); setInfoMessage('Projects loaded successfully!'); } else { setInfoMessage('No saved data found.'); } } catch (e: any) { setError(`Error loading data: ${e.message}`); } setSaveStatus('idle'); setHasUnsavedChanges(false); };
     useEffect(() => { if (projects.length > 0) { if (!currentProjectId || !projects.find(p => p.id === currentProjectId)) { const firstProject = projects[0]; setCurrentProjectId(firstProject.id); setCurrentRoomId(firstProject.rooms[0]?.id || null); } else { const proj = projects.find(p => p.id === currentProjectId); if (proj && (!currentRoomId || !proj.rooms.find(r => r.id === currentRoomId))) { setCurrentRoomId(proj.rooms[0]?.id || null); } } } else { setCurrentProjectId(null); setCurrentRoomId(null); } }, [projects, currentProjectId, currentRoomId]);
 
+    // --- New Export Function ---
+    const handleExportProject = () => {
+        if (!currentProject) {
+            setError("No project selected to export.");
+            return;
+        }
+        try {
+            const projectName = currentProject.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const fileName = `${projectName || 'project'}.wallpaper_proj.json`;
+            const dataToExport = JSON.stringify(currentProject, null, 2);
+            const blob = new Blob([dataToExport], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            setInfoMessage(`Project "${currentProject.name}" exported successfully.`);
+        } catch (e: any) {
+            setError(`Error exporting project: ${e.message}`);
+        }
+    };
+
+    // --- New Import Function ---
+    const handleImportProject = (file: File) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const text = event.target?.result;
+                if (typeof text !== 'string') {
+                    throw new Error("Could not read file.");
+                }
+                const importedProject = JSON.parse(text);
+
+                // Validate the imported object
+                if (!isProject(importedProject)) {
+                    throw new Error("Invalid project file format.");
+                }
+
+                // Check for ID conflict
+                if (projects.some(p => p.id === importedProject.id)) {
+                    throw new Error(`A project with ID "${importedProject.id}" (name: "${importedProject.name}") already exists.`);
+                }
+
+                // Add the new project
+                setProjects(prev => [...prev, importedProject]);
+                setCurrentProjectId(importedProject.id);
+                setCurrentRoomId(importedProject.rooms[0]?.id || null);
+                setInfoMessage(`Project "${importedProject.name}" imported successfully.`);
+                markUnsaved();
+                setIsProjectMenuOpen(false); // Close modal on success
+            } catch (e: any) {
+                setError(`Import failed: ${e.message}`);
+            }
+        };
+        reader.onerror = () => {
+            setError("Error reading file.");
+        };
+        reader.readAsText(file);
+    };
+
     // Updated per PDF point #12
     const projectTravelCharges = useMemo(() => {
         if (!currentProject || !currentProject.generalProjectInfo) return 0;
@@ -273,20 +340,46 @@ const App = () => {
                         <Plus /> Create New Project
                     </Button>
                 </div>
-                <footer className="footer-text"> Abode Couture Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
+                <footer className="footer-text"> Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
             </div>
         );
     }
 
     return (
         <div className="app-container">
-            <ProjectMenuModal isOpen={isProjectMenuOpen} onClose={() => setIsProjectMenuOpen(false)} projects={projects} currentProjectId={currentProjectId} onSelectProject={handleSelectProject} onAddProject={handleAddProject} onDeleteProject={handleDeleteProject} searchTerm={projectSearchTerm} onSearchTermChange={setProjectSearchTerm} />
+            {/* Passed new onImportProject prop */}
+            <ProjectMenuModal
+                isOpen={isProjectMenuOpen}
+                onClose={() => setIsProjectMenuOpen(false)}
+                projects={projects}
+                currentProjectId={currentProjectId}
+                onSelectProject={handleSelectProject}
+                onAddProject={handleAddProject}
+                onDeleteProject={handleDeleteProject}
+                searchTerm={projectSearchTerm}
+                onSearchTermChange={setProjectSearchTerm}
+                onImportProject={handleImportProject}
+            />
             <div className="sticky-header">
                 {error && (<Alert variant="destructive"><AlertCircle /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>)}
                 {infoMessage && (<Alert variant="success"><CheckCircle /><AlertTitle>Success</AlertTitle><AlertDescription>{infoMessage}</AlertDescription></Alert>)}
                 <div className="header-content">
-                    <div className="header-left"> <Button variant="ghost" size="icon" onClick={() => setIsProjectMenuOpen(true)} className="btn-open-menu" aria-label="Open project menu"> <MenuIcon /> </Button> <h1 className="app-title">Abode Couture Wallpaper Calculator</h1> </div>
-                    <div className="header-right"> <span className={`save-status ${saveStatus !== 'idle' || hasUnsavedChanges ? 'save-status-visible' : 'save-status-hidden'}`}> {hasUnsavedChanges && saveStatus === 'idle' && <span className="status-unsaved">Unsaved</span>} {saveStatus === 'saving' && <span className="status-saving">Saving...</span>} {saveStatus === 'saved' && <span className="status-saved">Saved</span>} {saveStatus === 'error' && <span className="status-error">Save failed</span>} </span> <Button onClick={() => handleSave(false)} className="btn-manualsave" size="xs-sm"> <Save /> Manual Save </Button> </div>
+                    <div className="header-left"> <Button variant="ghost" size="icon" onClick={() => setIsProjectMenuOpen(true)} className="btn-open-menu" aria-label="Open project menu"> <MenuIcon /> </Button> <h1 className="app-title">Wallpaper Calculator</h1> </div>
+                    {/* Added Export Button */}
+                    <div className="header-right">
+                        <span className={`save-status ${saveStatus !== 'idle' || hasUnsavedChanges ? 'save-status-visible' : 'save-status-hidden'}`}>
+                            {hasUnsavedChanges && saveStatus === 'idle' && <span className="status-unsaved">Unsaved</span>}
+                            {saveStatus === 'saving' && <span className="status-saving">Saving...</span>}
+                            {saveStatus === 'saved' && <span className="status-saved">Saved</span>}
+                            {saveStatus === 'error' && <span className="status-error">Save failed</span>}
+                        </span>
+                        <Button onClick={handleExportProject} className="btn-manualsave" size="xs-sm" variant="default" disabled={!currentProject}>
+                            <Download /> Export
+                        </Button>
+                        <Button onClick={() => handleSave(false)} className="btn-manualsave" size="xs-sm">
+                            <Save /> Manual Save
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -502,7 +595,7 @@ const App = () => {
                     </Card>
                 </>
             )}
-            <footer className="footer-text">Abode Couture Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
+            <footer className="footer-text"> Wallpaper Calculator &copy; {new Date().getFullYear()} </footer>
         </div>
     );
 };

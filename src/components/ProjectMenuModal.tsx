@@ -1,9 +1,9 @@
 // --- src/components/ProjectMenuModal.tsx ---
-import React from 'react';
+import React, { useRef } from 'react'; // Added useRef
 import { Project } from '../lib/types';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import { FolderPlus, Search, Trash2, XIcon } from './ui/Icons';
+import { FolderPlus, Search, Trash2, XIcon, Upload } from './ui/Icons'; // Added Upload
 
 interface ProjectMenuModalProps {
     isOpen: boolean;
@@ -15,6 +15,7 @@ interface ProjectMenuModalProps {
     onDeleteProject: (id: string) => void;
     searchTerm: string;
     onSearchTermChange: (term: string) => void;
+    onImportProject: (file: File) => void; // Added
 }
 
 export const ProjectMenuModal: React.FC<ProjectMenuModalProps> = ({
@@ -26,16 +27,44 @@ export const ProjectMenuModal: React.FC<ProjectMenuModalProps> = ({
                                                                       onAddProject,
                                                                       onDeleteProject,
                                                                       searchTerm,
-                                                                      onSearchTermChange
+                                                                      onSearchTermChange,
+                                                                      onImportProject // Added
                                                                   }) => {
+
+    // Ref for the hidden file input
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     if (!isOpen) return null;
 
     const filteredProjects = projects.filter(proj =>
         proj.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const handleImportClick = () => {
+        // Trigger the hidden file input
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            onImportProject(file);
+        }
+        // Reset the input value so the same file can be loaded again
+        event.target.value = '';
+    };
+
     return (
         <div className="project-menu-modal-overlay">
+            {/* Hidden file input for import */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept=".json,.wallpaper_proj"
+                style={{ display: 'none' }}
+            />
+
             <div className="project-menu-modal-backdrop" onClick={onClose}></div>
             <div className={`project-menu-modal-content ${isOpen ? 'open' : ''}`}>
                 <div className="project-menu-header">
@@ -55,6 +84,10 @@ export const ProjectMenuModal: React.FC<ProjectMenuModalProps> = ({
                         />
                         <Search />
                     </div>
+                    {/* Added Import Button */}
+                    <Button onClick={handleImportClick} className="project-menu-new-btn" variant="default">
+                        <Upload /> Import
+                    </Button>
                     <Button onClick={() => { onAddProject(); }} className="project-menu-new-btn">
                         <FolderPlus /> New Project
                     </Button>

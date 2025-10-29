@@ -90,3 +90,23 @@ export const createNewProject = (nameSuffix: string | number): Project => {
         isGeneralProjectInfoCollapsed: false,
     };
 };
+
+// --- Added Type Guard for Import Validation ---
+export const isProject = (obj: any): obj is Project => {
+    return (
+        obj &&
+        typeof obj.id === 'string' &&
+        typeof obj.name === 'string' &&
+        typeof obj.clientInfo === 'object' &&
+        typeof obj.generalProjectInfo === 'object' &&
+        Array.isArray(obj.rooms) &&
+        // Check if rooms array contains valid rooms (basic check)
+        obj.rooms.every((room: any) =>
+            room &&
+            typeof room.id === 'string' &&
+            typeof room.name === 'string' &&
+            typeof room.details === 'object' &&
+            Array.isArray(room.walls)
+        )
+    );
+};
