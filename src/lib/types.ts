@@ -77,6 +77,7 @@ export interface Wall {
 
     // Added per request point #1
     shippingAndTariffs?: number;
+    piaSurcharge?: number;
     salesPricePlusSalesTax?: number;
     paperGrandTotal?: number;
 }

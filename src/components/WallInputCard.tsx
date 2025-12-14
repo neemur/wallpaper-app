@@ -60,7 +60,8 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({ wall, onChange, on
             'patternVerticalRepeat',
             'unitPriceOfWallpaper',
             'comparableLengthOfBoltCustom',
-            'shippingAndTariffs' // Added per request point #1
+            'shippingAndTariffs', // Added per request point #1
+            'piaSurcharge'
         ];
         let processedValue = value;
         if (numericFields.includes(field)) {
@@ -318,7 +319,8 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({ wall, onChange, on
                     {renderReadOnlyInput('Base Labor ($)', "baseLabor", wall.baseLabor?.toFixed(2), undefined, `Equiv. S/R Calc. (${wall.equivalentProjectSRCalculation || 'N/A'}) × Price/SR (or 38% of Material Cost)`)}
                     {renderReadOnlyInput('Height Surcharge ($)', "heightSurcharge", wall.heightSurcharge?.toFixed(2), undefined, `(Round((Ceiling Ht. or Wall Ht. - 96″) / 12)) × $100`)}
                     {renderReadOnlyInput('Ceiling Surcharge ($)', "ceilingSurcharge", wall.ceilingSurcharge?.toFixed(2), undefined, `If Ceiling, Base Labor (${wall.baseLabor?.toFixed(2) || 'N/A'}) × 1.5`)}
-                    {renderReadOnlyInput('Space Grand Total ($)', "grandTotalLabor", wall.grandTotalLabor?.toFixed(2), 'font-bold-lg-green', "Base Labor + Height Surcharge + Ceiling Surcharge")}
+                    {renderInput("PIA Surcharge ($)", "piaSurcharge", "number", "e.g., 25")}
+                    {renderReadOnlyInput('Space Grand Total ($)', "grandTotalLabor", wall.grandTotalLabor?.toFixed(2), 'font-bold-lg-green', "Base Labor + Height Surcharge + Ceiling Surcharge + PIA Surcharge")}
 
                     {/* Added per request point #1 - Paper Totals */}
                     {/*<div className="md:col-span-1"></div> /!* Spacer *!/*/}

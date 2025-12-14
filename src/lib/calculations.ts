@@ -38,7 +38,8 @@ export const calculateWallValues = (wall: Wall, roomDetails?: RoomSpecificInfo):
         patternVerticalRepeat, patternMatch,
         pricedBy, unitPriceOfWallpaper,
         comparableLengthOfBolt, comparableLengthOfBoltCustom,
-        shippingAndTariffs // Added per request point #1
+        shippingAndTariffs, // Added per request point #1
+        piaSurcharge
     } = wall;
 
     let paperWidth = paperWidthOption === 'custom' ? paperWidthCustom : paperWidthOption;
@@ -80,7 +81,7 @@ export const calculateWallValues = (wall: Wall, roomDetails?: RoomSpecificInfo):
         heightSurcharge = Math.max(0, heightSurcharge);
     }
 
-    const subtotalLabor = baseLabor !== undefined ? baseLabor + heightSurcharge + ceilingSurcharge : undefined;
+    const subtotalLabor = baseLabor !== undefined ? baseLabor + heightSurcharge + ceilingSurcharge + (piaSurcharge || 0) : undefined;
     const grandTotalLabor = subtotalLabor;
 
     // --- New Paper Total Calculations (Point 1) ---
@@ -108,6 +109,7 @@ export const calculateWallValues = (wall: Wall, roomDetails?: RoomSpecificInfo):
         ceilingSurcharge,
         subtotalLabor,
         grandTotalLabor,
+        piaSurcharge: piaSurcharge || 0,
         salesPricePlusSalesTax, // Added per request
         paperGrandTotal, // Added per request
         shippingAndTariffs: shippingAndTariffs || 0 // Ensure it's a number
@@ -136,6 +138,7 @@ export const fieldDependencies: Record<string, { inputs: string[], outputs: stri
 
     // Added per request point #1
     shippingAndTariffs: { inputs: [], outputs: ['paperGrandTotal'] },
+    piaSurcharge: { inputs: [], outputs: ['grandTotalLabor'] },
 
     // Calculated fields
     verticalHeightOfMatchedRepeat: { inputs: ['patternVerticalRepeat', 'patternMatch'], outputs: ['numberOfRepeatsPerCut', 'lengthOfCuts'] },
@@ -154,7 +157,7 @@ export const fieldDependencies: Record<string, { inputs: string[], outputs: stri
     baseLabor: { inputs: ['equivalentProjectSRCalculation', 'pricedBy', 'materialCost'], outputs: ['ceilingSurcharge', 'grandTotalLabor'] },
     heightSurcharge: { inputs: ['heightOfWall' /* indirectly roomCeilingHeight */], outputs: ['grandTotalLabor'] },
     ceilingSurcharge: { inputs: ['baseLabor' /* indirectly isCeiling */], outputs: ['grandTotalLabor'] },
-    grandTotalLabor: { inputs: ['baseLabor', 'heightSurcharge', 'ceilingSurcharge'], outputs: [] },
+    grandTotalLabor: { inputs: ['baseLabor', 'heightSurcharge', 'ceilingSurcharge', 'piaSurcharge'], outputs: [] },
 
     // Added per request point #1
     salesPricePlusSalesTax: { inputs: ['materialCost'], outputs: ['paperGrandTotal'] },
