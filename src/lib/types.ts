@@ -40,6 +40,11 @@ export interface RoomSpecificInfo {
     isCeiling?: boolean; // Added per PDF point #3
 }
 
+export interface RemovalDimension {
+    width?: number;
+    height?: number;
+}
+
 export interface Wall {
     id: string;
     name: string;
@@ -74,6 +79,13 @@ export interface Wall {
     travelCharges?: number; // Will always be 0 from this function
     grandTotalLabor?: number; // Kept for consistency, but represents wall subtotal
     isCollapsed?: boolean;
+
+    // Wallpaper Removal
+    removalDimensions?: RemovalDimension[];
+    removalSqFtRateOption?: number | 'custom';
+    removalSqFtRateCustom?: number;
+    removalTotalSqFt?: number;
+    removalTotalCost?: number;
 
     // Added per request point #1
     shippingAndTariffs?: number;

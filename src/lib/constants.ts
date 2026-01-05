@@ -45,6 +45,12 @@ export const COMPARABLE_BOLT_LENGTH_OPTIONS = [
     { label: 'Custom (in)', value: 'custom' }
 ];
 
+export const REMOVAL_RATE_OPTIONS = [
+    { label: '$2.50/sf', value: 2.50 },
+    { label: '$3.50/sf', value: 3.50 },
+    { label: 'Custom', value: 'custom' }
+];
+
 // Removed per PDF point #8
 // export const SR_MULTIPLIER_OPTIONS = [
 //     { label: "2/3 S/R per Bolt", value: 2 / 3 },

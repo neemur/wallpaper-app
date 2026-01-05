@@ -1,10 +1,10 @@
-Within the "Space" section, can there be a subsection above the current layout that would have a different color background behind fields that relate to Wallpaper Removal?
+   a. Within the "Space" section, can there be a subsection above the current layout that would have a different color background behind fields that relate to Wallpaper Removal?
 
-    In this subsection, I need input boxes for Width x Height like the "Individual Wall Width in inches" fields, that allow "+ Add Dimensions" like the "+Width" button.  These width & height dimensions then need to be multiplied for each entry and divided by 144 and added together for a "Total Sq Ft" result
+   b. In this subsection, I need input boxes for Width x Height like the "Individual Wall Width in inches" fields, that allow "+ Add Dimensions" like the "+Width" button.  These width & height dimensions then need to be multiplied for each entry and divided by 144 and added together for a "Total Sq Ft" result
 
-   Then I need a "Sq Ft Rate" field with the following drop down selections:
+   c. Then I need a "Sq Ft Rate" field with the following drop down selections:
        $2.50/sf
        $3.50/sf
        Custom
 
-   Then I need the "Total Sq Ft" multiplied by the "Sq Ft Rate" to become a "$ Total Project Removal" to be located under the "Project Name" before the "$ Total Project Paper" field.
+   d. Then I need the "Total Sq Ft" multiplied by the "Sq Ft Rate" to become a "$ Total Project Removal" to be located under the "Project Name" before the "$ Total Project Paper" field.
