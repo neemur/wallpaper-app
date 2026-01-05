@@ -40,6 +40,7 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
   const { id, name, isCollapsed } = wall;
   const [highlightedInputs, setHighlightedInputs] = useState<string[]>([]);
   const [highlightedOutputs, setHighlightedOutputs] = useState<string[]>([]);
+  const [isRemovalCollapsed, setIsRemovalCollapsed] = useState(false); // Local state for removal section collapse
 
   const handleNumberInputWheel = (
     event: React.WheelEvent<HTMLInputElement>
@@ -499,107 +500,132 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
       </div>
       {!isCollapsed && (
         <CardContent className="card-content-grid-wall">
-          {/* --- Wallpaper Removal Subsection (Part a) --- */}
-          <div className="col-span-full bg-orange-50 p-4 rounded-md mb-4 border border-orange-200">
-            <h4 className="font-semibold text-orange-900 mb-3">
-              Wallpaper Removal
-            </h4>
-            <div className="space-y-4">
-              {/* Dimensions */}
-              <div>
-                <Label className="text-orange-900">
-                  Removal Areas (Width x Height in inches)
-                </Label>
-                <div className="space-y-2 mt-1">
-                  {(wall.removalDimensions || []).map((dim, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <Input
-                        type="number"
-                        placeholder="Width (in)"
-                        value={dim.width || ""}
-                        onChange={(e) =>
-                          handleRemovalDimensionChange(
-                            index,
-                            "width",
-                            e.target.value
-                          )
-                        }
-                        onWheel={handleNumberInputWheel}
-                        className="bg-white"
-                      />
-                      <span className="text-gray-500">x</span>
-                      <Input
-                        type="number"
-                        placeholder="Height (in)"
-                        value={dim.height || ""}
-                        onChange={(e) =>
-                          handleRemovalDimensionChange(
-                            index,
-                            "height",
-                            e.target.value
-                          )
-                        }
-                        onWheel={handleNumberInputWheel}
-                        className="bg-white"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveRemovalDimension(index)}
-                        baseClass="btn"
-                        aria-label="Remove dimension"
-                        style={{ color: "#ef4444" }}
-                      >
-                        <Trash2 />
-                      </Button>
-                    </div>
-                  ))}
+                    {/* --- Wallpaper Removal Subsection (Part a) --- */}
+                    <div 
+                      className="col-span-full card-base mb-6 overflow-hidden border-orange-200 shadow-sm"
+                      style={{ gridColumn: '1 / -1' }}
+                    >
+                      <div 
+                          className="card-header-wall bg-orange-50/80 hover:bg-orange-100/80 transition-colors border-b border-orange-100"              onClick={() => setIsRemovalCollapsed(!isRemovalCollapsed)}
+            >
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  baseClass="btn"
+                  className="h-8 w-8 text-orange-900 mr-2"
+                >
+                  {isRemovalCollapsed ? <ChevronDown /> : <ChevronUp />}
+                </Button>
+                <h4 className="text-lg font-medium text-orange-900">
+                  Wallpaper Removal
+                </h4>
+                {wall.removalTotalCost ? (
+                  <span className="ml-2 text-sm font-semibold text-orange-700">
+                    (${wall.removalTotalCost.toFixed(2)})
+                  </span>
+                ) : null}
+              </div>
+            </div>
+
+            {!isRemovalCollapsed && (
+              <div className="p-5 flex flex-row gap-6 items-start">
+                {/* Left Side: Removal Areas (Grow) */}
+                <div className="flex-grow space-y-3 min-w-0">
+                  <Label className="text-orange-900 text-xs uppercase font-bold tracking-wider">
+                    Removal Areas (W x H)
+                  </Label>
+                  <div className="space-y-2">
+                    {(wall.removalDimensions || []).map((dim, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          placeholder="W"
+                          value={dim.width || ""}
+                          onChange={(e) =>
+                            handleRemovalDimensionChange(
+                              index,
+                              "width",
+                              e.target.value
+                            )
+                          }
+                          onWheel={handleNumberInputWheel}
+                          className="bg-white h-9 text-sm w-20 sm:w-24"
+                        />
+                        <span className="text-gray-400 text-sm">x</span>
+                        <Input
+                          type="number"
+                          placeholder="H"
+                          value={dim.height || ""}
+                          onChange={(e) =>
+                            handleRemovalDimensionChange(
+                              index,
+                              "height",
+                              e.target.value
+                            )
+                          }
+                          onWheel={handleNumberInputWheel}
+                          className="bg-white h-9 text-sm w-20 sm:w-24"
+                        />
+                        <span className="text-gray-400 text-sm">in</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveRemovalDimension(index)}
+                          baseClass="btn"
+                          aria-label="Remove dimension"
+                          style={{
+                            color: "#ef4444",
+                            height: "2.25rem",
+                            width: "2.25rem",
+                          }}
+                        >
+                          <Trash2 style={{ width: "1rem", height: "1rem" }} />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                   <Button
                     onClick={handleAddRemovalDimension}
                     variant="ghost"
                     size="sm"
-                    className="bg-white border-orange-200 text-orange-900 hover:bg-orange-100"
+                    className="bg-white border border-orange-200 text-orange-900 hover:bg-orange-50 mt-2 text-xs"
                     baseClass="btn"
                   >
                     <Plus
-                      className="mr-2"
-                      style={{ height: "1rem", width: "1rem" }}
+                      className="mr-1"
+                      style={{ height: "0.75rem", width: "0.75rem" }}
                     />{" "}
-                    Add Dimensions
+                    Add Area
                   </Button>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Sq Ft Rate */}
-                <div>
-                  <Label
-                    htmlFor={`${id}-removalRate`}
-                    className="text-orange-900"
-                  >
-                    Sq Ft Rate
-                  </Label>
-                  <Select
-                    id={`${id}-removalRate`}
-                    value={String(wall.removalSqFtRateOption || "")}
-                    onValueChange={handleRemovalRateChange}
-                  >
-                    <SelectTrigger className="bg-white border-orange-200">
-                      <SelectValue placeholder="Select Rate" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {REMOVAL_RATE_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={String(opt.value)}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {wall.removalSqFtRateOption === "custom" && (
-                    <div className="mt-2">
-                      <Label className="text-xs text-orange-900">
-                        Custom Rate ($/sf)
-                      </Label>
+                {/* Right Side: Rate & Totals (Fixed Width) */}
+                <div className="w-64 flex-shrink-0 space-y-4 bg-orange-50/50 p-4 rounded-lg border border-orange-100">
+                  <div>
+                    <Label
+                      htmlFor={`${id}-removalRate`}
+                      className="text-orange-900 text-xs uppercase font-bold tracking-wider mb-2 block"
+                    >
+                      Sq Ft Rate
+                    </Label>
+                    <Select
+                      id={`${id}-removalRate`}
+                      value={String(wall.removalSqFtRateOption || "")}
+                      onValueChange={handleRemovalRateChange}
+                    >
+                      <SelectTrigger className="bg-white border-orange-200 h-9 text-sm w-full">
+                        <SelectValue placeholder="Select Rate" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {REMOVAL_RATE_OPTIONS.map((opt) => (
+                          <SelectItem key={opt.value} value={String(opt.value)}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {wall.removalSqFtRateOption === "custom" && (
                       <Input
                         type="number"
                         value={wall.removalSqFtRateCustom || ""}
@@ -607,34 +633,34 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
                           handleRemovalRateCustomChange(e.target.value)
                         }
                         onWheel={handleNumberInputWheel}
-                        className="bg-white border-orange-200"
+                        className="bg-white border-orange-200 mt-2 h-9 text-sm"
+                        placeholder="Custom $/sf"
                       />
-                    </div>
-                  )}
-                </div>
-
-                {/* Results */}
-                <div className="space-y-2">
-                  <div>
-                    <Label className="text-orange-900">Total Sq Ft</Label>
-                    <div className="text-lg font-mono font-medium text-orange-900 bg-white p-2 rounded border border-orange-200">
-                      {wall.removalTotalSqFt?.toFixed(2) || "0.00"} sq ft
-                    </div>
+                    )}
                   </div>
-                  <div>
-                    <Label className="text-orange-900">
-                      Removal Cost (Space)
-                    </Label>
-                    <div className="text-lg font-mono font-bold text-orange-900 bg-white p-2 rounded border border-orange-200">
-                      ${wall.removalTotalCost?.toFixed(2) || "0.00"}
+
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-orange-200">
+                    <div>
+                      <div className="text-xs text-orange-600 mb-1">
+                        Total Sq Ft
+                      </div>
+                      <div className="font-mono text-lg font-medium text-orange-900">
+                        {wall.removalTotalSqFt?.toFixed(2) || "0.00"}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-orange-600 mb-1">Cost</div>
+                      <div className="font-mono text-lg font-bold text-orange-900">
+                        ${wall.removalTotalCost?.toFixed(2) || "0.00"}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
           {/* --- End Wallpaper Removal Subsection --- */}
-
+          <div /> <div />
           {/* Changed from Input to ReadOnly per request point #2 */}
           {renderReadOnlyInput(
             "Net Ht of Wall to Paper (in)",
@@ -643,7 +669,6 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
             undefined,
             "IF Chair Rail Ht > 0: Ceiling Ht - Crown Ht - Chair Rail Ht. ELSE: Ceiling Ht - Crown Ht - Baseboard Ht."
           )}
-
           {/* --- Dynamic Width Inputs (PDF Point #5) --- */}
           <div
             className={`md:col-span-1 ${getFieldHighlightClass(
@@ -696,7 +721,6 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
               Add Width
             </Button>
           </div>
-
           {renderReadOnlyInput(
             "Total Perimeter of All Walls (in)",
             "width",
@@ -705,7 +729,6 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
             "Sum of all individual wall widths"
           )}
           {/* --- End of Dynamic Width Inputs --- */}
-
           <div>
             <div
               onMouseEnter={() => handleMouseEnterField("paperWidthOption")}
@@ -943,7 +966,6 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
             "number",
             "e.g., 75"
           )}
-
           {/* Added per request point #1 */}
           {renderInput(
             "Shipping & Tariffs ($)",
@@ -951,7 +973,6 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
             "number",
             "e.g., 50"
           )}
-
           {renderReadOnlyInput(
             "Vert. Height of Matched Repeat (in)",
             "verticalHeightOfMatchedRepeat",
@@ -1058,7 +1079,6 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
                 : wall.comparableLengthOfBolt) || "N/A"
             })) × 2⌉`
           )}
-
           {/* Labor Totals */}
           {renderReadOnlyInput(
             "Base Labor ($)",
@@ -1098,11 +1118,9 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
             "font-bold-lg-green",
             "Base Labor + Height Surcharge + Ceiling Surcharge + PIA Surcharge"
           )}
-
           {/* Added per request point #1 - Paper Totals */}
           {/*<div className="md:col-span-1"></div> /!* Spacer *!/*/}
           {/*materialCost: { inputs: ['unitPriceOfWallpaper', 'numberOfBolts'], outputs: ['baseLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },*/}
-
           {renderReadOnlyInput(
             "Material Cost ($)",
             "materialCost",
@@ -1110,7 +1128,6 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
             "font-bold-lg-green",
             "unitPriceOfWallpaper * numberOfBolts"
           )}
-
           {renderReadOnlyInput(
             "Sales Price Plus Sales Tax ($)",
             "salesPricePlusSalesTax",
