@@ -498,187 +498,188 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
           </Button>
         </div>
       </div>
-      {!isCollapsed && (
-        <>
-          {/* --- Wallpaper Removal Subsection (Part a) --- */}
-          {/* Moved OUT of CardContent to ensure it is always full width and separate from the input grid */}
-          <div className="p-4 border-b border-gray-100">
-            <div className="card-base overflow-hidden border-orange-200 shadow-sm">
-              <div
-                className="card-header-wall bg-orange-50/80 hover:bg-orange-100/80 transition-colors border-b border-orange-100 flex flex-row items-center gap-2"
-                style={{ justifyContent: "flex-start" }}
-                onClick={() => setIsRemovalCollapsed(!isRemovalCollapsed)}
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  baseClass="btn"
-                  className="h-8 w-8 text-orange-900 flex-shrink-0"
-                >
-                  {isRemovalCollapsed ? <ChevronDown /> : <ChevronUp />}
-                </Button>
-                <h4 className="text-lg font-medium text-orange-900 select-none">
-                  Wallpaper Removal
-                </h4>
-                {wall.removalTotalCost ? (
-                  <span className="ml-2 text-sm font-semibold text-orange-700">
-                    (${wall.removalTotalCost.toFixed(2)})
-                  </span>
-                ) : null}
-              </div>
-
-              {!isRemovalCollapsed && (
+            {!isCollapsed && (
+              <>
+                {/* --- Wallpaper Removal Subsection (Part a) --- */}
+                {/* Moved OUT of CardContent to ensure it is always full width and separate from the input grid */}
                 <div
-                  className="p-5 flex flex-row gap-6 items-start"
-                  style={{ paddingLeft: "30px" }}
+                  className="card-base overflow-hidden border-orange-200 shadow-sm"
+                  style={{ margin: "1rem" }}
                 >
-                  {/* Left Side: Removal Areas (Grow) */}
-                  <div className="flex-grow space-y-3 min-w-0">
-                    <Label className="text-orange-900 text-xs uppercase font-bold tracking-wider">
-                      Removal Areas (W x H)
-                    </Label>
-                    <div className="space-y-2">
-                      {(wall.removalDimensions || []).map((dim, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2"
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            flexWrap: "nowrap",
-                          }}
-                        >
-                          <Input
-                            type="number"
-                            placeholder="W"
-                            value={dim.width || ""}
-                            onChange={(e) =>
-                              handleRemovalDimensionChange(
-                                index,
-                                "width",
-                                e.target.value
-                              )
-                            }
-                            onWheel={handleNumberInputWheel}
-                            className="bg-white h-9 text-sm"
-                            style={{ width: "80px", flex: "0 0 80px" }}
-                          />
-                          <span className="text-gray-400 text-sm flex-shrink-0">
-                            x
-                          </span>
-                          <Input
-                            type="number"
-                            placeholder="H"
-                            value={dim.height || ""}
-                            onChange={(e) =>
-                              handleRemovalDimensionChange(
-                                index,
-                                "height",
-                                e.target.value
-                              )
-                            }
-                            onWheel={handleNumberInputWheel}
-                            className="bg-white h-9 text-sm"
-                            style={{ width: "80px", flex: "0 0 80px" }}
-                          />
-                          <span className="text-gray-400 text-sm flex-shrink-0">
-                            in
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleRemoveRemovalDimension(index)}
-                            baseClass="btn"
-                            aria-label="Remove dimension"
-                            style={{
-                              color: "#ef4444",
-                              height: "2.25rem",
-                              width: "2.25rem",
-                            }}
-                            className="flex-shrink-0"
-                          >
-                            <Trash2 style={{ width: "1rem", height: "1rem" }} />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
+                  <div
+                    className="card-header-wall bg-orange-50/80 hover:bg-orange-100/80 transition-colors border-b border-orange-100 flex flex-row items-center gap-2"
+                    style={{ justifyContent: "flex-start" }}
+                    onClick={() => setIsRemovalCollapsed(!isRemovalCollapsed)}
+                  >
                     <Button
-                      onClick={handleAddRemovalDimension}
                       variant="ghost"
-                      size="sm"
-                      className="bg-white border border-orange-200 text-orange-900 hover:bg-orange-50 mt-2 text-xs"
+                      size="icon"
                       baseClass="btn"
+                      className="h-8 w-8 text-orange-900 flex-shrink-0"
                     >
-                      <Plus
-                        className="mr-1"
-                        style={{ height: "0.75rem", width: "0.75rem" }}
-                      />{" "}
-                      Add Area
+                      {isRemovalCollapsed ? <ChevronDown /> : <ChevronUp />}
                     </Button>
+                    <h4 className="text-lg font-medium text-orange-900 select-none">
+                      Wallpaper Removal
+                    </h4>
+                    {wall.removalTotalCost ? (
+                      <span className="ml-2 text-sm font-semibold text-orange-700">
+                        (${wall.removalTotalCost.toFixed(2)})
+                      </span>
+                    ) : null}
                   </div>
-
-                  {/* Right Side: Rate & Totals (Fixed Width) */}
-                  <div className="w-64 flex-shrink-0 space-y-4 bg-orange-50/50 p-4 rounded-lg border border-orange-100">
-                    <div>
-                      <Label
-                        htmlFor={`${id}-removalRate`}
-                        className="text-orange-900 text-xs uppercase font-bold tracking-wider mb-2 block"
-                      >
-                        Sq Ft Rate
-                      </Label>
-                      <div style={{ width: "160px" }}>
-                        <Select
-                          id={`${id}-removalRate`}
-                          value={String(wall.removalSqFtRateOption || "")}
-                          onValueChange={handleRemovalRateChange}
-                        >
-                          <SelectTrigger className="bg-white border-orange-200 h-9 text-sm w-full">
-                            <SelectValue placeholder="Select Rate" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {REMOVAL_RATE_OPTIONS.map((opt) => (
-                              <SelectItem
-                                key={opt.value}
-                                value={String(opt.value)}
+      
+                  {!isRemovalCollapsed && (
+                    <div
+                      className="p-5 flex flex-row gap-6 items-start"
+                      style={{ paddingLeft: "30px" }}
+                    >
+                      {/* Left Side: Removal Areas (Grow) */}
+                      <div className="flex-grow space-y-3 min-w-0">
+                        <Label className="text-orange-900 text-xs uppercase font-bold tracking-wider">
+                          Removal Areas (W x H)
+                        </Label>
+                        <div className="space-y-2">
+                          {(wall.removalDimensions || []).map((dim, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2"
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                flexWrap: "nowrap",
+                              }}
+                            >
+                              <Input
+                                type="number"
+                                placeholder="W"
+                                value={dim.width || ""}
+                                onChange={(e) =>
+                                  handleRemovalDimensionChange(
+                                    index,
+                                    "width",
+                                    e.target.value
+                                  )
+                                }
+                                onWheel={handleNumberInputWheel}
+                                className="bg-white h-9 text-sm"
+                                style={{ width: "80px", flex: "0 0 80px" }}
+                              />
+                              <span className="text-gray-400 text-sm flex-shrink-0">
+                                x
+                              </span>
+                              <Input
+                                type="number"
+                                placeholder="H"
+                                value={dim.height || ""}
+                                onChange={(e) =>
+                                  handleRemovalDimensionChange(
+                                    index,
+                                    "height",
+                                    e.target.value
+                                  )
+                                }
+                                onWheel={handleNumberInputWheel}
+                                className="bg-white h-9 text-sm"
+                                style={{ width: "80px", flex: "0 0 80px" }}
+                              />
+                              <span className="text-gray-400 text-sm flex-shrink-0">
+                                in
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleRemoveRemovalDimension(index)}
+                                baseClass="btn"
+                                aria-label="Remove dimension"
+                                style={{
+                                  color: "#ef4444",
+                                  height: "2.25rem",
+                                  width: "2.25rem",
+                                }}
+                                className="flex-shrink-0"
                               >
-                                {opt.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {wall.removalSqFtRateOption === "custom" && (
-                          <Input
-                            type="number"
-                            value={wall.removalSqFtRateCustom || ""}
-                            onChange={(e) =>
-                              handleRemovalRateCustomChange(e.target.value)
-                            }
-                            onWheel={handleNumberInputWheel}
-                            className="bg-white border-orange-200 mt-2 h-9 text-sm w-full"
-                            placeholder="Custom $/sf"
-                          />
-                        )}
+                                <Trash2 style={{ width: "1rem", height: "1rem" }} />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          onClick={handleAddRemovalDimension}
+                          variant="ghost"
+                          size="sm"
+                          className="bg-white border border-orange-200 text-orange-900 hover:bg-orange-50 mt-2 text-xs"
+                          baseClass="btn"
+                        >
+                          <Plus
+                            className="mr-1"
+                            style={{ height: "0.75rem", width: "0.75rem" }}
+                          />{" "}
+                          Add Area
+                        </Button>
+                      </div>
+      
+                      {/* Right Side: Rate & Totals (Fixed Width) */}
+                      <div className="w-64 flex-shrink-0 space-y-4 bg-orange-50/50 p-4 rounded-lg border border-orange-100">
+                        <div>
+                          <Label
+                            htmlFor={`${id}-removalRate`}
+                            className="text-orange-900 text-xs uppercase font-bold tracking-wider mb-2 block"
+                          >
+                            Sq Ft Rate
+                          </Label>
+                          <div style={{ width: "160px" }}>
+                            <Select
+                              id={`${id}-removalRate`}
+                              value={String(wall.removalSqFtRateOption || "")}
+                              onValueChange={handleRemovalRateChange}
+                            >
+                              <SelectTrigger className="bg-white border-orange-200 h-9 text-sm w-full">
+                                <SelectValue placeholder="Select Rate" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {REMOVAL_RATE_OPTIONS.map((opt) => (
+                                  <SelectItem
+                                    key={opt.value}
+                                    value={String(opt.value)}
+                                  >
+                                    {opt.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {wall.removalSqFtRateOption === "custom" && (
+                              <Input
+                                type="number"
+                                value={wall.removalSqFtRateCustom || ""}
+                                onChange={(e) =>
+                                  handleRemovalRateCustomChange(e.target.value)
+                                }
+                                onWheel={handleNumberInputWheel}
+                                className="bg-white border-orange-200 mt-2 h-9 text-sm w-full"
+                                placeholder="Custom $/sf"
+                              />
+                            )}
+                          </div>
+                        </div>
+      
+                        <div className="pt-4 border-t border-orange-200">
+                          <div>
+                            <div className="text-xs text-orange-600 mb-1">
+                              Total Sq Ft
+                            </div>
+                            <div className="font-mono text-lg font-medium text-orange-900">
+                              {wall.removalTotalSqFt?.toFixed(2) || "0.00"}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="pt-4 border-t border-orange-200">
-                      <div>
-                        <div className="text-xs text-orange-600 mb-1">
-                          Total Sq Ft
-                        </div>
-                        <div className="font-mono text-lg font-medium text-orange-900">
-                          {wall.removalTotalSqFt?.toFixed(2) || "0.00"}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
-
-          <CardContent className="card-content-grid-wall">
+      
+                <CardContent className="card-content-grid-wall">
             {/* Changed from Input to ReadOnly per request point #2 */}
             {renderReadOnlyInput(
               "Net Ht of Wall to Paper (in)",
