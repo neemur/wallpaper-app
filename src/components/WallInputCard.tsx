@@ -499,25 +499,25 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
         </div>
       </div>
       {!isCollapsed && (
-        <CardContent className="card-content-grid-wall">
-                    {/* --- Wallpaper Removal Subsection (Part a) --- */}
-                    <div 
-                      className="col-span-full card-base mb-6 overflow-hidden border-orange-200 shadow-sm"
-                      style={{ gridColumn: '1 / -1' }}
-                    >
-                      <div 
-                          className="card-header-wall bg-orange-50/80 hover:bg-orange-100/80 transition-colors border-b border-orange-100"              onClick={() => setIsRemovalCollapsed(!isRemovalCollapsed)}
-            >
-              <div className="flex items-center gap-2">
+        <>
+          {/* --- Wallpaper Removal Subsection (Part a) --- */}
+          {/* Moved OUT of CardContent to ensure it is always full width and separate from the input grid */}
+          <div className="p-4 border-b border-gray-100">
+            <div className="card-base overflow-hidden border-orange-200 shadow-sm">
+              <div
+                className="card-header-wall bg-orange-50/80 hover:bg-orange-100/80 transition-colors border-b border-orange-100 flex flex-row items-center gap-2"
+                style={{ justifyContent: "flex-start" }}
+                onClick={() => setIsRemovalCollapsed(!isRemovalCollapsed)}
+              >
                 <Button
                   variant="ghost"
                   size="icon"
                   baseClass="btn"
-                  className="h-8 w-8 text-orange-900 mr-2"
+                  className="h-8 w-8 text-orange-900 flex-shrink-0"
                 >
                   {isRemovalCollapsed ? <ChevronDown /> : <ChevronUp />}
                 </Button>
-                <h4 className="text-lg font-medium text-orange-900">
+                <h4 className="text-lg font-medium text-orange-900 select-none">
                   Wallpaper Removal
                 </h4>
                 {wall.removalTotalCost ? (
@@ -526,627 +526,665 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
                   </span>
                 ) : null}
               </div>
-            </div>
 
-            {!isRemovalCollapsed && (
-              <div className="p-5 flex flex-row gap-6 items-start">
-                {/* Left Side: Removal Areas (Grow) */}
-                <div className="flex-grow space-y-3 min-w-0">
-                  <Label className="text-orange-900 text-xs uppercase font-bold tracking-wider">
-                    Removal Areas (W x H)
-                  </Label>
-                  <div className="space-y-2">
-                    {(wall.removalDimensions || []).map((dim, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <Input
-                          type="number"
-                          placeholder="W"
-                          value={dim.width || ""}
-                          onChange={(e) =>
-                            handleRemovalDimensionChange(
-                              index,
-                              "width",
-                              e.target.value
-                            )
-                          }
-                          onWheel={handleNumberInputWheel}
-                          className="bg-white h-9 text-sm w-20 sm:w-24"
-                        />
-                        <span className="text-gray-400 text-sm">x</span>
-                        <Input
-                          type="number"
-                          placeholder="H"
-                          value={dim.height || ""}
-                          onChange={(e) =>
-                            handleRemovalDimensionChange(
-                              index,
-                              "height",
-                              e.target.value
-                            )
-                          }
-                          onWheel={handleNumberInputWheel}
-                          className="bg-white h-9 text-sm w-20 sm:w-24"
-                        />
-                        <span className="text-gray-400 text-sm">in</span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRemoveRemovalDimension(index)}
-                          baseClass="btn"
-                          aria-label="Remove dimension"
+              {!isRemovalCollapsed && (
+                <div
+                  className="p-5 flex flex-row gap-6 items-start"
+                  style={{ paddingLeft: "30px" }}
+                >
+                  {/* Left Side: Removal Areas (Grow) */}
+                  <div className="flex-grow space-y-3 min-w-0">
+                    <Label className="text-orange-900 text-xs uppercase font-bold tracking-wider">
+                      Removal Areas (W x H)
+                    </Label>
+                    <div className="space-y-2">
+                      {(wall.removalDimensions || []).map((dim, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-2"
                           style={{
-                            color: "#ef4444",
-                            height: "2.25rem",
-                            width: "2.25rem",
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            flexWrap: "nowrap",
                           }}
                         >
-                          <Trash2 style={{ width: "1rem", height: "1rem" }} />
-                        </Button>
-                      </div>
-                    ))}
+                          <Input
+                            type="number"
+                            placeholder="W"
+                            value={dim.width || ""}
+                            onChange={(e) =>
+                              handleRemovalDimensionChange(
+                                index,
+                                "width",
+                                e.target.value
+                              )
+                            }
+                            onWheel={handleNumberInputWheel}
+                            className="bg-white h-9 text-sm"
+                            style={{ width: "80px", flex: "0 0 80px" }}
+                          />
+                          <span className="text-gray-400 text-sm flex-shrink-0">
+                            x
+                          </span>
+                          <Input
+                            type="number"
+                            placeholder="H"
+                            value={dim.height || ""}
+                            onChange={(e) =>
+                              handleRemovalDimensionChange(
+                                index,
+                                "height",
+                                e.target.value
+                              )
+                            }
+                            onWheel={handleNumberInputWheel}
+                            className="bg-white h-9 text-sm"
+                            style={{ width: "80px", flex: "0 0 80px" }}
+                          />
+                          <span className="text-gray-400 text-sm flex-shrink-0">
+                            in
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRemoveRemovalDimension(index)}
+                            baseClass="btn"
+                            aria-label="Remove dimension"
+                            style={{
+                              color: "#ef4444",
+                              height: "2.25rem",
+                              width: "2.25rem",
+                            }}
+                            className="flex-shrink-0"
+                          >
+                            <Trash2 style={{ width: "1rem", height: "1rem" }} />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                    <Button
+                      onClick={handleAddRemovalDimension}
+                      variant="ghost"
+                      size="sm"
+                      className="bg-white border border-orange-200 text-orange-900 hover:bg-orange-50 mt-2 text-xs"
+                      baseClass="btn"
+                    >
+                      <Plus
+                        className="mr-1"
+                        style={{ height: "0.75rem", width: "0.75rem" }}
+                      />{" "}
+                      Add Area
+                    </Button>
                   </div>
-                  <Button
-                    onClick={handleAddRemovalDimension}
-                    variant="ghost"
-                    size="sm"
-                    className="bg-white border border-orange-200 text-orange-900 hover:bg-orange-50 mt-2 text-xs"
-                    baseClass="btn"
-                  >
-                    <Plus
-                      className="mr-1"
-                      style={{ height: "0.75rem", width: "0.75rem" }}
-                    />{" "}
-                    Add Area
-                  </Button>
-                </div>
 
-                {/* Right Side: Rate & Totals (Fixed Width) */}
-                <div className="w-64 flex-shrink-0 space-y-4 bg-orange-50/50 p-4 rounded-lg border border-orange-100">
-                  <div>
-                    <Label
-                      htmlFor={`${id}-removalRate`}
-                      className="text-orange-900 text-xs uppercase font-bold tracking-wider mb-2 block"
-                    >
-                      Sq Ft Rate
-                    </Label>
-                    <Select
-                      id={`${id}-removalRate`}
-                      value={String(wall.removalSqFtRateOption || "")}
-                      onValueChange={handleRemovalRateChange}
-                    >
-                      <SelectTrigger className="bg-white border-orange-200 h-9 text-sm w-full">
-                        <SelectValue placeholder="Select Rate" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {REMOVAL_RATE_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={String(opt.value)}>
-                            {opt.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {wall.removalSqFtRateOption === "custom" && (
-                      <Input
-                        type="number"
-                        value={wall.removalSqFtRateCustom || ""}
-                        onChange={(e) =>
-                          handleRemovalRateCustomChange(e.target.value)
-                        }
-                        onWheel={handleNumberInputWheel}
-                        className="bg-white border-orange-200 mt-2 h-9 text-sm"
-                        placeholder="Custom $/sf"
-                      />
+                  {/* Right Side: Rate & Totals (Fixed Width) */}
+                  <div className="w-64 flex-shrink-0 space-y-4 bg-orange-50/50 p-4 rounded-lg border border-orange-100">
+                    <div>
+                      <Label
+                        htmlFor={`${id}-removalRate`}
+                        className="text-orange-900 text-xs uppercase font-bold tracking-wider mb-2 block"
+                      >
+                        Sq Ft Rate
+                      </Label>
+                      <div style={{ width: "160px" }}>
+                        <Select
+                          id={`${id}-removalRate`}
+                          value={String(wall.removalSqFtRateOption || "")}
+                          onValueChange={handleRemovalRateChange}
+                        >
+                          <SelectTrigger className="bg-white border-orange-200 h-9 text-sm w-full">
+                            <SelectValue placeholder="Select Rate" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {REMOVAL_RATE_OPTIONS.map((opt) => (
+                              <SelectItem
+                                key={opt.value}
+                                value={String(opt.value)}
+                              >
+                                {opt.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {wall.removalSqFtRateOption === "custom" && (
+                          <Input
+                            type="number"
+                            value={wall.removalSqFtRateCustom || ""}
+                            onChange={(e) =>
+                              handleRemovalRateCustomChange(e.target.value)
+                            }
+                            onWheel={handleNumberInputWheel}
+                            className="bg-white border-orange-200 mt-2 h-9 text-sm w-full"
+                            placeholder="Custom $/sf"
+                          />
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-orange-200">
+                      <div>
+                        <div className="text-xs text-orange-600 mb-1">
+                          Total Sq Ft
+                        </div>
+                        <div className="font-mono text-lg font-medium text-orange-900">
+                          {wall.removalTotalSqFt?.toFixed(2) || "0.00"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <CardContent className="card-content-grid-wall">
+            {/* Changed from Input to ReadOnly per request point #2 */}
+            {renderReadOnlyInput(
+              "Net Ht of Wall to Paper (in)",
+              "heightOfWall",
+              wall.heightOfWall?.toFixed(2),
+              undefined,
+              "IF Chair Rail Ht > 0: Ceiling Ht - Crown Ht - Chair Rail Ht. ELSE: Ceiling Ht - Crown Ht - Baseboard Ht."
+            )}
+
+            {/* --- Dynamic Width Inputs (PDF Point #5) --- */}
+            <div
+              className={`md:col-span-1 ${getFieldHighlightClass(
+                "individualWidths"
+              )}`}
+              onMouseEnter={() => handleMouseEnterField("individualWidths")}
+              onMouseLeave={handleMouseLeaveField}
+            >
+              <Label className={getLabelHighlightClass("individualWidths")}>
+                Individual Wall Widths (in)
+              </Label>
+              <div className="space-y-2 mt-1">
+                {(wall.individualWidths || []).map((width, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      placeholder={`Width ${index + 1}`}
+                      value={width || ""}
+                      onChange={(e) =>
+                        handleIndividualWidthChange(index, e.target.value)
+                      }
+                      onWheel={handleNumberInputWheel}
+                    />
+                    {(wall.individualWidths || []).length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveWidth(index)}
+                        baseClass="btn"
+                        aria-label="Remove width"
+                        style={{ color: "#ef4444", flexShrink: 0 }}
+                      >
+                        <Trash2 />
+                      </Button>
                     )}
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-orange-200">
-                    <div>
-                      <div className="text-xs text-orange-600 mb-1">
-                        Total Sq Ft
-                      </div>
-                      <div className="font-mono text-lg font-medium text-orange-900">
-                        {wall.removalTotalSqFt?.toFixed(2) || "0.00"}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-xs text-orange-600 mb-1">Cost</div>
-                      <div className="font-mono text-lg font-bold text-orange-900">
-                        ${wall.removalTotalCost?.toFixed(2) || "0.00"}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
+              <Button
+                onClick={handleAddWidth}
+                variant="default"
+                size="sm"
+                className="mt-2"
+                baseClass="btn"
+              >
+                <Plus
+                  className="mr-2"
+                  style={{ height: "1rem", width: "1rem" }}
+                />{" "}
+                Add Width
+              </Button>
+            </div>
+
+            {renderReadOnlyInput(
+              "Total Perimeter of All Walls (in)",
+              "width",
+              wall.width,
+              undefined,
+              "Sum of all individual wall widths"
             )}
-          </div>
-          {/* --- End Wallpaper Removal Subsection --- */}
-          <div /> <div />
-          {/* Changed from Input to ReadOnly per request point #2 */}
-          {renderReadOnlyInput(
-            "Net Ht of Wall to Paper (in)",
-            "heightOfWall",
-            wall.heightOfWall?.toFixed(2),
-            undefined,
-            "IF Chair Rail Ht > 0: Ceiling Ht - Crown Ht - Chair Rail Ht. ELSE: Ceiling Ht - Crown Ht - Baseboard Ht."
-          )}
-          {/* --- Dynamic Width Inputs (PDF Point #5) --- */}
-          <div
-            className={`md:col-span-1 ${getFieldHighlightClass(
-              "individualWidths"
-            )}`}
-            onMouseEnter={() => handleMouseEnterField("individualWidths")}
-            onMouseLeave={handleMouseLeaveField}
-          >
-            <Label className={getLabelHighlightClass("individualWidths")}>
-              Individual Wall Widths (in)
-            </Label>
-            <div className="space-y-2 mt-1">
-              {(wall.individualWidths || []).map((width, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    placeholder={`Width ${index + 1}`}
-                    value={width || ""}
-                    onChange={(e) =>
-                      handleIndividualWidthChange(index, e.target.value)
-                    }
-                    onWheel={handleNumberInputWheel}
-                  />
-                  {(wall.individualWidths || []).length > 1 && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleRemoveWidth(index)}
-                      baseClass="btn"
-                      aria-label="Remove width"
-                      style={{ color: "#ef4444", flexShrink: 0 }}
-                    >
-                      <Trash2 />
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-            <Button
-              onClick={handleAddWidth}
-              variant="default"
-              size="sm"
-              className="mt-2"
-              baseClass="btn"
-            >
-              <Plus
-                className="mr-2"
-                style={{ height: "1rem", width: "1rem" }}
-              />{" "}
-              Add Width
-            </Button>
-          </div>
-          {renderReadOnlyInput(
-            "Total Perimeter of All Walls (in)",
-            "width",
-            wall.width,
-            undefined,
-            "Sum of all individual wall widths"
-          )}
-          {/* --- End of Dynamic Width Inputs --- */}
-          <div>
-            <div
-              onMouseEnter={() => handleMouseEnterField("paperWidthOption")}
-              onMouseLeave={handleMouseLeaveField}
-              className={getFieldHighlightClass("paperWidthOption")}
-            >
-              <Label
-                htmlFor={`${id}-paperWidthOption`}
-                className={getLabelHighlightClass("paperWidthOption")}
-              >
-                Paper Width
-              </Label>
-              <Select
-                id={`${id}-paperWidthOption`}
-                onValueChange={(value) => {
-                  handleInputChange(
-                    "paperWidthOption",
-                    value === "custom" ? "custom" : Number(value)
-                  );
-                  if (value !== "custom")
-                    handleInputChange("paperWidthCustom", undefined);
-                }}
-                value={wall.paperWidthOption}
-              >
-                {" "}
-                <SelectTrigger>
-                  <SelectValue placeholder="Select width" />
-                </SelectTrigger>{" "}
-                <SelectContent>
-                  {" "}
-                  {PAPER_WIDTH_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={String(option.value)}>
-                      {option.label}
-                    </SelectItem>
-                  ))}{" "}
-                </SelectContent>{" "}
-              </Select>
-            </div>
-            {wall.paperWidthOption === "custom" && (
+            {/* --- End of Dynamic Width Inputs --- */}
+
+            <div>
               <div
-                className={`mt-2 ${getFieldHighlightClass("paperWidthCustom")}`}
-                onMouseEnter={() => handleMouseEnterField("paperWidthCustom")}
+                onMouseEnter={() => handleMouseEnterField("paperWidthOption")}
                 onMouseLeave={handleMouseLeaveField}
+                className={getFieldHighlightClass("paperWidthOption")}
               >
                 <Label
-                  htmlFor={`${id}-paperWidthCustom`}
-                  className={`label-xs ${getLabelHighlightClass(
+                  htmlFor={`${id}-paperWidthOption`}
+                  className={getLabelHighlightClass("paperWidthOption")}
+                >
+                  Paper Width
+                </Label>
+                <Select
+                  id={`${id}-paperWidthOption`}
+                  onValueChange={(value) => {
+                    handleInputChange(
+                      "paperWidthOption",
+                      value === "custom" ? "custom" : Number(value)
+                    );
+                    if (value !== "custom")
+                      handleInputChange("paperWidthCustom", undefined);
+                  }}
+                  value={wall.paperWidthOption}
+                >
+                  {" "}
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select width" />
+                  </SelectTrigger>{" "}
+                  <SelectContent>
+                    {" "}
+                    {PAPER_WIDTH_OPTIONS.map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        value={String(option.value)}
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}{" "}
+                  </SelectContent>{" "}
+                </Select>
+              </div>
+              {wall.paperWidthOption === "custom" && (
+                <div
+                  className={`mt-2 ${getFieldHighlightClass(
                     "paperWidthCustom"
                   )}`}
+                  onMouseEnter={() => handleMouseEnterField("paperWidthCustom")}
+                  onMouseLeave={handleMouseLeaveField}
                 >
-                  Custom Width (in)
-                </Label>
-                <Input
-                  id={`${id}-paperWidthCustom`}
-                  type="number"
-                  value={wall.paperWidthCustom || ""}
-                  onChange={(e) =>
-                    handleInputChange("paperWidthCustom", e.target.value)
-                  }
-                  onWheel={handleNumberInputWheel}
-                  className="mt-1"
-                />
-              </div>
-            )}
-          </div>
-          <div>
-            <div
-              onMouseEnter={() => handleMouseEnterField("lengthOfBoltOption")}
-              onMouseLeave={handleMouseLeaveField}
-              className={getFieldHighlightClass("lengthOfBoltOption")}
-            >
-              <Label
-                htmlFor={`${id}-lengthOfBoltOption`}
-                className={getLabelHighlightClass("lengthOfBoltOption")}
-              >
-                Length of Packaged Bolt
-              </Label>
-              <Select
-                id={`${id}-lengthOfBoltOption`}
-                onValueChange={(value) => {
-                  handleInputChange(
-                    "lengthOfBoltOption",
-                    value === "custom" ? "custom" : Number(value)
-                  );
-                  if (value !== "custom")
-                    handleInputChange("lengthOfBoltCustom", undefined);
-                }}
-                value={wall.lengthOfBoltOption}
-              >
-                {" "}
-                <SelectTrigger>
-                  <SelectValue placeholder="Select length" />
-                </SelectTrigger>{" "}
-                <SelectContent>
-                  {" "}
-                  {BOLT_LENGTH_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={String(option.value)}>
-                      {option.label}
-                    </SelectItem>
-                  ))}{" "}
-                </SelectContent>{" "}
-              </Select>
+                  <Label
+                    htmlFor={`${id}-paperWidthCustom`}
+                    className={`label-xs ${getLabelHighlightClass(
+                      "paperWidthCustom"
+                    )}`}
+                  >
+                    Custom Width (in)
+                  </Label>
+                  <Input
+                    id={`${id}-paperWidthCustom`}
+                    type="number"
+                    value={wall.paperWidthCustom || ""}
+                    onChange={(e) =>
+                      handleInputChange("paperWidthCustom", e.target.value)
+                    }
+                    onWheel={handleNumberInputWheel}
+                    className="mt-1"
+                  />
+                </div>
+              )}
             </div>
-            {wall.lengthOfBoltOption === "custom" && (
+            <div>
               <div
-                className={`mt-2 ${getFieldHighlightClass(
-                  "lengthOfBoltCustom"
-                )}`}
-                onMouseEnter={() => handleMouseEnterField("lengthOfBoltCustom")}
+                onMouseEnter={() => handleMouseEnterField("lengthOfBoltOption")}
                 onMouseLeave={handleMouseLeaveField}
+                className={getFieldHighlightClass("lengthOfBoltOption")}
               >
                 <Label
-                  htmlFor={`${id}-lengthOfBoltCustom`}
-                  className={`label-xs ${getLabelHighlightClass(
+                  htmlFor={`${id}-lengthOfBoltOption`}
+                  className={getLabelHighlightClass("lengthOfBoltOption")}
+                >
+                  Length of Packaged Bolt
+                </Label>
+                <Select
+                  id={`${id}-lengthOfBoltOption`}
+                  onValueChange={(value) => {
+                    handleInputChange(
+                      "lengthOfBoltOption",
+                      value === "custom" ? "custom" : Number(value)
+                    );
+                    if (value !== "custom")
+                      handleInputChange("lengthOfBoltCustom", undefined);
+                  }}
+                  value={wall.lengthOfBoltOption}
+                >
+                  {" "}
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select length" />
+                  </SelectTrigger>{" "}
+                  <SelectContent>
+                    {" "}
+                    {BOLT_LENGTH_OPTIONS.map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        value={String(option.value)}
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}{" "}
+                  </SelectContent>{" "}
+                </Select>
+              </div>
+              {wall.lengthOfBoltOption === "custom" && (
+                <div
+                  className={`mt-2 ${getFieldHighlightClass(
                     "lengthOfBoltCustom"
                   )}`}
-                >
-                  Custom Length (in)
-                </Label>
-                <Input
-                  id={`${id}-lengthOfBoltCustom`}
-                  type="number"
-                  value={wall.lengthOfBoltCustom || ""}
-                  onChange={(e) =>
-                    handleInputChange("lengthOfBoltCustom", e.target.value)
+                  onMouseEnter={() =>
+                    handleMouseEnterField("lengthOfBoltCustom")
                   }
-                  onWheel={handleNumberInputWheel}
-                  className="mt-1"
-                />
-              </div>
-            )}
-          </div>
-          {renderInput(
-            "Pattern Vertical Repeat (in)",
-            "patternVerticalRepeat",
-            "number",
-            "0 if no repeat"
-          )}
-          {renderInput(
-            "Pattern Match",
-            "patternMatch",
-            "select",
-            undefined,
-            PATTERN_MATCH_OPTIONS
-          )}
-          {/* Added per PDF point #7 */}
-          <div>
-            <div
-              onMouseEnter={() =>
-                handleMouseEnterField("comparableLengthOfBolt")
-              }
-              onMouseLeave={handleMouseLeaveField}
-              className={getFieldHighlightClass("comparableLengthOfBolt")}
-            >
-              <Label
-                htmlFor={`${id}-comparableLengthOfBolt`}
-                className={getLabelHighlightClass("comparableLengthOfBolt")}
-              >
-                Comparable Length of Bolt Multiplier
-              </Label>
-              <Select
-                id={`${id}-comparableLengthOfBolt`}
-                onValueChange={(value) => {
-                  handleInputChange(
-                    "comparableLengthOfBolt",
-                    value === "custom" ? "custom" : Number(value)
-                  );
-                  if (value !== "custom")
-                    handleInputChange(
-                      "comparableLengthOfBoltCustom",
-                      undefined
-                    );
-                }}
-                value={wall.comparableLengthOfBolt}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select comparable length" />
-                </SelectTrigger>
-                <SelectContent>
-                  {COMPARABLE_BOLT_LENGTH_OPTIONS.map((option) => (
-                    <SelectItem
-                      key={String(option.value)}
-                      value={String(option.value)}
-                    >
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                  onMouseLeave={handleMouseLeaveField}
+                >
+                  <Label
+                    htmlFor={`${id}-lengthOfBoltCustom`}
+                    className={`label-xs ${getLabelHighlightClass(
+                      "lengthOfBoltCustom"
+                    )}`}
+                  >
+                    Custom Length (in)
+                  </Label>
+                  <Input
+                    id={`${id}-lengthOfBoltCustom`}
+                    type="number"
+                    value={wall.lengthOfBoltCustom || ""}
+                    onChange={(e) =>
+                      handleInputChange("lengthOfBoltCustom", e.target.value)
+                    }
+                    onWheel={handleNumberInputWheel}
+                    className="mt-1"
+                  />
+                </div>
+              )}
             </div>
-            {wall.comparableLengthOfBolt === "custom" && (
+            {renderInput(
+              "Pattern Vertical Repeat (in)",
+              "patternVerticalRepeat",
+              "number",
+              "0 if no repeat"
+            )}
+            {renderInput(
+              "Pattern Match",
+              "patternMatch",
+              "select",
+              undefined,
+              PATTERN_MATCH_OPTIONS
+            )}
+            {/* Added per PDF point #7 */}
+            <div>
               <div
-                className={`mt-2 ${getFieldHighlightClass(
-                  "comparableLengthOfBoltCustom"
-                )}`}
                 onMouseEnter={() =>
-                  handleMouseEnterField("comparableLengthOfBoltCustom")
+                  handleMouseEnterField("comparableLengthOfBolt")
                 }
                 onMouseLeave={handleMouseLeaveField}
+                className={getFieldHighlightClass("comparableLengthOfBolt")}
               >
                 <Label
-                  htmlFor={`${id}-comparableLengthOfBoltCustom`}
-                  className={`label-xs ${getLabelHighlightClass(
+                  htmlFor={`${id}-comparableLengthOfBolt`}
+                  className={getLabelHighlightClass("comparableLengthOfBolt")}
+                >
+                  Comparable Length of Bolt Multiplier
+                </Label>
+                <Select
+                  id={`${id}-comparableLengthOfBolt`}
+                  onValueChange={(value) => {
+                    handleInputChange(
+                      "comparableLengthOfBolt",
+                      value === "custom" ? "custom" : Number(value)
+                    );
+                    if (value !== "custom")
+                      handleInputChange(
+                        "comparableLengthOfBoltCustom",
+                        undefined
+                      );
+                  }}
+                  value={wall.comparableLengthOfBolt}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select comparable length" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COMPARABLE_BOLT_LENGTH_OPTIONS.map((option) => (
+                      <SelectItem
+                        key={String(option.value)}
+                        value={String(option.value)}
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {wall.comparableLengthOfBolt === "custom" && (
+                <div
+                  className={`mt-2 ${getFieldHighlightClass(
                     "comparableLengthOfBoltCustom"
                   )}`}
-                >
-                  Custom Comparable Length (in)
-                </Label>
-                <Input
-                  id={`${id}-comparableLengthOfBoltCustom`}
-                  type="number"
-                  value={wall.comparableLengthOfBoltCustom || ""}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "comparableLengthOfBoltCustom",
-                      e.target.value
-                    )
+                  onMouseEnter={() =>
+                    handleMouseEnterField("comparableLengthOfBoltCustom")
                   }
-                  onWheel={handleNumberInputWheel}
-                  className="mt-1"
-                />
-              </div>
+                  onMouseLeave={handleMouseLeaveField}
+                >
+                  <Label
+                    htmlFor={`${id}-comparableLengthOfBoltCustom`}
+                    className={`label-xs ${getLabelHighlightClass(
+                      "comparableLengthOfBoltCustom"
+                    )}`}
+                  >
+                    Custom Comparable Length (in)
+                  </Label>
+                  <Input
+                    id={`${id}-comparableLengthOfBoltCustom`}
+                    type="number"
+                    value={wall.comparableLengthOfBoltCustom || ""}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "comparableLengthOfBoltCustom",
+                        e.target.value
+                      )
+                    }
+                    onWheel={handleNumberInputWheel}
+                    className="mt-1"
+                  />
+                </div>
+              )}
+            </div>
+            {renderInput(
+              "Installation Priced By",
+              "pricedBy",
+              "select",
+              undefined,
+              PRICING_OPTIONS
             )}
-          </div>
-          {renderInput(
-            "Installation Priced By",
-            "pricedBy",
-            "select",
-            undefined,
-            PRICING_OPTIONS
-          )}
-          {renderInput(
-            "Unit Price of Wallpaper ($ per Bolt)",
-            "unitPriceOfWallpaper",
-            "number",
-            "e.g., 75"
-          )}
-          {/* Added per request point #1 */}
-          {renderInput(
-            "Shipping & Tariffs ($)",
-            "shippingAndTariffs",
-            "number",
-            "e.g., 50"
-          )}
-          {renderReadOnlyInput(
-            "Vert. Height of Matched Repeat (in)",
-            "verticalHeightOfMatchedRepeat",
-            wall.verticalHeightOfMatchedRepeat,
-            undefined,
-            `Pattern Vert. Repeat (${
-              wall.patternVerticalRepeat || "N/A"
-            }) × Pattern Match (${wall.patternMatch || "N/A"})`
-          )}
-          {renderReadOnlyInput(
-            "# of Cuts for Project",
-            "numberOfCutsForProject",
-            wall.numberOfCutsForProject,
-            undefined,
-            `(⌈Perimeter (${wall.width || "N/A"}) / Paper Width (${
-              (wall.paperWidthOption === "custom"
-                ? wall.paperWidthCustom
-                : wall.paperWidthOption) || "N/A"
-            })⌉) + 1`
-          )}
-          {renderReadOnlyInput(
-            "# of Repeats per Cut",
-            "numberOfRepeatsPerCut",
-            wall.numberOfRepeatsPerCut,
-            undefined,
-            `⌈(Net Height (${
-              wall.heightOfWall?.toFixed(2) || "N/A"
-            }) + 4″) / Vert. Height of Matched Repeat (${
-              wall.verticalHeightOfMatchedRepeat?.toFixed(2) || "N/A"
-            })⌉`
-          )}
-          {renderReadOnlyInput(
-            "Length of Cuts (incl. trim) (in)",
-            "lengthOfCuts",
-            wall.lengthOfCuts?.toFixed(2),
-            undefined,
-            `# Repeats per Cut (${
-              wall.numberOfRepeatsPerCut || "N/A"
-            }) × Vert. Height of Matched Repeat (${
-              wall.verticalHeightOfMatchedRepeat?.toFixed(2) || "N/A"
-            })`
-          )}
-          {renderReadOnlyInput(
-            "Calculated Total Length Needed (in)",
-            "totalLengthNeeded",
-            wall.totalLengthNeeded?.toFixed(2),
-            undefined,
-            `Length of Cuts (${
-              wall.lengthOfCuts?.toFixed(2) || "N/A"
-            }) × # of Cuts (${wall.numberOfCutsForProject || "N/A"})`
-          )}
-          {renderReadOnlyInput(
-            "# of Cut Lengths per Bolt",
-            "numberOfCutLengthsPerBolt",
-            wall.numberOfCutLengthsPerBolt,
-            undefined,
-            `⌊Bolt Length (${
-              (wall.lengthOfBoltOption === "custom"
-                ? wall.lengthOfBoltCustom
-                : wall.lengthOfBoltOption) || "N/A"
-            }) / Length of Cuts (${wall.lengthOfCuts?.toFixed(2) || "N/A"})⌋`
-          )}
-          {renderReadOnlyInput(
-            "# of Bolts to Order",
-            "numberOfBolts",
-            wall.numberOfBolts,
-            undefined,
-            `⌈# of Cuts (${
-              wall.numberOfCutsForProject || "N/A"
-            }) / # Cut Lengths per Bolt (${
-              wall.numberOfCutLengthsPerBolt || "N/A"
-            })⌉`
-          )}
-          {renderReadOnlyInput(
-            "Total Material from Bolts (in)",
-            "totalLengthPurchased",
-            wall.totalLengthPurchased?.toFixed(2),
-            undefined,
-            `# Bolts (${wall.numberOfBolts || "N/A"}) × Bolt Length (${
-              (wall.lengthOfBoltOption === "custom"
-                ? wall.lengthOfBoltCustom
-                : wall.lengthOfBoltOption) || "N/A"
-            })`
-          )}
-          {renderReadOnlyInput(
-            "# of Yards to Order",
-            "numberOfYardsToOrder",
-            wall.numberOfYardsToOrder,
-            undefined,
-            `⌈Total Material from Bolts (${
-              wall.totalLengthPurchased?.toFixed(2) || "N/A"
-            }) / 36⌉`
-          )}
-          {renderReadOnlyInput(
-            "Equiv. Project S/R Calc.",
-            "equivalentProjectSRCalculation",
-            wall.equivalentProjectSRCalculation,
-            undefined,
-            `⌈(Calc. Total Length (${
-              wall.totalLengthNeeded?.toFixed(2) || "N/A"
-            }) / Comp. Bolt Length (${
-              (wall.comparableLengthOfBolt === "custom"
-                ? wall.comparableLengthOfBoltCustom
-                : wall.comparableLengthOfBolt) || "N/A"
-            })) × 2⌉`
-          )}
-          {/* Labor Totals */}
-          {renderReadOnlyInput(
-            "Base Labor ($)",
-            "baseLabor",
-            wall.baseLabor?.toFixed(2),
-            undefined,
-            `Equiv. S/R Calc. (${
-              wall.equivalentProjectSRCalculation || "N/A"
-            }) × Price/SR (or 38% of Material Cost)`
-          )}
-          {renderReadOnlyInput(
-            "Height Surcharge ($)",
-            "heightSurcharge",
-            wall.heightSurcharge?.toFixed(2),
-            undefined,
-            `(Round((Ceiling Ht. or Wall Ht. - 96″) / 12)) × $100`
-          )}
-          {renderReadOnlyInput(
-            "Ceiling Surcharge ($)",
-            "ceilingSurcharge",
-            wall.ceilingSurcharge?.toFixed(2),
-            undefined,
-            `If Ceiling, Base Labor (${
-              wall.baseLabor?.toFixed(2) || "N/A"
-            }) × 1.5`
-          )}
-          {renderInput(
-            "PIA Surcharge ($)",
-            "piaSurcharge",
-            "number",
-            "e.g., 25"
-          )}
-          {renderReadOnlyInput(
-            "Space Grand Total ($)",
-            "grandTotalLabor",
-            wall.grandTotalLabor?.toFixed(2),
-            "font-bold-lg-green",
-            "Base Labor + Height Surcharge + Ceiling Surcharge + PIA Surcharge"
-          )}
-          {/* Added per request point #1 - Paper Totals */}
-          {/*<div className="md:col-span-1"></div> /!* Spacer *!/*/}
-          {/*materialCost: { inputs: ['unitPriceOfWallpaper', 'numberOfBolts'], outputs: ['baseLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },*/}
-          {renderReadOnlyInput(
-            "Material Cost ($)",
-            "materialCost",
-            wall.materialCost?.toFixed(2),
-            "font-bold-lg-green",
-            "unitPriceOfWallpaper * numberOfBolts"
-          )}
-          {renderReadOnlyInput(
-            "Sales Price Plus Sales Tax ($)",
-            "salesPricePlusSalesTax",
-            wall.salesPricePlusSalesTax?.toFixed(2),
-            undefined,
-            `(Material Cost [${
-              wall.materialCost?.toFixed(2) || "N/A"
-            }] * 1.2) * 1.06`
-          )}
-          {renderReadOnlyInput(
-            "Paper Grand Total ($)",
-            "paperGrandTotal",
-            wall.paperGrandTotal?.toFixed(2),
-            "font-bold-lg-blue",
-            `Sales Price Plus Tax [${
-              wall.salesPricePlusSalesTax?.toFixed(2) || "N/A"
-            }] + Shipping [${wall.shippingAndTariffs?.toFixed(2) || "N/A"}]`
-          )}
-        </CardContent>
+            {renderInput(
+              "Unit Price of Wallpaper ($ per Bolt)",
+              "unitPriceOfWallpaper",
+              "number",
+              "e.g., 75"
+            )}
+
+            {/* Added per request point #1 */}
+            {renderInput(
+              "Shipping & Tariffs ($)",
+              "shippingAndTariffs",
+              "number",
+              "e.g., 50"
+            )}
+
+            {renderReadOnlyInput(
+              "Vert. Height of Matched Repeat (in)",
+              "verticalHeightOfMatchedRepeat",
+              wall.verticalHeightOfMatchedRepeat,
+              undefined,
+              `Pattern Vert. Repeat (${
+                wall.patternVerticalRepeat || "N/A"
+              }) × Pattern Match (${wall.patternMatch || "N/A"})`
+            )}
+            {renderReadOnlyInput(
+              "# of Cuts for Project",
+              "numberOfCutsForProject",
+              wall.numberOfCutsForProject,
+              undefined,
+              `(⌈Perimeter (${wall.width || "N/A"}) / Paper Width (${
+                (wall.paperWidthOption === "custom"
+                  ? wall.paperWidthCustom
+                  : wall.paperWidthOption) || "N/A"
+              })⌉) + 1`
+            )}
+            {renderReadOnlyInput(
+              "# of Repeats per Cut",
+              "numberOfRepeatsPerCut",
+              wall.numberOfRepeatsPerCut,
+              undefined,
+              `⌈(Net Height (${
+                wall.heightOfWall?.toFixed(2) || "N/A"
+              }) + 4″) / Vert. Height of Matched Repeat (${
+                wall.verticalHeightOfMatchedRepeat?.toFixed(2) || "N/A"
+              })⌉`
+            )}
+            {renderReadOnlyInput(
+              "Length of Cuts (incl. trim) (in)",
+              "lengthOfCuts",
+              wall.lengthOfCuts?.toFixed(2),
+              undefined,
+              `# Repeats per Cut (${
+                wall.numberOfRepeatsPerCut || "N/A"
+              }) × Vert. Height of Matched Repeat (${
+                wall.verticalHeightOfMatchedRepeat?.toFixed(2) || "N/A"
+              })`
+            )}
+            {renderReadOnlyInput(
+              "Calculated Total Length Needed (in)",
+              "totalLengthNeeded",
+              wall.totalLengthNeeded?.toFixed(2),
+              undefined,
+              `Length of Cuts (${
+                wall.lengthOfCuts?.toFixed(2) || "N/A"
+              }) × # of Cuts (${wall.numberOfCutsForProject || "N/A"})`
+            )}
+            {renderReadOnlyInput(
+              "# of Cut Lengths per Bolt",
+              "numberOfCutLengthsPerBolt",
+              wall.numberOfCutLengthsPerBolt,
+              undefined,
+              `⌊Bolt Length (${
+                (wall.lengthOfBoltOption === "custom"
+                  ? wall.lengthOfBoltCustom
+                  : wall.lengthOfBoltOption) || "N/A"
+              }) / Length of Cuts (${wall.lengthOfCuts?.toFixed(2) || "N/A"})⌋`
+            )}
+            {renderReadOnlyInput(
+              "# of Bolts to Order",
+              "numberOfBolts",
+              wall.numberOfBolts,
+              undefined,
+              `⌈# of Cuts (${
+                wall.numberOfCutsForProject || "N/A"
+              }) / # Cut Lengths per Bolt (${
+                wall.numberOfCutLengthsPerBolt || "N/A"
+              })⌉`
+            )}
+            {renderReadOnlyInput(
+              "Total Material from Bolts (in)",
+              "totalLengthPurchased",
+              wall.totalLengthPurchased?.toFixed(2),
+              undefined,
+              `# Bolts (${wall.numberOfBolts || "N/A"}) × Bolt Length (${
+                (wall.lengthOfBoltOption === "custom"
+                  ? wall.lengthOfBoltCustom
+                  : wall.lengthOfBoltOption) || "N/A"
+              })`
+            )}
+            {renderReadOnlyInput(
+              "# of Yards to Order",
+              "numberOfYardsToOrder",
+              wall.numberOfYardsToOrder,
+              undefined,
+              `⌈Total Material from Bolts (${
+                wall.totalLengthPurchased?.toFixed(2) || "N/A"
+              }) / 36⌉`
+            )}
+            {renderReadOnlyInput(
+              "Equiv. Project S/R Calc.",
+              "equivalentProjectSRCalculation",
+              wall.equivalentProjectSRCalculation,
+              undefined,
+              `⌈(Calc. Total Length (${
+                wall.totalLengthNeeded?.toFixed(2) || "N/A"
+              }) / Comp. Bolt Length (${
+                (wall.comparableLengthOfBolt === "custom"
+                  ? wall.comparableLengthOfBoltCustom
+                  : wall.comparableLengthOfBolt) || "N/A"
+              })) × 2⌉`
+            )}
+
+            {/* Labor Totals */}
+            {renderReadOnlyInput(
+              "Base Labor ($)",
+              "baseLabor",
+              wall.baseLabor?.toFixed(2),
+              undefined,
+              `Equiv. S/R Calc. (${
+                wall.equivalentProjectSRCalculation || "N/A"
+              }) × Price/SR (or 38% of Material Cost)`
+            )}
+            {renderReadOnlyInput(
+              "Height Surcharge ($)",
+              "heightSurcharge",
+              wall.heightSurcharge?.toFixed(2),
+              undefined,
+              `(Round((Ceiling Ht. or Wall Ht. - 96″) / 12)) × $100`
+            )}
+            {renderReadOnlyInput(
+              "Ceiling Surcharge ($)",
+              "ceilingSurcharge",
+              wall.ceilingSurcharge?.toFixed(2),
+              undefined,
+              `If Ceiling, Base Labor (${
+                wall.baseLabor?.toFixed(2) || "N/A"
+              }) × 1.5`
+            )}
+            {renderInput(
+              "PIA Surcharge ($)",
+              "piaSurcharge",
+              "number",
+              "e.g., 25"
+            )}
+            {renderReadOnlyInput(
+              "Space Grand Total ($)",
+              "grandTotalLabor",
+              wall.grandTotalLabor?.toFixed(2),
+              "font-bold-lg-green",
+              "Base Labor + Height Surcharge + Ceiling Surcharge + PIA Surcharge"
+            )}
+
+            {/* Added per request point #1 - Paper Totals */}
+            {/*<div className="md:col-span-1"></div> /!* Spacer *!/*/}
+            {/*materialCost: { inputs: ['unitPriceOfWallpaper', 'numberOfBolts'], outputs: ['baseLabor', 'salesPricePlusSalesTax', 'paperGrandTotal'] },*/}
+
+            {renderReadOnlyInput(
+              "Material Cost ($)",
+              "materialCost",
+              wall.materialCost?.toFixed(2),
+              "font-bold-lg-green",
+              "unitPriceOfWallpaper * numberOfBolts"
+            )}
+
+            {renderReadOnlyInput(
+              "Sales Price Plus Sales Tax ($)",
+              "salesPricePlusSalesTax",
+              wall.salesPricePlusSalesTax?.toFixed(2),
+              undefined,
+              `(Material Cost [${
+                wall.materialCost?.toFixed(2) || "N/A"
+              }] * 1.2) * 1.06`
+            )}
+            {renderReadOnlyInput(
+              "Paper Grand Total ($)",
+              "paperGrandTotal",
+              wall.paperGrandTotal?.toFixed(2),
+              "font-bold-lg-blue",
+              `Sales Price Plus Tax [${
+                wall.salesPricePlusSalesTax?.toFixed(2) || "N/A"
+              }] + Shipping [${wall.shippingAndTariffs?.toFixed(2) || "N/A"}]`
+            )}
+          </CardContent>
+        </>
       )}
     </Card>
   );

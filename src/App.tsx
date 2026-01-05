@@ -303,9 +303,10 @@ const App = () => {
     // Updated per PDF point #12
     const projectTravelCharges = useMemo(() => {
         if (!currentProject || !currentProject.generalProjectInfo) return 0;
-        const { roundTripMileage } = currentProject.generalProjectInfo;
+        const { roundTripMileage, numberOfDaysForInstall } = currentProject.generalProjectInfo;
         if (roundTripMileage === undefined || roundTripMileage <= 60) return 0;
-        return roundTripMileage * 0.70;
+        const days = numberOfDaysForInstall ?? 1;
+        return roundTripMileage * 0.70 * days;
     }, [currentProject]);
 
     const totalProjectLaborWithTravel = useMemo(() => {
