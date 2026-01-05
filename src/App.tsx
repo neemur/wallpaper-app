@@ -303,9 +303,10 @@ const App = () => {
     // Updated per PDF point #12
     const projectTravelCharges = useMemo(() => {
         if (!currentProject || !currentProject.generalProjectInfo) return 0;
-        const { roundTripMileage } = currentProject.generalProjectInfo;
+        const { roundTripMileage, numberOfDaysForInstall } = currentProject.generalProjectInfo;
         if (roundTripMileage === undefined || roundTripMileage <= 60) return 0;
-        return roundTripMileage * 0.70;
+        const days = numberOfDaysForInstall ?? 1;
+        return roundTripMileage * 0.70 * days;
     }, [currentProject]);
 
     const totalProjectLaborWithTravel = useMemo(() => {
@@ -320,6 +321,16 @@ const App = () => {
         return currentProject.rooms.reduce((projectTotal, room) =>
                 projectTotal + room.walls.reduce((roomWallTotal, wall) =>
                         roomWallTotal + (wall.paperGrandTotal || 0)
+                    , 0)
+            , 0);
+    }, [currentProject]);
+
+    // Added for Wallpaper Removal
+    const totalProjectRemoval = useMemo(() => {
+        if (!currentProject) return 0;
+        return currentProject.rooms.reduce((projectTotal, room) =>
+                projectTotal + room.walls.reduce((roomWallTotal, wall) =>
+                        roomWallTotal + (wall.removalTotalCost || 0)
                     , 0)
             , 0);
     }, [currentProject]);
@@ -399,6 +410,9 @@ const App = () => {
                     <div className="mb-4 flex flex-wrap items-center justify-between gap-3" style={{ marginBottom: '1rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
                         <Input value={currentProject.name} onChange={(e) => handleProjectNameChange(currentProject.id, e.target.value)} className="input-project-name" placeholder="Project Name" />
                         <div className="flex flex-wrap gap-x-6 gap-y-2"> {/* Wrapper for totals */}
+                            <div className="total-project-labor" style={{ color: '#c2410c' }}> {/* Orange for removal */}
+                                <DollarSign /> Total Project Removal: ${totalProjectRemoval.toFixed(2)}
+                            </div>
                             <div className="total-project-labor" style={{ color: '#059669' }}> {/* Green for paper */}
                                 <DollarSign /> Total Project Paper: ${totalProjectPaper.toFixed(2)}
                             </div>
