@@ -1136,11 +1136,10 @@ export const WallInputCard: React.FC<WallInputCardProps> = ({
               "ceilingSurcharge",
               wall.ceilingSurcharge?.toFixed(2),
               undefined,
-              `If Ceiling, Base Labor (${
-                wall.baseLabor?.toFixed(2) || "N/A"
-              }) × 1.5`
-            )}
-            {renderInput(
+                          `If Ceiling, equals Base Labor (${
+                            wall.baseLabor?.toFixed(2) || "N/A"
+                          })`
+                        )}            {renderInput(
               "PIA Surcharge ($)",
               "piaSurcharge",
               "number",

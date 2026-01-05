@@ -73,7 +73,7 @@ export const calculateWallValues = (wall: Wall, roomDetails?: RoomSpecificInfo):
         ? roomDetails.ceilingHeight
         : calculationHeight;
 
-    const ceilingSurcharge = (isCeiling && baseLabor !== undefined) ? (baseLabor * 1.5) : 0;
+    const ceilingSurcharge = (isCeiling && baseLabor !== undefined) ? baseLabor : 0;
 
     let heightSurcharge = 0;
     if (heightToUseForSurcharge && heightToUseForSurcharge > 96) {
